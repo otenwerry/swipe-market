@@ -13,7 +13,7 @@ from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
 
 app = Flask(__name__) #sets up a flask application
-app.secret_key = os.environ.Wget('SECRET_KEY','fallback-secret-key') 
+app.secret_key = os.environ.get('SECRET_KEY','fallback-secret-key') 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') # for PostgreSQL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
