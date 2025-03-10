@@ -217,12 +217,12 @@ def send_connection_email():
 def index():
   seller_listings = SellerListing.query.order_by(SellerListing.created_at.desc()).all()
   buyer_listings = BuyerListing.query.order_by(BuyerListing.created_at.desc()).all()
-  return render_template('market.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
+  return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
 
 #regular route for the Sellers page
 @app.route('/listings')
 def listings():
-  return render_template('sellers.html')
+  return render_template('listings.html')
 
 if __name__ == '__main__':
    with app.app_context():
