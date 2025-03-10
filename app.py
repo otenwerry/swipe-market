@@ -6,7 +6,6 @@ import os
 import requests
 import json
 import boto3
-from time_functions import john_jay_open, jjs_open, ferris_open, fac_house_open, mikes_open, dons_open, grace_dodge_open, fac_shack_open, hewitt_open, diana_open, hours_dict, breakfast_hours, lunch_hours, dinner_hours, latenight_hours, johnnys_open
 import string
 import pytz
 from  flask_sqlalchemy import SQLAlchemy
