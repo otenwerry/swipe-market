@@ -1,0 +1,130 @@
+div{
+    font-family: Inconsolata;
+    font-size: 1.125rem;
+  }
+  
+  a{
+    text-decoration: none;
+    color: black;
+    transition: color 0.15s;
+  }
+  
+  a:hover{
+    color: rgb(105, 179, 231); 
+  }
+  .container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-decoration: none;
+    justify-content: center;
+    margin: 0 auto;
+    column-gap: 2rem;
+    max-width: 1200px;
+    /*color: rgb(247,95,28);  halloween */
+  }
+  
+  .col {
+    display: flex;
+    flex-direction: column;
+    transition: color 0.15s;
+    font-size: 1.5rem;/*1.5rem*/
+    align-items: flex-start;
+    flex: 1 1 calc(16% - 2rem); /* 20% width for 5 items per row, minus gap */
+    max-width: calc(20% - 2rem); /*Ensures max width does not exceed 20% */
+    box-sizing: border-box; /* Includes padding/border in element's width and height 
+    margin: 0.5rem; Adds spacing around items */
+  }
+  .menu {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+    /*word-wrap: break-word;  Breaks long words 
+    overflow-wrap: break-word;  Handles overflowing words */
+    white-space: normal;
+    row-gap: 0.3rem;
+  }
+  
+  
+  button {
+    border: none;
+    /*background-color: rgb(105, 179, 231); */
+    /*color: rgb(247,95,28);  halloween */
+    color: rgb(105, 179, 231); 
+    color: white;
+    font-weight: medium;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: "Inconsolata";
+    font-size: 24px;
+    padding: 10px 30px 10px 30px;
+    transition: opacity 0.15s;
+  }
+  
+  button:hover{
+    opacity: .75;
+  }
+  
+  
+  .votes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px; /*0.2rem*/
+  }
+  
+  h3 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    /*color: rgb(247,95,28);  halloween */
+  }
+  
+  .food-type {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 0.625rem; /*0.625rem*/
+  }
+  
+  .meal-name.italicized {
+    font-style: italic !important;
+  }
+  
+  .deadline {
+    margin-left: 5px;
+  }
+  
+  .meal-button {
+    display: inline-block;
+    padding: 10px 30px 10px 30px;
+    background-color: rgb(105, 179, 231); 
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.6rem;
+    margin: 5px;
+    cursor: pointer;
+    transition: 0.15s;
+    font-weight: medium;
+    font-size: 26px;
+  }
+  
+  .meal-button:hover {
+    opacity: 0.75;
+    color: white;
+  }
+  
+  .meal-button.active {
+    background-color: rgb(1, 33, 105);
+  }
+  
+  .barrier{
+    height: 40px;
+  }
+  
+  .timing {
+    margin-bottom: 8px;
+    font-style: italic !important;
+  }
+  
