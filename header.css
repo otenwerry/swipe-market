@@ -1,0 +1,93 @@
+.header {
+    display: flex;
+    font-family: "Poppins", sans-serif;
+    align-items: top;
+    font-size:56px;
+    font-weight: 500;
+    margin-top: 100px;
+    z-index: 100;
+    transition: color 0.15s;
+    flex-direction: row;
+    justify-content: center;
+    letter-spacing: 2px;
+  }
+  
+  #index-header:hover{
+    color:rgb(105, 179, 231); 
+  }
+  
+  .meals-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px 50px 0px 50px;
+    flex-wrap: wrap;
+    text-decoration: none;
+    font-size: 28px;
+    transition: color 0.15s;
+    color:rgb(105, 179, 231); 
+  }
+  .meals-container:hover{
+    color:rgb(105, 179, 231); 
+  }
+  
+  .footer {
+    height: 5rem
+  }
+  
+  body {
+    margin-left: 1.5rem;
+    /*background-color: black;  halloween */
+  }
+  
+  .sidebar {
+    height: 100vh; /* Full-height */
+    width: 10rem; /* Sidebar width */
+    position: fixed; /* Fixed sidebar */
+    top: 0;
+    left: 0;
+  }
+  
+  .top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 2.5rem;
+    font-size: 22px;
+  }
+  
+  .top-right {
+    margin-right: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 22px;
+  }
+  
+  .feedback {
+    text-decoration: underline;
+    margin-top:5px;
+  }
+  
+  .contest {
+    font-size: 24px;
+  }
+  
+  .feedback:hover{
+    opacity: .75;
+  }
+  
+  .prefs-alls {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;  
+  }
+  
+  .pa-menu{
+    font-size: 24px;
+  }
