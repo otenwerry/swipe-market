@@ -1,0 +1,247 @@
+.back-button-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  table {
+    /*width = 100%*/
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 20px; 
+  }
+  
+  th, td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .sell-button-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .sell-button {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .sell-button:hover {
+    background-color: #45a049;
+  }
+  
+  .seller-form{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content: center;
+  }
+  
+  .seller-form label{
+    display:block;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-size: 16px;
+  }
+  
+  .terms-of-service{
+    font-family: "Poppins";
+    max-width: 800px;
+    margin: auto;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #d2d2d2;
+  }
+  
+  table {
+    margin: 0 auto;
+  }
+  
+  .buy-button {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .buy-button:hover {
+    background-color: #45a049;
+  }
+  
+  .tables-container {
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+    justify-content: space-between;
+    /*gap: 20px; optional spacing between tables */
+  }
+  
+  .contact-button {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .contact-button:hover {
+    background-color: #45a049;
+  }
+  
+  .form-popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 100px;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+  }
+  
+  .form-container {
+    max-width: 300px;
+    padding: 10px;
+    background-color: white;
+  }
+  
+  .form-container input[type=text], .form-container input[type=password] {
+    /*width: 100%;*/
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #f1f1f1;
+  }
+  
+  .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+  }
+  
+  .form-container .btn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom:10px;
+    opacity: 0.8;
+  }
+  
+  .form-container .cancel {
+    background-color: red;
+  }
+  
+  /* Add some hover effects to buttons */
+  .form-container .btn:hover, .open-button:hover {
+    opacity: 1;
+  }
+  
+  
+  .form-popup {
+    display: none;
+    position: fixed;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .form-container {
+    background-color: white;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    margin: 15% auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-container input[type=text] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Inconsolata;
+    font-size: 16px;
+  }
+  
+  .form-container label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  .form-container .btn {
+    background-color: rgb(105, 179, 231);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  
+  .form-container .btn.cancel {
+    background-color: #f44336;
+    margin-top: 5px;
+  }
+  
+  .form-container .btn:hover {
+    opacity: 0.8;
+  }
+  
+  .profile-menu {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .profile-menu img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    margin-top: 5px;
+    background-color: #fff;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .profile-dropdown button {
+    border: none;
+    background: none;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    color: black;
+  }
+  
+  .profile-menu.active .profile-dropdown {
+    display: block;
+  }
+  
+  
+  
