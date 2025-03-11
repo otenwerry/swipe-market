@@ -219,9 +219,25 @@ def send_connection_email():
 #regular route for the Swipe Market page
 @app.route('/')
 def index():
-  seller_listings = SellerListing.query.order_by(SellerListing.created_at.desc()).all()
-  buyer_listings = BuyerListing.query.order_by(BuyerListing.created_at.desc()).all()
-  return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
+    # Convert string date and time to datetime for sorting
+    def get_datetime(listing):
+        try:
+            date_str = listing.date
+            time_str = listing.start_time
+            dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            return dt
+        except:
+            return datetime.max  # Put invalid dates at the end
+
+    # Get all listings and sort them
+    seller_listings = SellerListing.query.all()
+    buyer_listings = BuyerListing.query.all()
+    
+    # Sort listings by date and time
+    seller_listings = sorted(seller_listings, key=get_datetime)
+    buyer_listings = sorted(buyer_listings, key=get_datetime)
+    
+    return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
 
 #regular route for the listings page
 @app.route('/listings')
