@@ -144,23 +144,5 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script src="../static/functions.js" type="text/javascript"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const userName = localStorage.getItem('userName');
-        const userEmail = localStorage.getItem('userEmail');
-        
-        if (userName && userEmail) {
-          const posterNameField = document.getElementById('poster_name');
-          const posterEmailField = document.getElementById('poster_email');
-          
-          if (posterNameField) {
-            posterNameField.value = userName;
-          }
-          if (posterEmailField) {
-            posterEmailField.value = userEmail;
-          }
-        }
-      });
-    </script>
   </body>
 </html>

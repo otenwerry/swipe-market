@@ -12,6 +12,47 @@ function onSignIn(googleUser) {
     document.getElementById('g_id_signin').style.display = 'none';
   
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const userName = localStorage.getItem('userName');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userName && userEmail) {
+      const posterNameField = document.getElementById('poster_name');
+      const posterEmailField = document.getElementById('poster_email');
+      
+      if (posterNameField) {
+        posterNameField.value = userName;
+      }
+      if (posterEmailField) {
+        posterEmailField.value = userEmail;
+      }
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+    // set default date to today
+    const today = new Date();
+    const dateInput = document.getElementById('date');
+    
+    // format today's date as YYYY-MM-DD
+    const formattedDate = today.toISOString().split('T')[0];
+    dateInput.value = formattedDate;
+    dateInput.min = formattedDate; // prevent selecting past dates
+
+    // add validation before form submission
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const selectedDate = new Date(dateInput.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // reset time part for accurate date comparison
+
+        if (selectedDate < today) {
+            e.preventDefault();
+            alert('Please select today or a future date');
+            return false;
+        }
+    });
+  });
   
   //gets user's google credential and stores it in localStorage.
   function handleCredentialResponse(response) {
@@ -142,6 +183,7 @@ function onSignIn(googleUser) {
     }
     return true;
   }
+
   
   // --- INITIALIZATION AND EVENT LISTENERS ---
   
