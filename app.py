@@ -209,10 +209,10 @@ def send_connection_email():
   
   try:
     mail.send(msg)
-    flash("Connection email sent successfully!", "success")
+    return redirect(url_for('index', show_popup='true'))
   except Exception as e:
-    flash("Error sending email. Please try again later.", "error")
     print("Email sending error:", e)
+    return redirect(url_for('index', error='true'))
   
   return redirect(url_for('index'))
 
