@@ -317,13 +317,14 @@ function onSignIn(googleUser) {
     const userEmail = localStorage.getItem('userEmail');
     document.querySelectorAll('.listing-actions').forEach(actions => {
         const isOwner = actions.dataset.ownerEmail === userEmail;
+        const contactButton = actions.previousElementSibling;
+        
         if (isOwner) {
             actions.style.display = 'inline-block';
-        }
-        // Show/hide contact button based on ownership
-        const contactButton = actions.nextElementSibling;
-        if (contactButton && contactButton.classList.contains('contact-button')) {
-            contactButton.style.display = isOwner ? 'none' : 'inline-block';
+            contactButton.style.display = 'none';
+        } else {
+            actions.style.display = 'none';
+            contactButton.style.display = 'inline-block';
         }
     });
   });
