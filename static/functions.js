@@ -316,8 +316,14 @@ function onSignIn(googleUser) {
     // Show/hide edit/delete buttons based on user email
     const userEmail = localStorage.getItem('userEmail');
     document.querySelectorAll('.listing-actions').forEach(actions => {
-        if (actions.dataset.ownerEmail === userEmail) {
+        const isOwner = actions.dataset.ownerEmail === userEmail;
+        if (isOwner) {
             actions.style.display = 'inline-block';
+        }
+        // Show/hide contact button based on ownership
+        const contactButton = actions.nextElementSibling;
+        if (contactButton && contactButton.classList.contains('contact-button')) {
+            contactButton.style.display = isOwner ? 'none' : 'inline-block';
         }
     });
   });
