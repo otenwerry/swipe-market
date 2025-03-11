@@ -298,8 +298,13 @@ function onSignIn(googleUser) {
   // Close the form when clicking outside of it
   window.onclick = function(event) {
     const form = document.getElementById("myForm");
+    const popup = document.getElementById("popup");
+    
     if (event.target == form) {
-      closeForm();
+        closeForm();
+    }
+    if (event.target == popup) {
+        popup.style.display = 'none';
     }
   }
   
