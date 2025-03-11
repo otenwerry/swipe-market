@@ -43,6 +43,17 @@ function onSignIn(googleUser) {
       this.parentElement.classList.toggle('active');
     });
   
+    // Try to populate form fields if they exist
+    const posterNameField = document.getElementById('poster_name');
+    const posterEmailField = document.getElementById('poster_email');
+    
+    if (posterNameField) {
+      posterNameField.value = responsePayload.name;
+    }
+    if (posterEmailField) {
+      posterEmailField.value = responsePayload.email;
+    }
+  
     console.log('User logged in:', responsePayload.email);  // Debug log
   }
   
@@ -98,11 +109,12 @@ function onSignIn(googleUser) {
     if (!credential) {
       //alert('Please sign in with your Columbia/Barnard email.');
       document.getElementById('g_id_signin').style.display = 'block';
+      /*
       google.accounts.id.prompt();
       if (window.google && google.accounts && google.accounts.id) {
         alert('inside if')
         google.accounts.id.prompt();
-      }
+      }*/
       return false; // Stop the function from continuing
     }
     const form = document.getElementById("myForm");
@@ -121,10 +133,11 @@ function onSignIn(googleUser) {
       alert('Please sign in with your Columbia/Barnard email to post listings.');
       document.getElementById('g_id_signin').style.display = 'block';
       //google.accounts.id.prompt();
+      /*
       if (window.google && google.accounts && google.accounts.id) {
         alert('inside if2')
         google.accounts.id.prompt();
-      }
+      }*/
       return false;
     }
     return true;
