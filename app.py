@@ -228,6 +228,19 @@ def index():
 def listings():
   return render_template('listings.html')
 
+@app.route('/clear_database')
+def clear_database():
+    try:
+        # delete all records from both tables
+        SellerListing.query.delete()
+        BuyerListing.query.delete()
+        # commit changes
+        db.session.commit()
+        return "Database cleared successfully"
+    except Exception as e:
+        db.session.rollback()
+        return f"Error clearing database: {str(e)}"
+
 if __name__ == '__main__':
    with app.app_context():
      db.create_all()
