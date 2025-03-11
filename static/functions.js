@@ -308,5 +308,27 @@ function onSignIn(googleUser) {
     }
   }
   
+  document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide edit/delete buttons based on user email
+    const userEmail = localStorage.getItem('userEmail');
+    document.querySelectorAll('.listing-actions').forEach(actions => {
+        if (actions.dataset.ownerEmail === userEmail) {
+            actions.style.display = 'inline-block';
+        }
+    });
+  });
+
+  function deleteListing(listingId) {
+    if (confirm('Are you sure you want to delete this listing?')) {
+        fetch(`/delete_listing/${listingId}`, {
+            method: 'POST',
+        }).then(() => window.location.reload());
+    }
+  }
+
+  function editListing(listingId) {
+    window.location.href = `/edit_listing/${listingId}`;
+  }
+  
   
   
