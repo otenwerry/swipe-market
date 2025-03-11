@@ -32,7 +32,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 
 ny_tz = pytz.timezone('America/New_York')
-
+# test comment
 
 #class for seller listings
 class SellerListing(db.Model):
