@@ -13,6 +13,7 @@ from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
 
 # broooo
+# merge attempt
 
 app = Flask(__name__) #sets up a flask application
 app.secret_key = os.environ.get('SECRET_KEY','fallback-secret-key') 
