@@ -241,6 +241,23 @@ def clear_database():
         db.session.rollback()
         return f"Error clearing database: {str(e)}"
 
+@app.route('/delete_listing/<int:listing_id>', methods=['POST'])
+def delete_listing(listing_id):
+    listing = SellerListing.query.get(listing_id) or BuyerListing.query.get(listing_id)
+    if listing:
+        db.session.delete(listing)
+        db.session.commit()
+    return redirect(url_for('index'))
+
+"""
+@app.route('/edit_listing/<int:listing_id>')
+def edit_listing(listing_id):
+    listing = SellerListing.query.get(listing_id) or BuyerListing.query.get(listing_id)
+    if listing:
+        return render_template('listings.html', listing=listing)  # Reuse your existing form
+    return redirect(url_for('index'))
+"""
+
 if __name__ == '__main__':
    with app.app_context():
      db.create_all()
