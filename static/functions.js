@@ -29,6 +29,8 @@ function onSignIn(googleUser) {
       }
     }
   });
+
+  //sets default date and time for seller listings.
   document.addEventListener('DOMContentLoaded', function() {
     // set default date to today
     const today = new Date();
