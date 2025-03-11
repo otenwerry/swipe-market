@@ -70,6 +70,31 @@ function onSignIn(googleUser) {
             endTimeInput.setCustomValidity('');
         }
     });
+
+    const form = document.querySelector('form');
+    const diningHallSelect = document.getElementById('dining_hall');
+    const paymentMethodsSelect = document.getElementById('payment_methods');
+
+    // Add validation for multiple select fields
+    diningHallSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one dining hall');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    paymentMethodsSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one payment method');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Trigger initial validation
+    diningHallSelect.dispatchEvent(new Event('change'));
+    paymentMethodsSelect.dispatchEvent(new Event('change'));
   });
   
   //gets user's google credential and stores it in localStorage.
