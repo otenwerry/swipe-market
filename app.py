@@ -79,8 +79,10 @@ def submit_buyer():
   payment_methods_list = request.form.getlist('payment_methods[]')
   payment_methods=', '.join(payment_methods_list)
   
-  buyer_name = request.form.get('name')
-  buyer_email = request.form.get('email')
+  buyer_name = request.form.get('poster_name')
+  buyer_email = request.form.get('poster_email')
+  #print("poster name: " + buyer_name)
+  #print("poster email: " + buyer_email)
   buyer_phone = request.form.get('phone_number')
 
   try:
@@ -106,7 +108,7 @@ def submit_buyer():
   db.session.commit()
 
   #redirect to Swipe Market page
-  return redirect(url_for('market'))
+  return redirect(url_for('index'))
 
 #create all tables in the database
 with app.app_context():
@@ -127,9 +129,11 @@ def submit_seller():
   payment_methods_list = request.form.getlist('payment_methods[]')
   payment_methods=', '.join(payment_methods_list)
   
-  seller_name = request.form.get('name')
-  seller_email = request.form.get('email')
+  seller_name = request.form.get('poster_name')
+  seller_email = request.form.get('poster_email')
   seller_phone = request.form.get('phone_number')
+  #print("poster name: " + seller_name)
+  #print("poster email: " + seller_email)
 
   try:
     price_value = float(price)
@@ -154,7 +158,7 @@ def submit_seller():
   db.session.commit()
 
   #redirect to Swipe Market page
-  return redirect(url_for('market'))
+  return redirect(url_for('index'))
 
 #create all tables in the database
 with app.app_context():
@@ -165,7 +169,7 @@ with app.app_context():
 def contact_form():
   email = request.form.get('email')
   flash('Success! Your email has been submitted', 'success')
-  return redirect(url_for('market'))
+  return redirect(url_for('/'))
 
 @app.route('/send_connection_email', methods=['POST'])
 def send_connection_email():
@@ -179,7 +183,7 @@ def send_connection_email():
     receiver_listing = BuyerListing.query.get(listing_id)
     if not receiver_listing:
       flash("Error: Listing not found.", "error")
-      return redirect(url_for('market'))
+      return redirect(url_for('index'))
 
   # Get the receiver's information based on the listing type
   if isinstance(receiver_listing, BuyerListing):
@@ -210,7 +214,7 @@ def send_connection_email():
     flash("Error sending email. Please try again later.", "error")
     print("Email sending error:", e)
   
-  return redirect(url_for('market'))
+  return redirect(url_for('index'))
 
 #regular route for the Swipe Market page
 @app.route('/')
@@ -219,7 +223,7 @@ def index():
   buyer_listings = BuyerListing.query.order_by(BuyerListing.created_at.desc()).all()
   return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
 
-#regular route for the Sellers page
+#regular route for the listings page
 @app.route('/listings')
 def listings():
   return render_template('listings.html')
