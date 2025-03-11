@@ -220,22 +220,30 @@ def send_connection_email():
 @app.route('/')
 def index():
     # Convert string date and time to datetime for sorting
-    def get_datetime(listing):
+    def get_sort_key(listing):
         try:
+            # Primary sort: date and start time
             date_str = listing.date
             time_str = listing.start_time
-            dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
-            return dt
+            start_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            
+            # Secondary sort: end time
+            end_time = datetime.strptime(listing.end_time, "%H:%M").time()
+            
+            # Tertiary sort: price (lower prices first)
+            price = float(listing.price) if listing.price is not None else float('inf')
+            
+            return (start_time, end_time, price)
         except:
-            return datetime.max  # Put invalid dates at the end
+            return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
 
     # Get all listings and sort them
     seller_listings = SellerListing.query.all()
     buyer_listings = BuyerListing.query.all()
     
-    # Sort listings by date and time
-    seller_listings = sorted(seller_listings, key=get_datetime)
-    buyer_listings = sorted(buyer_listings, key=get_datetime)
+    # Sort listings by multiple criteria
+    seller_listings = sorted(seller_listings, key=get_sort_key)
+    buyer_listings = sorted(buyer_listings, key=get_sort_key)
     
     return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
 
