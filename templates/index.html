@@ -82,12 +82,13 @@
             <td>{{ listing.price }}</td>
             <td>{{ listing.payment_methods }}</td>
             <td>
-                <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
-                <!--delete button that only appears to poster-->
-                <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
+              <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
+              <!--delete button that only appears to poster-->
+              <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
                     <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
                     <!--<button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>-->
                 </div>
+                <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)" style="display: none;">Contact</button>
             </td>
           </tr>
           {% else %}
@@ -117,12 +118,13 @@
             <td>{{ listing.start_time }} - {{ listing.end_time }}</td>
             <td>{{ listing.price }}</td>
             <td>{{ listing.payment_methods }}</td>
-            <td><button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
-              <!--delete button that only appears to poster-->
+            <td>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
                   <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
                   <!--<button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>-->
-              </div></td>
+              </div>
+              <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)" style="display: none;">Contact</button>
+            </td>
           </tr>
           {% else %}
           <tr>
