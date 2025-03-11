@@ -33,23 +33,41 @@ function onSignIn(googleUser) {
     // set default date to today
     const today = new Date();
     const dateInput = document.getElementById('date');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
     
     // format today's date as YYYY-MM-DD
     const formattedDate = today.toISOString().split('T')[0];
     dateInput.value = formattedDate;
     dateInput.min = formattedDate; // prevent selecting past dates
 
-    // add validation before form submission
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const selectedDate = new Date(dateInput.value);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // reset time part for accurate date comparison
+    // set default start time to current time (rounded to nearest 15 minutes)
+    const minutes = today.getMinutes();
+    const roundedMinutes = Math.ceil(minutes / 15) * 15;
+    today.setMinutes(roundedMinutes);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    
+    // format time as HH:MM
+    const hours = String(today.getHours()).padStart(2, '0');
+    const mins = String(today.getMinutes()).padStart(2, '0');
+    startTimeInput.value = `${hours}:${mins}`;
 
-        if (selectedDate < today) {
-            e.preventDefault();
-            alert('Please select today or a future date');
-            return false;
+    // custom validation for end time
+    endTimeInput.addEventListener('input', function() {
+        if (startTimeInput.value && this.value <= startTimeInput.value) {
+            this.setCustomValidity('End time must be later than start time');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // also check when start time changes
+    startTimeInput.addEventListener('input', function() {
+        if (endTimeInput.value && endTimeInput.value <= this.value) {
+            endTimeInput.setCustomValidity('End time must be later than start time');
+        } else {
+            endTimeInput.setCustomValidity('');
         }
     });
   });
