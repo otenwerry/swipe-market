@@ -312,6 +312,7 @@ function onSignIn(googleUser) {
   }
   
   //shows edit/delete buttons to poster only.
+  //hides contact button from poster.
   document.addEventListener('DOMContentLoaded', function() {
     // Show/hide edit/delete buttons based on user email
     const userEmail = localStorage.getItem('userEmail');
