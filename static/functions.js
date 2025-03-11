@@ -31,6 +31,7 @@ function onSignIn(googleUser) {
   });
 
   //sets default date and time for seller listings.
+  //formats date and time as YYYY-MM-DD HH:MM.
   document.addEventListener('DOMContentLoaded', function() {
     // set default date to today
     const today = new Date();
@@ -310,6 +311,7 @@ function onSignIn(googleUser) {
     }
   }
   
+  //shows edit/delete buttons to poster only.
   document.addEventListener('DOMContentLoaded', function() {
     // Show/hide edit/delete buttons based on user email
     const userEmail = localStorage.getItem('userEmail');
@@ -320,6 +322,7 @@ function onSignIn(googleUser) {
     });
   });
 
+  //deletes listing.
   function deleteListing(listingId) {
     if (confirm('Are you sure you want to delete this listing?')) {
         fetch(`/delete_listing/${listingId}`, {
@@ -328,6 +331,7 @@ function onSignIn(googleUser) {
     }
   }
 
+  //shows edit form.
   function editListing(listingId) {
     window.location.href = `/edit_listing/${listingId}`;
   }
