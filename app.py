@@ -28,6 +28,28 @@ mail = Mail(app)
 ny_tz = pytz.timezone('America/New_York')
 # test comment
 
+# Utility function to format time from 24-hour to 12-hour format with AM/PM
+def format_time_to_12hour(time_str):
+    # Return early if the time_str is empty or invalid
+    if not time_str or ':' not in time_str:
+        return time_str
+    
+    try:
+        # Parse the time string
+        hours, minutes = map(int, time_str.split(':'))
+        
+        # Determine period and convert hour to 12-hour format
+        period = 'pm' if hours >= 12 else 'am'
+        hour12 = hours % 12
+        if hour12 == 0:
+            hour12 = 12  # 0 hours in 24-hour time is 12 AM
+            
+        # Format the result
+        return f"{hour12}:{minutes:02d} {period}"
+    except (ValueError, TypeError):
+        # Return the original string if parsing fails
+        return time_str
+
 #class for seller listings
 class SellerListing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -297,6 +319,10 @@ def send_connection_email():
     if sender_user and sender_user.phone and sender_user.phone.strip() != "":
       seller_phone = sender_user.phone
 
+    # Format times to 12-hour format
+    start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
+    end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
+
     # Compose email
     subject = "[Swipe Market] Potential Sale"
     price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
@@ -319,7 +345,7 @@ def send_connection_email():
     
     body += (
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
-      f"between {buyer_listing.start_time} and {buyer_listing.end_time} for ${price_str}. "
+      f"between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
       f"{buyer_name}, remember to delete your listing once you've agreed to the sale.\n\n"
       "Best regards,\n"
@@ -341,6 +367,10 @@ def send_connection_email():
     sender_user = User.query.filter_by(email=buyer_email).first()
     if sender_user and sender_user.phone and sender_user.phone.strip() != "":
       buyer_phone = sender_user.phone
+
+    # Format times to 12-hour format
+    start_time_formatted = format_time_to_12hour(seller_listing.start_time)
+    end_time_formatted = format_time_to_12hour(seller_listing.end_time)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
@@ -364,7 +394,7 @@ def send_connection_email():
     
     body += (
       f"As a reminder, the listing is for {seller_listing.dining_hall} from "
-      f"{seller_listing.start_time} to {seller_listing.end_time} and costs "
+      f"{start_time_formatted} to {end_time_formatted} and costs "
       f"${price_str}. "
       f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell today, "
