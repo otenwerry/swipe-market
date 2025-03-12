@@ -142,7 +142,12 @@ def submit_buyer():
   buyer_email = request.form.get('poster_email')
   print("poster name: " + buyer_name)
   print("poster email: " + buyer_email)
-  buyer_phone = request.form.get('phone_number')
+  
+  # Always retrieve phone number from User model since form field has been removed
+  buyer_phone = ""
+  user = User.query.filter_by(email=buyer_email).first()
+  if user and user.phone and user.phone.strip() != "":
+    buyer_phone = user.phone
 
   # Validate that if date is today, start time is in the future
   now = datetime.now(ny_tz)
@@ -161,12 +166,6 @@ def submit_buyer():
           print(f"Time validation error: {e}")
           flash("Error: Invalid time format.", "error")
           return redirect(url_for('index'))
-
-  # If phone number is not provided in the form, try to get it from the User model
-  if not buyer_phone or buyer_phone.strip() == "":
-    user = User.query.filter_by(email=buyer_email).first()
-    if user and user.phone and user.phone.strip() != "":
-      buyer_phone = user.phone
 
   try:
     price_value = float(price)
@@ -210,9 +209,12 @@ def submit_seller():
   
   seller_name = request.form.get('poster_name')
   seller_email = request.form.get('poster_email')
-  seller_phone = request.form.get('phone_number')
-  #print("poster name: " + seller_name)
-  #print("poster email: " + seller_email)
+  
+  # Always retrieve phone number from User model since form field has been removed
+  seller_phone = ""
+  user = User.query.filter_by(email=seller_email).first()
+  if user and user.phone and user.phone.strip() != "":
+    seller_phone = user.phone
 
   # Validate that if date is today, start time is in the future
   now = datetime.now(ny_tz)
@@ -231,12 +233,6 @@ def submit_seller():
           print(f"Time validation error: {e}")
           flash("Error: Invalid time format.", "error")
           return redirect(url_for('index'))
-
-  # If phone number is not provided in the form, try to get it from the User model
-  if not seller_phone or seller_phone.strip() == "":
-    user = User.query.filter_by(email=seller_email).first()
-    if user and user.phone and user.phone.strip() != "":
-      seller_phone = user.phone
 
   try:
     price_value = float(price)
