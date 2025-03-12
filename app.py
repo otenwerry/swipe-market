@@ -512,6 +512,10 @@ def save_user():
     if not email or not name:
         return jsonify({"success": False, "error": "Name and email are required"}), 400
     
+    # Ensure we only store the first name
+    if name and ' ' in name:
+        name = name.split(' ')[0]
+    
     # Check if user already exists
     user = User.query.filter_by(email=email).first()
     if user:
