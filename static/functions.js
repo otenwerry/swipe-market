@@ -116,9 +116,13 @@ function onSignIn(googleUser) {
       return;
     }
     
+    // Extract just the first name
+    const fullName = responsePayload.name;
+    const firstName = fullName.split(' ')[0];
+    
     // Store the credential in localStorage
     localStorage.setItem('googleCredential', response.credential);
-    localStorage.setItem('userName', responsePayload.name);
+    localStorage.setItem('userName', firstName);
     localStorage.setItem('userImage', responsePayload.picture);
     localStorage.setItem('userEmail', responsePayload.email);
   
@@ -143,7 +147,7 @@ function onSignIn(googleUser) {
     const posterEmailField = document.getElementById('poster_email');
     
     if (posterNameField) {
-      posterNameField.value = responsePayload.name;
+      posterNameField.value = firstName;
     }
     if (posterEmailField) {
       posterEmailField.value = responsePayload.email;
@@ -547,6 +551,12 @@ function onSignIn(googleUser) {
         }
   
         console.log('User is logged in:', payload.email);  // Debug log
+
+        // Extract first name in case token was stored before this feature was added
+        if (payload.name) {
+          const firstName = payload.name.split(' ')[0];
+          localStorage.setItem('userName', firstName);
+        }
 
         // Check if user exists in database on page load
         checkUserExistence(payload.email);
