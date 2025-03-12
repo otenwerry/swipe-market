@@ -11,14 +11,12 @@ import pytz
 from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
-from flask_migrate import Migrate
 
 app = Flask(__name__) #sets up a flask application
 app.secret_key = os.environ.get('SECRET_KEY','fallback-secret-key') 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') # for PostgreSQL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT'))
 app.config['MAIL_USE_TLS'] = True
