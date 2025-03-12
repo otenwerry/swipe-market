@@ -66,6 +66,52 @@ class BuyerListing(db.Model):
     def __repr__(self):
         return f'<BuyerListing {self.id} - {self.buyer_name}>'
 
+# Update expired listings: sets is_active to False for listings whose end time has passed
+def update_expired_listings():
+    now = datetime.now(ny_tz)
+    print(f"Current time (NY timezone): {now}")
+    
+    # Update SellerListings
+    active_sellers = SellerListing.query.filter_by(is_active=True).all()
+    for listing in active_sellers:
+        try:
+            expiration_str = f"{listing.date} {listing.end_time}"
+            print(f"Processing seller listing {listing.id}, expiration string: {expiration_str}")
+            expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            print(f"Seller listing {listing.id}: expiration={expiration}, now={now}")
+            
+            if now > expiration:
+                print(f"Marking seller listing {listing.id} as inactive")
+                listing.is_active = False
+            else:
+                print(f"Seller listing {listing.id} is still active, expires in {expiration - now}")
+        except Exception as e:
+            print(f"Error updating SellerListing {listing.id}: {e}")
+            # Continue with next listing
+    
+    # Update BuyerListings
+    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
+    for listing in active_buyers:
+        try:
+            expiration_str = f"{listing.date} {listing.end_time}"
+            print(f"Processing buyer listing {listing.id}, expiration string: {expiration_str}")
+            expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            print(f"Buyer listing {listing.id}: expiration={expiration}, now={now}")
+            
+            if now > expiration:
+                print(f"Marking buyer listing {listing.id} as inactive")
+                listing.is_active = False
+            else:
+                print(f"Buyer listing {listing.id} is still active, expires in {expiration - now}")
+        except Exception as e:
+            print(f"Error updating BuyerListing {listing.id}: {e}")
+            # Continue with next listing
+
+    #commit changes to database
+    db.session.commit()
+
 #route for taking buyer listings from the form
 #and putting them into the database, then send
 #the user back to the Swipe Market page
@@ -112,37 +158,6 @@ def submit_buyer():
   #redirect to Swipe Market page
   return redirect(url_for('index'))
 
-#create all tables in the database
-with app.app_context():
-   
-    db.create_all()
-
-# Update expired listings: sets is_active to False for listings whose end time has passed
-def update_expired_listings():
-    now = datetime.now(ny_tz)
-    # Update SellerListings
-    active_sellers = SellerListing.query.filter_by(is_active=True).all()
-    for listing in active_sellers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating SellerListing {listing.id}: {e}")
-    
-    # Update BuyerListings
-    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
-    for listing in active_buyers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating BuyerListing {listing.id}: {e}")
-    db.session.commit()
-
 #route for taking seller listings from the form
 #and putting them into the database, then send
 #the user back to the Swipe Market page
@@ -188,12 +203,6 @@ def submit_seller():
 
   #redirect to Swipe Market page
   return redirect(url_for('index'))
-
-#create all tables in the database
-with app.app_context():
-    #db.drop_all()
-    db.create_all()
-
 
 @app.route('/contact_form', methods=['POST'])
 def contact_form():
@@ -409,32 +418,6 @@ def edit_listing(listing_id):
 
     # Show the edit form for both GET requests and initial POST verification
     return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
-
-# Update expired listings: sets is_active to False for listings whose end time has passed
-def update_expired_listings():
-    now = datetime.now(ny_tz)
-    # Update SellerListings
-    active_sellers = SellerListing.query.filter_by(is_active=True).all()
-    for listing in active_sellers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating SellerListing {listing.id}: {e}")
-    
-    # Update BuyerListings
-    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
-    for listing in active_buyers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating BuyerListing {listing.id}: {e}")
-    db.session.commit()
 
 if __name__ == '__main__':
    with app.app_context():
