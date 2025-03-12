@@ -83,8 +83,8 @@ def submit_buyer():
   
   buyer_name = request.form.get('poster_name')
   buyer_email = request.form.get('poster_email')
-  #print("poster name: " + buyer_name)
-  #print("poster email: " + buyer_email)
+  print("poster name: " + buyer_name)
+  print("poster email: " + buyer_email)
   buyer_phone = request.form.get('phone_number')
 
   try:
@@ -204,69 +204,70 @@ def contact_form():
 @app.route('/send_connection_email', methods=['POST'])
 def send_connection_email():
   listing_id = request.form.get('listing_id')
-
-  #sender = person who clicked the button
-  #receiver = person who owns the listing
-
-  # Try to find the listing in both buyer and seller tables
-  receiver_listing = SellerListing.query.get(listing_id)
-  if not receiver_listing:
+  listing_type = request.form.get('listing_type')
+  
+  if listing_type == 'seller':
+    receiver_listing = SellerListing.query.get(listing_id)
+    if not receiver_listing:
+      flash("Error: Seller listing not found.", "error")
+      return redirect(url_for('index'))
+  else:
     receiver_listing = BuyerListing.query.get(listing_id)
     if not receiver_listing:
-      flash("Error: Listing not found.", "error")
+      flash("Error: Buyer listing not found.", "error")
       return redirect(url_for('index'))
-
-    #if receiver is buyer
+  
+  # If receiver is buyer
   if isinstance(receiver_listing, BuyerListing):
     buyer_listing = receiver_listing
     buyer_name = buyer_listing.buyer_name
     buyer_email = buyer_listing.buyer_email
-    #and sender is seller
+    # And sender is seller
     seller_name = request.form.get('sender_name')
     seller_email = request.form.get('sender_email')
 
-    #compose email
+    # Compose email
     subject = "[Swipe Market] Potential Sale"
     body = (
       f"Hello {buyer_name},\n\n"
-      f"{seller_name} is interested in selling a swipe to you."
-      f"You can reach them at {seller_email}.\n"
-      f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n"
+      f"{seller_name} is interested in selling a swipe to you. "
+      f"You can reach them at {seller_email}.\n\n"
+      f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
-      f"between {buyer_listing.start_time} and {buyer_listing.end_time} for {buyer_listing.price} dollars. "
-      f"They can pay in {buyer_listing.payment_methods}.\n\n"
+      f"between {buyer_listing.start_time} and {buyer_listing.end_time} for ${buyer_listing.price}. "
+      f"They can pay via {buyer_listing.payment_methods}.\n\n"
       f"{buyer_name}, remember to delete your listing once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
     )
     
-  #if receiver is seller
+  # If receiver is seller
   else:
     seller_listing = receiver_listing
     seller_name = seller_listing.seller_name
     seller_email = seller_listing.seller_email
-    #and sender is buyer
+    # And sender is buyer
     buyer_name = request.form.get('sender_name')
     buyer_email = request.form.get('sender_email')
 
-    #compose email
+    # Compose email
     subject = "[Swipe Market] Potential Sale"
     body = (
       f"Hello {seller_name},\n\n"
-      f"{buyer_name} is interested in buying a swipe from you."
-      f"You can reach them at {buyer_email}.\n"
-      f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n"
+      f"{buyer_name} is interested in buying a swipe from you. "
+      f"You can reach them at {buyer_email}.\n\n"
+      f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
       f"As a reminder, the listing is for {seller_listing.dining_hall} from "
       f"{seller_listing.start_time} to {seller_listing.end_time} and costs "
-      f"{seller_listing.price}. "
-      f"{seller_name} takes {seller_listing.payment_methods}.\n\n"
+      f"${seller_listing.price}. "
+      f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell today, "
       "remember to delete your listing once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
     )
 
-  #send email
+  # Send email
   recipients = [seller_email, buyer_email]
   msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
   msg.body = body
@@ -275,10 +276,7 @@ def send_connection_email():
     mail.send(msg)
     return redirect(url_for('index', show_popup='true'))
   except Exception as e:
-    print("Email sending error:", e)
     return redirect(url_for('index', error='true'))
-  
-  return redirect(url_for('index'))
 
 #regular route for the Swipe Market page
 @app.route('/')

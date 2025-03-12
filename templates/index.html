@@ -55,7 +55,9 @@
         <a href="/">Swipe Market &#128722;</a> 
       </header>
       <div class="sell-button-container">
+        <!--
         <div id="g_id_signin" class="g_id_signin" style="background-color:green;" >Post Listing Test</div>
+        -->
         <a href="/listings">
           <button type="button" class="sell-button" id="postListingsButton">Post Listing</button>
         </a>
@@ -82,7 +84,10 @@
             <td>{{ listing.price }}</td>
             <td>{{ listing.payment_methods }}</td>
             <td>
-              <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
+              <button type="button" class="contact-button" 
+                      data-listing-id="{{ listing.id }}" 
+                      data-listing-type="seller" 
+                      onclick="openForm(this)">Contact</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
                     <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
@@ -118,7 +123,10 @@
             <td>{{ listing.price }}</td>
             <td>{{ listing.payment_methods }}</td>
             <td>
-              <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
+              <button type="button" class="contact-button" 
+                      data-listing-id="{{ listing.id }}" 
+                      data-listing-type="buyer" 
+                      onclick="openForm(this)">Contact</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
                   <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
                   <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
@@ -136,6 +144,7 @@
     <div class="form-popup" id="myForm">
       <form action="/send_connection_email" method="POST" class="form-container">
         <input type="hidden" name="listing_id" id="listing_id" value="">
+        <input type="hidden" name="listing_type" id="listing_type" value="">
         <input type="hidden" name="sender_name" id="sender_name" value="">
         <input type="hidden" name="sender_email" id="sender_email" value="">
         <button type="submit" class="btn">Confirm</button>
