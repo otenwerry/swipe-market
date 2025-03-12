@@ -173,8 +173,6 @@ def contact_form():
 
 @app.route('/send_connection_email', methods=['POST'])
 def send_connection_email():
-  sender_name = request.form.get('sender_name')
-  sender_email = request.form.get('sender_email')
   listing_id = request.form.get('listing_id')
 
   # Try to find the listing in both buyer and seller tables
@@ -185,13 +183,24 @@ def send_connection_email():
       flash("Error: Listing not found.", "error")
       return redirect(url_for('index'))
 
+
   # Get the receiver's information based on the listing type
   if isinstance(receiver_listing, BuyerListing):
-    receiver_name = receiver_listing.buyer_name
-    receiver_email = receiver_listing.buyer_email
+    #receiver is buyer
+    buyer_listing = receiver_listing
+    buyer_name = buyer_listing.buyer_name
+    buyer_email = buyer_listing.buyer_email
+    #and sender is seller
+    seller_name = request.form.get('sender_name')
+    seller_email = request.form.get('sender_email')
   else:
-    receiver_name = receiver_listing.seller_name
-    receiver_email = receiver_listing.seller_email
+    #receiver is seller
+    seller_listing = receiver_listing
+    seller_name = seller_listing.seller_name
+    seller_email = seller_listing.seller_email
+    #and sender is buyer
+    buyer_name = request.form.get('sender_name')
+    buyer_email = request.form.get('sender_email')
 
   subject = "[Swipe Market] Potential Sale"
   body = (
