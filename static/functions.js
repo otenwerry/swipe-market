@@ -45,6 +45,7 @@ function onSignIn(googleUser) {
     if (!isEditPage) {
       // format today's date as YYYY-MM-DD
       const formattedDate = today.toISOString().split('T')[0];
+      console.log('made it to edit page')
       dateInput.value = formattedDate;
       dateInput.min = formattedDate; // prevent selecting past dates
 
@@ -343,9 +344,7 @@ function onSignIn(googleUser) {
   //deletes listing.
   function deleteListing(listingId) {
     const credential = localStorage.getItem('googleCredential');
-    /*
-    const poster_email = localStorage.getItem('userEmail');
-    const poster_name = localStorage.getItem('userName');*/
+    const userEmail = localStorage.getItem('userEmail');
     if (!credential) {
         alert('Please sign in to delete listings');
         return;
@@ -360,15 +359,19 @@ function onSignIn(googleUser) {
   //shows edit form.
   function editListing(listingId) {
     const credential = localStorage.getItem('googleCredential');
-    /*const poster_email = localStorage.getItem('userEmail');
-    const poster_name = localStorage.getItem('userName');*/
-    console.log('credential: ' + credential)
-    if (!credential) {
+    const userEmail = localStorage.getItem('userEmail');
+    console.log("Sending user email:", userEmail); // Debug log
+    
+    if (!credential || !userEmail) {
         alert('Please sign in to edit listings');
         return;
     }
+    
     if (confirm('Are you sure you want to edit this listing?')) {
-        window.location.href = `/edit_listing/${listingId}`;
+        // Make sure to properly encode the email for URL
+        const url = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`;
+        console.log("Redirecting to:", url); // Debug log
+        window.location.href = url;
     }
   }
 
