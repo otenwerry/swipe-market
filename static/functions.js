@@ -194,9 +194,8 @@ function onSignIn(googleUser) {
         if (data.name) {
           localStorage.setItem('userName', data.name);
         }
-        if (data.phone) {
-          localStorage.setItem('userPhone', data.phone);
-        }
+        // Always update phone in localStorage, even if it's an empty string
+        localStorage.setItem('userPhone', data.phone || '');
       } else {
         console.log('New user, prompting for phone number');
         showPhoneNumberModal();
@@ -338,9 +337,8 @@ function onSignIn(googleUser) {
     .then(data => {
       if (data.success) {
         console.log('User saved successfully');
-        if (phone) {
-          localStorage.setItem('userPhone', phone);
-        }
+        // Always update the phone in localStorage, even if it's an empty string
+        localStorage.setItem('userPhone', phone);
         // Make sure the name is updated in localStorage too
         localStorage.setItem('userName', data.name);
       } else {

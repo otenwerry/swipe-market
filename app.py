@@ -147,7 +147,7 @@ def submit_buyer():
   # If phone number is not provided in the form, try to get it from the User model
   if not buyer_phone or buyer_phone.strip() == "":
     user = User.query.filter_by(email=buyer_email).first()
-    if user and user.phone:
+    if user and user.phone and user.phone.strip() != "":
       buyer_phone = user.phone
 
   try:
@@ -199,7 +199,7 @@ def submit_seller():
   # If phone number is not provided in the form, try to get it from the User model
   if not seller_phone or seller_phone.strip() == "":
     user = User.query.filter_by(email=seller_email).first()
-    if user and user.phone:
+    if user and user.phone and user.phone.strip() != "":
       seller_phone = user.phone
 
   try:
@@ -262,7 +262,7 @@ def send_connection_email():
     # Get sender's phone if available
     seller_phone = ""
     sender_user = User.query.filter_by(email=seller_email).first()
-    if sender_user and sender_user.phone:
+    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
       seller_phone = sender_user.phone
 
     # Compose email
@@ -274,12 +274,12 @@ def send_connection_email():
     )
     
     # Add phone numbers if available
-    if seller_phone:
+    if seller_phone and seller_phone.strip() != "":
       body += f" or via phone at {seller_phone}"
     
     body += ".\n\n"
     
-    if buyer_phone:
+    if buyer_phone and buyer_phone.strip() != "":
       body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.\n\n"
     else:
       body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
@@ -306,7 +306,7 @@ def send_connection_email():
     # Get sender's phone if available
     buyer_phone = ""
     sender_user = User.query.filter_by(email=buyer_email).first()
-    if sender_user and sender_user.phone:
+    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
       buyer_phone = sender_user.phone
 
     # Compose email
@@ -318,12 +318,12 @@ def send_connection_email():
     )
     
     # Add phone numbers if available
-    if buyer_phone:
+    if buyer_phone and buyer_phone.strip() != "":
       body += f" or via phone at {buyer_phone}"
     
     body += ".\n\n"
     
-    if seller_phone:
+    if seller_phone and seller_phone.strip() != "":
       body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.\n\n"
     else:
       body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
@@ -521,8 +521,8 @@ def save_user():
     if user:
         # Update existing user
         user.name = name
-        if phone:
-            user.phone = phone
+        # Always update phone field, even if it's an empty string
+        user.phone = phone
     else:
         # Create new user
         user = User(name=name, email=email, phone=phone)
