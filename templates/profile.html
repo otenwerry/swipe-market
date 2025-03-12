@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/general.css">
+    <link rel="stylesheet" href="../static/swipemarket.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D26R1LF247"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload" data-client_id="362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false">
+    </div>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D26R1LF247');
+    </script>
+    <style>
+      .profile-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .profile-form div {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .profile-form label {
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      
+      .profile-form input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      
+      .profile-form button {
+        padding: 12px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      
+      .profile-form button:hover {
+        background-color: #3367d6;
+      }
+      
+      .success-message {
+        color: green;
+        background-color: #e8f5e9;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: none;
+      }
+      
+      .error-message {
+        color: red;
+        background-color: #ffebee;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="top">
+        <div class="top-left">
+          <a href="/">&lt; Swipe Market</a>
+        </div>
+        <div class="top-right">
+          <div id="current-time"></div>
+          <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank">
+            <div class="feedback">Feedback</div>
+          </a>
+          <div id="g_id_signin" class="g_id_signin" data-type="standard"></div>
+          <div id="profile-menu" class="profile-menu">
+            <img id="profile-icon" src="" alt="Profile" />
+            <div id="profile-dropdown" class="profile-dropdown">
+              <button onclick="handleSignOut()">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <header class="header" id="index-header">
+        <a href="/profile">User Profile</a> 
+      </header>
+      
+      <div class="profile-container">
+        <div id="success-message" class="success-message">
+          Profile updated successfully!
+        </div>
+        <div id="error-message" class="error-message">
+          Error updating profile.
+        </div>
+        
+        <div class="profile-form">
+          <div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" readonly>
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Your email" readonly>
+          </div>
+          <div>
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+          </div>
+          <div>
+            <button id="save-profile" type="button">Save Changes</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer"><p></p></div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="../static/functions.js" type="text/javascript"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Populate form with user data from localStorage
+        const userName = localStorage.getItem('userName');
+        const userEmail = localStorage.getItem('userEmail');
+        const userPhone = localStorage.getItem('userPhone');
+        
+        if (userName) document.getElementById('name').value = userName;
+        if (userEmail) document.getElementById('email').value = userEmail;
+        if (userPhone) document.getElementById('phone').value = userPhone;
+        
+        // Handle save button click
+        document.getElementById('save-profile').addEventListener('click', function() {
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const phone = document.getElementById('phone').value;
+          
+          // Validate inputs
+          if (!name || !email) {
+            showError('Name and email are required');
+            return;
+          }
+          
+          // Save to server
+          fetch('/api/save_user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: name,
+              email: email,
+              phone: phone
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update localStorage
+              localStorage.setItem('userPhone', phone);
+              showSuccess('Profile updated successfully');
+            } else {
+              showError(data.error || 'Error updating profile');
+            }
+          })
+          .catch(error => {
+            showError('Error connecting to server');
+            console.error('Error:', error);
+          });
+        });
+        
+        function showSuccess(message) {
+          const successMsg = document.getElementById('success-message');
+          successMsg.textContent = message;
+          successMsg.style.display = 'block';
+          
+          setTimeout(() => {
+            successMsg.style.display = 'none';
+          }, 3000);
+        }
+        
+        function showError(message) {
+          const errorMsg = document.getElementById('error-message');
+          errorMsg.textContent = message;
+          errorMsg.style.display = 'block';
+          
+          setTimeout(() => {
+            errorMsg.style.display = 'none';
+          }, 3000);
+        }
+      });
+    </script>
+  </body>
+</html> 
