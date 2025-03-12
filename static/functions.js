@@ -134,6 +134,9 @@ function onSignIn(googleUser) {
     profileIcon.addEventListener('click', function() {
       this.parentElement.classList.toggle('active');
     });
+
+    // Check if user exists in our database
+    checkUserExistence(responsePayload.email);
   
     // Try to populate form fields if they exist
     const posterNameField = document.getElementById('poster_name');
@@ -148,6 +151,177 @@ function onSignIn(googleUser) {
   
     console.log('User logged in:', responsePayload.email);  // Debug log
   }
+
+  // Function to check if user exists in our database
+  function checkUserExistence(email) {
+    fetch('/api/check_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        console.log('User found in database');
+        
+        // Store the phone number in local storage
+        if (data.phone) {
+          localStorage.setItem('userPhone', data.phone);
+        }
+      } else {
+        console.log('New user, prompting for phone number');
+        showPhoneNumberModal();
+      }
+    })
+    .catch(error => {
+      console.error('Error checking user:', error);
+    });
+  }
+
+  // Function to show the phone number modal for first-time users
+  function showPhoneNumberModal() {
+    // Create modal if it doesn't exist
+    if (!document.getElementById('phone-modal')) {
+      const modal = document.createElement('div');
+      modal.id = 'phone-modal';
+      modal.className = 'modal';
+      
+      modal.innerHTML = `
+        <div class="modal-content">
+          <h2>Complete Your Profile</h2>
+          <p>Please provide your phone number to complete your profile.</p>
+          <input type="tel" id="new-phone" placeholder="Your phone number" required>
+          <div class="modal-buttons">
+            <button id="save-phone-btn">Save</button>
+            <button id="skip-phone-btn">Skip for now</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Add styles for the modal
+      const style = document.createElement('style');
+      style.textContent = `
+        .modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+          background-color: #fff;
+          margin: 15% auto;
+          padding: 20px;
+          border-radius: 8px;
+          width: 80%;
+          max-width: 500px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .modal-content h2 {
+          margin-top: 0;
+        }
+        
+        .modal-content input {
+          width: 100%;
+          padding: 10px;
+          margin: 15px 0;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+        }
+        
+        .modal-buttons {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+        
+        .modal-buttons button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        #save-phone-btn {
+          background-color: #4285f4;
+          color: white;
+        }
+        
+        #skip-phone-btn {
+          background-color: #f1f1f1;
+          color: #333;
+        }
+      `;
+      
+      document.head.appendChild(style);
+      
+      // Add event listeners
+      document.getElementById('save-phone-btn').addEventListener('click', function() {
+        const phone = document.getElementById('new-phone').value.trim();
+        if (phone) {
+          saveNewUser(phone);
+          modal.style.display = 'none';
+        } else {
+          alert('Please enter a valid phone number');
+        }
+      });
+      
+      document.getElementById('skip-phone-btn').addEventListener('click', function() {
+        saveNewUser('');
+        modal.style.display = 'none';
+      });
+    } else {
+      document.getElementById('phone-modal').style.display = 'block';
+    }
+  }
+
+  // Function to save a new user
+  function saveNewUser(phone) {
+    const name = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail');
+    
+    if (!name || !email) {
+      console.error('Missing user information');
+      return;
+    }
+    
+    fetch('/api/save_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('User saved successfully');
+        if (phone) {
+          localStorage.setItem('userPhone', phone);
+        }
+      } else {
+        console.error('Error saving user:', data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error saving user:', error);
+    });
+  }
   
   //removes user's google credential from localStorage when they sign out.
   //also removes other information from localStorage.
@@ -156,6 +330,7 @@ function onSignIn(googleUser) {
     localStorage.removeItem('userName');
     localStorage.removeItem('userImage');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userPhone');
   
     //hide profile icon and show sign in button
     document.getElementById('profile-menu').style.display = 'none';
@@ -279,8 +454,74 @@ function onSignIn(googleUser) {
         profileIcon.addEventListener('click', function() {
           this.parentElement.classList.toggle('active');
         });
+
+        // Add the dropdown styles if they don't exist
+        if (!document.getElementById('dropdown-styles')) {
+          const style = document.createElement('style');
+          style.id = 'dropdown-styles';
+          style.textContent = `
+            .profile-menu {
+              position: relative;
+              display: inline-block;
+            }
+            
+            .profile-menu img {
+              width: 35px;
+              height: 35px;
+              border-radius: 50%;
+              cursor: pointer;
+              transition: opacity 0.3s;
+            }
+            
+            .profile-menu img:hover {
+              opacity: 0.8;
+            }
+            
+            .profile-dropdown {
+              display: none;
+              position: absolute;
+              right: 0;
+              background-color: white;
+              min-width: 150px;
+              box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+              z-index: 1;
+              border-radius: 4px;
+              padding: 5px 0;
+            }
+            
+            .profile-menu.active .profile-dropdown {
+              display: block;
+            }
+            
+            .profile-dropdown button, .profile-dropdown a button {
+              width: 100%;
+              padding: 10px 15px;
+              text-align: left;
+              background: none;
+              border: none;
+              cursor: pointer;
+              font-size: 14px;
+              color: #333;
+              transition: background-color 0.3s;
+            }
+            
+            .profile-dropdown button:hover, .profile-dropdown a button:hover {
+              background-color: #f1f1f1;
+            }
+            
+            .profile-dropdown a {
+              display: block;
+              text-decoration: none;
+              color: inherit;
+            }
+          `;
+          document.head.appendChild(style);
+        }
   
         console.log('User is logged in:', payload.email);  // Debug log
+
+        // Check if user exists in database on page load
+        checkUserExistence(payload.email);
       } else {
         // Token expired, remove it
         localStorage.removeItem('googleCredential');
