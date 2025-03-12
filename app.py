@@ -144,6 +144,24 @@ def submit_buyer():
   print("poster email: " + buyer_email)
   buyer_phone = request.form.get('phone_number')
 
+  # Validate that if date is today, start time is in the future
+  now = datetime.now(ny_tz)
+  today_date = now.strftime("%Y-%m-%d")
+  
+  if date == today_date:
+      # Convert form start_time to datetime object for comparison
+      try:
+          start_hour, start_minute = map(int, start_time.split(':'))
+          start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+          
+          if start_datetime < now:
+              flash("Error: For today's listings, start time must be in the future.", "error")
+              return redirect(url_for('index'))
+      except Exception as e:
+          print(f"Time validation error: {e}")
+          flash("Error: Invalid time format.", "error")
+          return redirect(url_for('index'))
+
   # If phone number is not provided in the form, try to get it from the User model
   if not buyer_phone or buyer_phone.strip() == "":
     user = User.query.filter_by(email=buyer_email).first()
@@ -195,6 +213,24 @@ def submit_seller():
   seller_phone = request.form.get('phone_number')
   #print("poster name: " + seller_name)
   #print("poster email: " + seller_email)
+
+  # Validate that if date is today, start time is in the future
+  now = datetime.now(ny_tz)
+  today_date = now.strftime("%Y-%m-%d")
+  
+  if date == today_date:
+      # Convert form start_time to datetime object for comparison
+      try:
+          start_hour, start_minute = map(int, start_time.split(':'))
+          start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+          
+          if start_datetime < now:
+              flash("Error: For today's listings, start time must be in the future.", "error")
+              return redirect(url_for('index'))
+      except Exception as e:
+          print(f"Time validation error: {e}")
+          flash("Error: Invalid time format.", "error")
+          return redirect(url_for('index'))
 
   # If phone number is not provided in the form, try to get it from the User model
   if not seller_phone or seller_phone.strip() == "":
