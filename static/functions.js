@@ -486,6 +486,11 @@ function onSignIn(googleUser) {
   //opens popup form when button is clicked,
   //and populates the form with the listing id.
   function openForm(button) {
+    // Don't open form if button is disabled (already contacted)
+    if (button.disabled || button.classList.contains('contacted')) {
+      return false;
+    }
+    
     const credential = localStorage.getItem('googleCredential');
     if (!credential) {
       document.getElementById('g_id_signin').style.display = 'block';
@@ -765,21 +770,22 @@ function onSignIn(googleUser) {
         const popup = document.getElementById('popup');
         popup.style.display = 'block';
         
-        const justContactedId = localStorage.getItem('justContactedId');
-        if (justContactedId) {
+        // Get contacted_id from URL parameters
+        const contactedId = urlParams.get('contacted_id');
+        if (contactedId) {
+            // Store the contacted listing ID in localStorage
             const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
-            if (!contactedListings.includes(justContactedId)) {
-                contactedListings.push(justContactedId);
+            if (!contactedListings.includes(contactedId)) {
+                contactedListings.push(contactedId);
                 localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
             }
 
-            const button = document.querySelector(`button[data-listing-id="${justContactedId}"]`);
+            // Disable the corresponding button
+            const button = document.querySelector(`button[data-listing-id="${contactedId}"]`);
             if (button) {
                 button.disabled = true;
                 button.classList.add('contacted');
             }
-
-            localStorage.removeItem('justContactedId');
         }
         
         const newUrl = window.location.pathname;
@@ -787,17 +793,56 @@ function onSignIn(googleUser) {
     }
   }
   
-  // Add this new event listener setup in the DOMContentLoaded event
+  // When the contact form is submitted, mark the listing as contacted right away
   document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('myForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(event) {
+        const listingId = document.getElementById('listing_id').value;
+        if (listingId) {
+          // Store the contacted listing ID in localStorage
+          const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
+          if (!contactedListings.includes(listingId)) {
+            contactedListings.push(listingId);
+            localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
+          }
+          // Disable the corresponding button immediately
+          const button = document.querySelector(`button[data-listing-id="${listingId}"]`);
+          if (button) {
+            button.disabled = true;
+            button.classList.add('contacted');
+          }
+        }
+      });
+    }
+    
     disableContactedListings();
     handlePopup();
     
     // Format time displays when DOM is loaded
     formatTimeDisplay();
-    
-    // ... rest of your existing DOMContentLoaded code ...
   });
 
+  // Add styles for contacted buttons if they don't exist
+  if (!document.getElementById('contacted-button-styles')) {
+    const style = document.createElement('style');
+    style.id = 'contacted-button-styles';
+    style.textContent = `
+      .contact-button.contacted {
+        background-color: #cccccc;
+        color: #777777;
+        cursor: not-allowed;
+        opacity: 0.7;
+        border: 1px solid #aaaaaa;
+      }
+      
+      .contact-button.contacted:hover {
+        background-color: #cccccc;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
   
   
   
