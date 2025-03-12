@@ -69,28 +69,45 @@ class BuyerListing(db.Model):
 # Update expired listings: sets is_active to False for listings whose end time has passed
 def update_expired_listings():
     now = datetime.now(ny_tz)
+    print(f"Current time (NY timezone): {now}")
+    
     # Update SellerListings
     active_sellers = SellerListing.query.filter_by(is_active=True).all()
     for listing in active_sellers:
         try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-        except Exception as e :
+            expiration_str = f"{listing.date} {listing.end_time}"
+            print(f"Processing seller listing {listing.id}, expiration string: {expiration_str}")
+            expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            print(f"Seller listing {listing.id}: expiration={expiration}, now={now}")
+            
+            if now > expiration:
+                print(f"Marking seller listing {listing.id} as inactive")
+                listing.is_active = False
+            else:
+                print(f"Seller listing {listing.id} is still active, expires in {expiration - now}")
+        except Exception as e:
             print(f"Error updating SellerListing {listing.id}: {e}")
-        expiration = ny_tz.localize(expiration)
-        if now > expiration:
-          listing.is_active = False
+            # Continue with next listing
     
     # Update BuyerListings
     active_buyers = BuyerListing.query.filter_by(is_active=True).all()
     for listing in active_buyers:
         try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
+            expiration_str = f"{listing.date} {listing.end_time}"
+            print(f"Processing buyer listing {listing.id}, expiration string: {expiration_str}")
+            expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            print(f"Buyer listing {listing.id}: expiration={expiration}, now={now}")
+            
+            if now > expiration:
+                print(f"Marking buyer listing {listing.id} as inactive")
+                listing.is_active = False
+            else:
+                print(f"Buyer listing {listing.id} is still active, expires in {expiration - now}")
         except Exception as e:
             print(f"Error updating BuyerListing {listing.id}: {e}")
-
-        expiration = ny_tz.localize(expiration)
-        if now > expiration:
-          listing.is_active = False
+            # Continue with next listing
 
     #commit changes to database
     db.session.commit()
