@@ -190,7 +190,10 @@ function onSignIn(googleUser) {
       if (data.exists) {
         console.log('User found in database');
         
-        // Store the phone number in local storage
+        // Store the user info in local storage
+        if (data.name) {
+          localStorage.setItem('userName', data.name);
+        }
         if (data.phone) {
           localStorage.setItem('userPhone', data.phone);
         }
@@ -338,6 +341,8 @@ function onSignIn(googleUser) {
         if (phone) {
           localStorage.setItem('userPhone', phone);
         }
+        // Make sure the name is updated in localStorage too
+        localStorage.setItem('userName', data.name);
       } else {
         console.error('Error saving user:', data.error);
       }
