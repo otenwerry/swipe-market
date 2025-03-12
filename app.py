@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from datetime import datetime, time 
 import time as time_module
 import random
@@ -46,6 +46,17 @@ class SellerListing(db.Model):
 
     def __repr__(self):
         return f'<SellerListing {self.id} - {self.seller_name}>'
+
+# User model to store user information
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    phone = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<User {self.id} - {self.name}>'
 
 #class for buyer listings
 class BuyerListing(db.Model):
@@ -133,6 +144,12 @@ def submit_buyer():
   print("poster email: " + buyer_email)
   buyer_phone = request.form.get('phone_number')
 
+  # If phone number is not provided in the form, try to get it from the User model
+  if not buyer_phone or buyer_phone.strip() == "":
+    user = User.query.filter_by(email=buyer_email).first()
+    if user and user.phone:
+      buyer_phone = user.phone
+
   try:
     price_value = float(price)
   except (ValueError, TypeError):
@@ -178,6 +195,12 @@ def submit_seller():
   seller_phone = request.form.get('phone_number')
   #print("poster name: " + seller_name)
   #print("poster email: " + seller_email)
+
+  # If phone number is not provided in the form, try to get it from the User model
+  if not seller_phone or seller_phone.strip() == "":
+    user = User.query.filter_by(email=seller_email).first()
+    if user and user.phone:
+      seller_phone = user.phone
 
   try:
     price_value = float(price)
@@ -231,17 +254,37 @@ def send_connection_email():
     buyer_listing = receiver_listing
     buyer_name = buyer_listing.buyer_name
     buyer_email = buyer_listing.buyer_email
+    buyer_phone = buyer_listing.buyer_phone
     # And sender is seller
     seller_name = request.form.get('sender_name')
     seller_email = request.form.get('sender_email')
+    
+    # Get sender's phone if available
+    seller_phone = ""
+    sender_user = User.query.filter_by(email=seller_email).first()
+    if sender_user and sender_user.phone:
+      seller_phone = sender_user.phone
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
     body = (
       f"Hello {buyer_name},\n\n"
       f"{seller_name} is interested in selling a swipe to you. "
-      f"You can reach them at {seller_email}.\n\n"
-      f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
+      f"You can reach them at {seller_email}"
+    )
+    
+    # Add phone numbers if available
+    if seller_phone:
+      body += f" or via phone at {seller_phone}"
+    
+    body += ".\n\n"
+    
+    if buyer_phone:
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.\n\n"
+    else:
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
+    
+    body += (
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
       f"between {buyer_listing.start_time} and {buyer_listing.end_time} for ${buyer_listing.price}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
@@ -255,17 +298,37 @@ def send_connection_email():
     seller_listing = receiver_listing
     seller_name = seller_listing.seller_name
     seller_email = seller_listing.seller_email
+    seller_phone = seller_listing.seller_phone
     # And sender is buyer
     buyer_name = request.form.get('sender_name')
     buyer_email = request.form.get('sender_email')
+    
+    # Get sender's phone if available
+    buyer_phone = ""
+    sender_user = User.query.filter_by(email=buyer_email).first()
+    if sender_user and sender_user.phone:
+      buyer_phone = sender_user.phone
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
     body = (
       f"Hello {seller_name},\n\n"
       f"{buyer_name} is interested in buying a swipe from you. "
-      f"You can reach them at {buyer_email}.\n\n"
-      f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
+      f"You can reach them at {buyer_email}"
+    )
+    
+    # Add phone numbers if available
+    if buyer_phone:
+      body += f" or via phone at {buyer_phone}"
+    
+    body += ".\n\n"
+    
+    if seller_phone:
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.\n\n"
+    else:
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
+    
+    body += (
       f"As a reminder, the listing is for {seller_listing.dining_hall} from "
       f"{seller_listing.start_time} to {seller_listing.end_time} and costs "
       f"${seller_listing.price}. "
@@ -419,6 +482,63 @@ def edit_listing(listing_id):
 
     # Show the edit form for both GET requests and initial POST verification
     return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
+
+# Routes for user profile management
+@app.route('/api/check_user', methods=['POST'])
+def check_user():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({"exists": False, "error": "Email is required"}), 400
+    
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({
+            "exists": True, 
+            "name": user.name, 
+            "email": user.email, 
+            "phone": user.phone
+        })
+    else:
+        return jsonify({"exists": False})
+
+@app.route('/api/save_user', methods=['POST'])
+def save_user():
+    data = request.get_json()
+    name = data.get('name')
+    email = data.get('email')
+    phone = data.get('phone')
+    
+    if not email or not name:
+        return jsonify({"success": False, "error": "Name and email are required"}), 400
+    
+    # Check if user already exists
+    user = User.query.filter_by(email=email).first()
+    if user:
+        # Update existing user
+        user.name = name
+        if phone:
+            user.phone = phone
+    else:
+        # Create new user
+        user = User(name=name, email=email, phone=phone)
+        db.session.add(user)
+    
+    try:
+        db.session.commit()
+        return jsonify({
+            "success": True, 
+            "name": user.name, 
+            "email": user.email, 
+            "phone": user.phone
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
 
 if __name__ == '__main__':
    with app.app_context():
