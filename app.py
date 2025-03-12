@@ -114,6 +114,7 @@ def submit_buyer():
 
 #create all tables in the database
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 # Update expired listings: sets is_active to False for listings whose end time has passed
@@ -190,6 +191,7 @@ def submit_seller():
 
 #create all tables in the database
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 
@@ -410,5 +412,6 @@ def edit_listing(listing_id):
 
 if __name__ == '__main__':
    with app.app_context():
+     db.drop_all()
      db.create_all()
    app.run(host='0.0.0.0',port=5000, debug=True)
