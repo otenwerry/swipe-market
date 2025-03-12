@@ -146,25 +146,51 @@ function onSignIn(googleUser) {
       posterEmailField.value = responsePayload.email;
     }
   
-    console.log('User logged in:', responsePayload.email);  // Debug log
+    // Update UI based on user's email
+    const userEmail = responsePayload.email;
+    
+    // Show edit/delete buttons for listings owned by this user
+    document.querySelectorAll('.listing-actions').forEach(actions => {
+      const isOwner = actions.dataset.ownerEmail === userEmail;
+      const contactButton = actions.previousElementSibling;
+      
+      if (isOwner) {
+        actions.style.display = 'inline-block';
+        contactButton.style.display = 'none';
+      } else {
+        actions.style.display = 'none';
+        contactButton.style.display = 'inline-block';
+      }
+    });
+    
+    // Disable contact buttons for previously contacted listings
+    disableContactedListings();
+  
+    console.log('User logged in:', responsePayload.email);
   }
   
   //removes user's google credential from localStorage when they sign out.
   //also removes other information from localStorage.
   function handleSignOut() {
+    // Clear user data
     localStorage.removeItem('googleCredential');
     localStorage.removeItem('userName');
     localStorage.removeItem('userImage');
     localStorage.removeItem('userEmail');
-  
-    //hide profile icon and show sign in button
+    
+    // Clear contacted listings to reset all buttons
+    localStorage.removeItem('contactedListings');
+    
+    // Reset UI: hide profile icon and show sign in button
     document.getElementById('profile-menu').style.display = 'none';
     document.getElementById('g_id_signin').style.display = 'block';
-  
-    console.log('User logged out');  // Debug log
-  
+    
+    console.log('User logged out');
+    
     google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
       console.log('Token revoked');
+      // Reload the page to reset all UI elements
+      window.location.reload();
     });
   }
   // --- UTILITY FUNCTIONS ---
