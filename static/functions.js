@@ -350,8 +350,12 @@ function onSignIn(googleUser) {
         return;
     }
     if (confirm('Are you sure you want to delete this listing?')) {
+        const formData = new FormData();
+        formData.append('user_email', userEmail);
+        
         fetch(`/delete_listing/${listingId}`, {
             method: 'POST',
+            body: formData
         }).then(() => window.location.reload());
     }
   }
@@ -360,18 +364,14 @@ function onSignIn(googleUser) {
   function editListing(listingId) {
     const credential = localStorage.getItem('googleCredential');
     const userEmail = localStorage.getItem('userEmail');
-    console.log("Sending user email:", userEmail); // Debug log
     
     if (!credential || !userEmail) {
         alert('Please sign in to edit listings');
         return;
     }
-    
     if (confirm('Are you sure you want to edit this listing?')) {
-        // Make sure to properly encode the email for URL
-        const url = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`;
-        console.log("Redirecting to:", url); // Debug log
-        window.location.href = url;
+        // Redirect to edit page with user email as query parameter
+        window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`;
     }
   }
 

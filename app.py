@@ -301,12 +301,12 @@ def delete_listing(listing_id):
 
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 def edit_listing(listing_id):
-    # Get the user's email from the request
-    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('user_email')
+    print("Method: ", request.method)
+    user_email = request.form.get('poster_email')
+    print("User email: ", user_email)
     if not user_email:
         return redirect(url_for('index'))
-
-    # Try to find the listing in both seller and buyer tables
+    
     listing = SellerListing.query.get(listing_id)
     if not listing:
         listing = BuyerListing.query.get_or_404(listing_id)
@@ -318,12 +318,9 @@ def edit_listing(listing_id):
        (not is_seller and listing.buyer_email != user_email):
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
-        print("Before update - start_time:", listing.start_time)
-        print("Form submission - start_time:", request.form.get('edit_start_time'))
-        
-        # Only update fields that are present in the form
-        
+    if request.method == 'POST' and 'dining_hall[]' in request.form:
+        print("Form data received: ", request.form)
+        # Update the listing with new values
         listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
         listing.date = request.form.get('date')
         listing.start_time = request.form.get('edit_start_time')
@@ -335,15 +332,16 @@ def edit_listing(listing_id):
         listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
         
         try:
+            print("Before commit - start_time:", listing.start_time)  # Debug log
             db.session.commit()
-            print("After update - start_time:", listing.start_time)
+            print("After commit - start_time:", listing.start_time)  # Debug log
             return redirect(url_for('index'))
         except Exception as e:
             print("Error updating:", str(e))
             db.session.rollback()
             return "Error updating listing", 500
 
-    print("Initial listing start_time:", listing.start_time)
+    # Show the edit form for both GET requests and initial POST verification
     return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
 
 if __name__ == '__main__':

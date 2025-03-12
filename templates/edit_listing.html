@@ -32,7 +32,7 @@
                 <h2>Edit Listing</h2>
                 <form action="/edit_listing/{{ listing.id }}" method="POST">
                     <input type="hidden" name="poster_name" id="poster_name">
-                    <input type="hidden" name="poster_email" id="poster_email">
+                    <input type="hidden" name="poster_email" id="poster_email" value="{{ user_email }}">
                     <div>
                         <label for="dining_hall">Dining hall:</label>
                         <select id="dining_hall" name="dining_hall[]" multiple required>
