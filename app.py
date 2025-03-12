@@ -410,7 +410,7 @@ def send_connection_email():
 
   try:
     mail.send(msg)
-    return redirect(url_for('index', show_popup='true'))
+    return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
   except Exception as e:
     return redirect(url_for('index', error='true'))
 
