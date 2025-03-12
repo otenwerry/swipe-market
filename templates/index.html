@@ -90,9 +90,9 @@
                       onclick="openForm(this)">Contact</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
-                    <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
-                    <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
-                </div>
+                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
+                <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
+              </div>
             </td>
           </tr>
           {% else %}
@@ -128,8 +128,8 @@
                       data-listing-type="buyer" 
                       onclick="openForm(this)">Contact</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
-                  <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
-                  <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
+                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
+                <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
               </div>
             </td>
           </tr>
@@ -151,18 +151,6 @@
         <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
       </form>
     </div>
-    <div class="success-messages">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <ul>
-            {% for category, message in messages %}
-              <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
-    </div>
-    
     <div class="footer"><p></p></div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>

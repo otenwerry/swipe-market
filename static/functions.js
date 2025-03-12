@@ -216,7 +216,7 @@ function onSignIn(googleUser) {
     listingIdInput.value = listingId;
     listingTypeInput.value = listingType;
     
-    // Also set sender info
+    // Set sender info
     const senderNameInput = form.querySelector('input[name="sender_name"]');
     const senderEmailInput = form.querySelector('input[name="sender_email"]');
     
@@ -296,33 +296,26 @@ function onSignIn(googleUser) {
   // attach click listeners to all contact buttons
   document.querySelectorAll('.contact-button').forEach(function(button) {
     button.addEventListener('click', function(event) {
-    if (!requireSignIn(event)) return;
-    
-    // Pull name/user from local storage set during signin
-    var userName = localStorage.getItem('userName');
-    var userEmail = localStorage.getItem('userEmail');
-    
-    console.log('DEBUG - Contact button clicked');
-    console.log('DEBUG - User name from localStorage:', userName);
-    console.log('DEBUG - User email from localStorage:', userEmail);
-    
-    // Populate hidden fields in contact form
-    document.getElementById('sender_name').value = userName;
-    document.getElementById('sender_email').value = userEmail;
-    
-    console.log('DEBUG - sender_name field value:', document.getElementById('sender_name').value);
-    console.log('DEBUG - sender_email field value:', document.getElementById('sender_email').value);
-    
-    // Pull listing id from contact button
-    var listingId = this.getAttribute('data-listing-id');
-    console.log('DEBUG - Listing ID:', listingId);
-    
-    if (listingId) {
-      document.getElementById('listing_id').value = listingId;
-      console.log('DEBUG - listing_id field value:', document.getElementById('listing_id').value);
-    }
-    
-    document.getElementById('myForm').style.display = 'block';
+      if (!requireSignIn(event)) return;
+      
+      // Pull name/user from local storage set during signin
+      var userName = localStorage.getItem('userName');
+      var userEmail = localStorage.getItem('userEmail');
+      
+      // Populate hidden fields in contact form
+      document.getElementById('sender_name').value = userName;
+      document.getElementById('sender_email').value = userEmail;
+      
+      // Pull listing id and type from contact button
+      var listingId = this.getAttribute('data-listing-id');
+      var listingType = this.getAttribute('data-listing-type');
+      
+      if (listingId) {
+        document.getElementById('listing_id').value = listingId;
+        document.getElementById('listing_type').value = listingType;
+      }
+      
+      document.getElementById('myForm').style.display = 'block';
     });
   });
   
@@ -446,8 +439,7 @@ function onSignIn(googleUser) {
         });
     }
   });
-  
-  localStorage.removeItem('contactedListings');
+
   
   
   
