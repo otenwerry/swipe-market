@@ -81,9 +81,13 @@
     font-family: 'Times New Roman', Times, serif;
     display: flex;
     justify-content: space-between;
-    /*gap: 20px; optional spacing between tables */
+    align-items: flex-start;
+    flex: 1;
   }
   
+  .tables-container tr {
+    height: 80px;
+  }
   .contact-button {
     font-size: 1.5rem;
     padding: 10px 20px;
@@ -92,10 +96,21 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
   }
   .contact-button:hover {
     background-color: #45a049;
+  }
+  
+  .contact-button.contacted {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .contact-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
   }
   
   .form-popup {
@@ -248,19 +263,16 @@
     margin-top: 10px;
   }
   
-  .edit-button, .delete-button {
-    font-size: 1rem;
-    padding: 5px 10px;
-    margin: 0 5px;
-  }
-  
-  .delete-button {
+  .delete-button,.edit-button {
+    font-size: 1.5rem;
+    padding: 10px 20px;
     background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
   }
-  
-  .edit-button {
-    background-color: #44b;
+
+  .edit-button{
+    background-color:#4a90e2;
   }
-  
-  
-  

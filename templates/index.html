@@ -85,8 +85,8 @@
               <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
-                    <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
-                    <!--<button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>-->
+                    <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
+                    <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
                 </div>
             </td>
           </tr>
@@ -120,7 +120,8 @@
             <td>
               <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" onclick="openForm(this)">Contact</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
-                  <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
+                  <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">X</button>
+                  <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
               </div>
             </td>
           </tr>
@@ -162,12 +163,5 @@
             <p id="popup-message">Connection email sent! Check your inbox</p>
         </div>
     </div>
-    <script>
-        // Check URL parameters when page loads
-        if (new URLSearchParams(window.location.search).get('show_popup') === 'true') {
-            const popup = document.getElementById('popup');
-            popup.style.display = 'block';
-        }
-    </script>
   </body>
 </html>

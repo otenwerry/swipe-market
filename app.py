@@ -248,9 +248,20 @@ def index():
     return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
 
 #regular route for the listings page
-@app.route('/listings')
-def listings():
-  return render_template('listings.html')
+@app.route('/listings/<int:listing_id>', methods=['GET'])
+@app.route('/listings', methods=['GET'])
+def listings(listing_id=None):
+    if listing_id:
+        # Try to find the listing in both seller and buyer tables
+        listing = SellerListing.query.get(listing_id)
+        is_seller = True
+        if not listing:
+            listing = BuyerListing.query.get(listing_id)
+            is_seller = False
+            if not listing:
+                return redirect(url_for('index'))
+        return render_template('listings.html', listing=listing, is_seller=is_seller)
+    return render_template('listings.html', listing=None)
 
 @app.route('/clear_database')
 def clear_database():
@@ -267,20 +278,73 @@ def clear_database():
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
 def delete_listing(listing_id):
-    listing = SellerListing.query.get(listing_id) or BuyerListing.query.get(listing_id)
-    if listing:
-        db.session.delete(listing)
-        db.session.commit()
+    # Get the user's email from the request
+    user_email = request.form.get('user_email')
+    if not user_email:
+        return "Unauthorized - Please log in", 401
+
+    # Try to find the listing in both tables
+    listing = SellerListing.query.get(listing_id)
+    is_seller = True
+    if not listing:
+        listing = BuyerListing.query.get_or_404(listing_id)
+        is_seller = False
+
+    # Check if the user owns the listing
+    if (is_seller and listing.seller_email != user_email) or \
+       (not is_seller and listing.buyer_email != user_email):
+        return "Unauthorized - You don't own this listing", 403
+
+    db.session.delete(listing)
+    db.session.commit()
     return redirect(url_for('index'))
 
-"""
-@app.route('/edit_listing/<int:listing_id>')
+@app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 def edit_listing(listing_id):
-    listing = SellerListing.query.get(listing_id) or BuyerListing.query.get(listing_id)
-    if listing:
-        return render_template('listings.html', listing=listing)  # Reuse your existing form
-    return redirect(url_for('index'))
-"""
+    # Get the user's email from the request
+    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('user_email')
+    if not user_email:
+        return redirect(url_for('index'))
+
+    # Try to find the listing in both seller and buyer tables
+    listing = SellerListing.query.get(listing_id)
+    if not listing:
+        listing = BuyerListing.query.get_or_404(listing_id)
+
+    is_seller = isinstance(listing, SellerListing)
+
+    # Check if the user owns the listing
+    if (is_seller and listing.seller_email != user_email) or \
+       (not is_seller and listing.buyer_email != user_email):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        print("Before update - start_time:", listing.start_time)
+        print("Form submission - start_time:", request.form.get('edit_start_time'))
+        
+        # Only update fields that are present in the form
+        
+        listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
+        listing.date = request.form.get('date')
+        listing.start_time = request.form.get('edit_start_time')
+        listing.end_time = request.form.get('end_time')
+        try:
+            listing.price = float(request.form.get('price'))
+        except (ValueError, TypeError):
+            listing.price = -1.0
+        listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
+        
+        try:
+            db.session.commit()
+            print("After update - start_time:", listing.start_time)
+            return redirect(url_for('index'))
+        except Exception as e:
+            print("Error updating:", str(e))
+            db.session.rollback()
+            return "Error updating listing", 500
+
+    print("Initial listing start_time:", listing.start_time)
+    return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
 
 if __name__ == '__main__':
    with app.app_context():
