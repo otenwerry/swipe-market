@@ -299,6 +299,7 @@ def send_connection_email():
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
+    price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
     body = (
       f"Hello {buyer_name},\n\n"
       f"{seller_name} is interested in selling a swipe to you. "
@@ -318,7 +319,7 @@ def send_connection_email():
     
     body += (
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
-      f"between {buyer_listing.start_time} and {buyer_listing.end_time} for ${buyer_listing.price}. "
+      f"between {buyer_listing.start_time} and {buyer_listing.end_time} for ${price_str}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
       f"{buyer_name}, remember to delete your listing once you've agreed to the sale.\n\n"
       "Best regards,\n"
@@ -343,6 +344,7 @@ def send_connection_email():
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
+    price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
     body = (
       f"Hello {seller_name},\n\n"
       f"{buyer_name} is interested in buying a swipe from you. "
@@ -363,7 +365,7 @@ def send_connection_email():
     body += (
       f"As a reminder, the listing is for {seller_listing.dining_hall} from "
       f"{seller_listing.start_time} to {seller_listing.end_time} and costs "
-      f"${seller_listing.price}. "
+      f"${price_str}. "
       f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell today, "
       "remember to delete your listing once you've agreed to the sale.\n\n"
