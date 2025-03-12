@@ -42,6 +42,7 @@ class SellerListing(db.Model):
     seller_email = db.Column(db.String(100), nullable=False)
     seller_phone = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return f'<SellerListing {self.id} - {self.seller_name}>'
@@ -60,6 +61,7 @@ class BuyerListing(db.Model):
     buyer_email = db.Column(db.String(100), nullable=False)
     buyer_phone = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return f'<BuyerListing {self.id} - {self.buyer_name}>'
@@ -272,8 +274,8 @@ def index():
             return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
 
     # Get all listings and sort them
-    seller_listings = SellerListing.query.all()
-    buyer_listings = BuyerListing.query.all()
+    seller_listings = SellerListing.query.filter_by(is_active=True).all()
+    buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
     
     # Sort listings by multiple criteria
     seller_listings = sorted(seller_listings, key=get_sort_key)
