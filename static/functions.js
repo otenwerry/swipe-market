@@ -191,7 +191,10 @@ function onSignIn(googleUser) {
   
   //closes the form when the user clicks outside of it.
   function closeForm() {
-    document.getElementById("myForm").style.display = "none";
+    const form = document.getElementById("myForm");
+    form.style.display = "none";
+    // Clear the stored button reference
+    form.removeAttribute('data-button-id');
   }
   
   //opens popup form when button is clicked,
@@ -203,24 +206,14 @@ function onSignIn(googleUser) {
         return false;
     }
 
-    // Get or initialize contacted listings array from localStorage
-    const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
     const listingId = button.getAttribute('data-listing-id');
-    
-    // Add this listing to contacted listings
-    if (!contactedListings.includes(listingId)) {
-        contactedListings.push(listingId);
-        localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
-    }
-
-    // Disable the button
-    button.disabled = true;
-    button.classList.add('contacted');
-    
     const form = document.getElementById("myForm");
     const listingIdInput = form.querySelector('input[name="listing_id"]');
     listingIdInput.value = listingId;
     form.style.display = "block";
+
+    // Store the button reference for later use
+    form.setAttribute('data-button-id', listingId);
   }
   
   // checks for valid credential
@@ -394,11 +387,43 @@ function onSignIn(googleUser) {
         const popup = document.getElementById('popup');
         popup.style.display = 'block';
         
-        // remove the query parameter without refreshing the page
+        const justContactedId = localStorage.getItem('justContactedId');
+        if (justContactedId) {
+            const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
+            if (!contactedListings.includes(justContactedId)) {
+                contactedListings.push(justContactedId);
+                localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
+            }
+
+            const button = document.querySelector(`button[data-listing-id="${justContactedId}"]`);
+            if (button) {
+                button.disabled = true;
+                button.classList.add('contacted');
+            }
+
+            localStorage.removeItem('justContactedId');
+        }
+        
         const newUrl = window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     }
   }
+  
+  // Add this new event listener setup in the DOMContentLoaded event
+  document.addEventListener('DOMContentLoaded', function() {
+    // ... existing DOMContentLoaded code ...
+
+    // Add submit handler to the contact form
+    const contactForm = document.querySelector('#myForm form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(event) {
+            const listingId = this.querySelector('input[name="listing_id"]').value;
+            localStorage.setItem('justContactedId', listingId);
+        });
+    }
+  });
+  
+  localStorage.removeItem('contactedListings');
   
   
   

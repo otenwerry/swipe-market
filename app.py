@@ -112,37 +112,6 @@ def submit_buyer():
   #redirect to Swipe Market page
   return redirect(url_for('index'))
 
-#create all tables in the database
-with app.app_context():
-    db.drop_all()
-    db.create_all()
-
-# Update expired listings: sets is_active to False for listings whose end time has passed
-def update_expired_listings():
-    now = datetime.now(ny_tz)
-    # Update SellerListings
-    active_sellers = SellerListing.query.filter_by(is_active=True).all()
-    for listing in active_sellers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating SellerListing {listing.id}: {e}")
-    
-    # Update BuyerListings
-    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
-    for listing in active_buyers:
-        try:
-            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating BuyerListing {listing.id}: {e}")
-    db.session.commit()
-
 #route for taking seller listings from the form
 #and putting them into the database, then send
 #the user back to the Swipe Market page
@@ -188,12 +157,6 @@ def submit_seller():
 
   #redirect to Swipe Market page
   return redirect(url_for('index'))
-
-#create all tables in the database
-with app.app_context():
-    db.drop_all()
-    db.create_all()
-
 
 @app.route('/contact_form', methods=['POST'])
 def contact_form():
@@ -328,6 +291,7 @@ def listings(listing_id=None):
         return render_template('listings.html', listing=listing, is_seller=is_seller)
     return render_template('listings.html', listing=None)
 
+"""
 @app.route('/clear_database')
 def clear_database():
     try:
@@ -340,6 +304,7 @@ def clear_database():
     except Exception as e:
         db.session.rollback()
         return f"Error clearing database: {str(e)}"
+"""
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
 def delete_listing(listing_id):
@@ -410,8 +375,33 @@ def edit_listing(listing_id):
     # Show the edit form for both GET requests and initial POST verification
     return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
 
+# Update expired listings: sets is_active to False for listings whose end time has passed
+def update_expired_listings():
+    now = datetime.now(ny_tz)
+    # Update SellerListings
+    active_sellers = SellerListing.query.filter_by(is_active=True).all()
+    for listing in active_sellers:
+        try:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            if now > expiration:
+                listing.is_active = False
+        except Exception as e:
+            print(f"Error updating SellerListing {listing.id}: {e}")
+    
+    # Update BuyerListings
+    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
+    for listing in active_buyers:
+        try:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            if now > expiration:
+                listing.is_active = False
+        except Exception as e:
+            print(f"Error updating BuyerListing {listing.id}: {e}")
+    db.session.commit()
+
 if __name__ == '__main__':
    with app.app_context():
-     db.drop_all()
-     db.create_all()
+     db.create_all()  # This will create tables only if they don't exist
    app.run(host='0.0.0.0',port=5000, debug=True)
