@@ -369,7 +369,8 @@ def delete_listing(listing_id):
        (not is_seller and listing.buyer_email != user_email):
         return "Unauthorized - You don't own this listing", 403
 
-    db.session.delete(listing)
+    #set is_active to false``
+    listing.is_active = False
     db.session.commit()
     return redirect(url_for('index'))
 
