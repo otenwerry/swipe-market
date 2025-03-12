@@ -436,6 +436,45 @@ function onSignIn(googleUser) {
   updateTime();
   setInterval(updateTime, 1000);
   
+  // Function to format time from 24-hour to 12-hour format with AM/PM
+  function formatTimeDisplay() {
+    // Get all table cells that contain time information
+    const timeCells = document.querySelectorAll('table tbody tr td:nth-child(3)');
+    
+    timeCells.forEach(cell => {
+      const timeText = cell.textContent.trim();
+      
+      // Skip empty cells or cells that don't contain time ranges
+      if (!timeText || !timeText.includes(' - ')) return;
+      
+      const [startTime, endTime] = timeText.split(' - ');
+      
+      // Convert start time to 12-hour format
+      const formattedStartTime = formatTo12Hour(startTime);
+      
+      // Convert end time to 12-hour format
+      const formattedEndTime = formatTo12Hour(endTime);
+      
+      // Update the cell with the new formatted time
+      cell.textContent = `${formattedStartTime} - ${formattedEndTime}`;
+    });
+  }
+  
+  // Helper function to convert a time string from 24-hour to 12-hour format
+  function formatTo12Hour(timeStr) {
+    // Return early if the timeStr is empty or invalid
+    if (!timeStr || !timeStr.includes(':')) return timeStr;
+    
+    const [hours, minutes] = timeStr.split(':').map(part => parseInt(part, 10));
+    
+    if (isNaN(hours) || isNaN(minutes)) return timeStr;
+    
+    const period = hours >= 12 ? 'pm' : 'am';
+    const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+    
+    return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
+  }
+  
   //closes the form when the user clicks outside of it.
   function closeForm() {
     const form = document.getElementById("myForm");
@@ -610,6 +649,9 @@ function onSignIn(googleUser) {
     document.getElementById('postListingsButton').addEventListener('click', function(event) {
       if(!requireSignIn(event)) return;
     });
+    
+    // Format time displays on page load
+    formatTimeDisplay();
   };
   
   // attach click listeners to all contact buttons
@@ -747,16 +789,13 @@ function onSignIn(googleUser) {
   
   // Add this new event listener setup in the DOMContentLoaded event
   document.addEventListener('DOMContentLoaded', function() {
-    // ... existing DOMContentLoaded code ...
-
-    // Add submit handler to the contact form
-    const contactForm = document.querySelector('#myForm form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            const listingId = this.querySelector('input[name="listing_id"]').value;
-            localStorage.setItem('justContactedId', listingId);
-        });
-    }
+    disableContactedListings();
+    handlePopup();
+    
+    // Format time displays when DOM is loaded
+    formatTimeDisplay();
+    
+    // ... rest of your existing DOMContentLoaded code ...
   });
 
   
