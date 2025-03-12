@@ -42,6 +42,7 @@ class SellerListing(db.Model):
     seller_email = db.Column(db.String(100), nullable=False)
     seller_phone = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return f'<SellerListing {self.id} - {self.seller_name}>'
@@ -60,6 +61,7 @@ class BuyerListing(db.Model):
     buyer_email = db.Column(db.String(100), nullable=False)
     buyer_phone = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return f'<BuyerListing {self.id} - {self.buyer_name}>'
@@ -113,6 +115,32 @@ def submit_buyer():
 #create all tables in the database
 with app.app_context():
     db.create_all()
+
+# Update expired listings: sets is_active to False for listings whose end time has passed
+def update_expired_listings():
+    now = datetime.now(ny_tz)
+    # Update SellerListings
+    active_sellers = SellerListing.query.filter_by(is_active=True).all()
+    for listing in active_sellers:
+        try:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            if now > expiration:
+                listing.is_active = False
+        except Exception as e:
+            print(f"Error updating SellerListing {listing.id}: {e}")
+    
+    # Update BuyerListings
+    active_buyers = BuyerListing.query.filter_by(is_active=True).all()
+    for listing in active_buyers:
+        try:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
+            expiration = ny_tz.localize(expiration)
+            if now > expiration:
+                listing.is_active = False
+        except Exception as e:
+            print(f"Error updating BuyerListing {listing.id}: {e}")
+    db.session.commit()
 
 #route for taking seller listings from the form
 #and putting them into the database, then send
@@ -253,6 +281,7 @@ def send_connection_email():
 #regular route for the Swipe Market page
 @app.route('/')
 def index():
+    update_expired_listings()
     # Convert string date and time to datetime for sorting
     def get_sort_key(listing):
         try:
@@ -272,8 +301,8 @@ def index():
             return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
 
     # Get all listings and sort them
-    seller_listings = SellerListing.query.all()
-    buyer_listings = BuyerListing.query.all()
+    seller_listings = SellerListing.query.filter_by(is_active=True).all()
+    buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
     
     # Sort listings by multiple criteria
     seller_listings = sorted(seller_listings, key=get_sort_key)
