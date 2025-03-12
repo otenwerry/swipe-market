@@ -133,7 +133,7 @@
           </div>
           <div>
             <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Your name" readonly>
+            <input type="text" id="name" name="name" placeholder="Your name">
           </div>
           <div>
             <label for="phone">Phone Number</label>
@@ -189,6 +189,7 @@
             if (data.success) {
               // Update localStorage
               localStorage.setItem('userPhone', phone);
+              localStorage.setItem('userName', name);
               showSuccess('Profile updated successfully');
             } else {
               showError(data.error || 'Error updating profile');
