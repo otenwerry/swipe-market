@@ -61,6 +61,38 @@ function onSignIn(googleUser) {
       const mins = String(today.getMinutes()).padStart(2, '0');
       startTimeInput.value = `${hours}:${mins}`;
     }
+    
+    // Function to validate start time for today's date
+    function validateStartTime() {
+      // Check if date is today
+      if (dateInput.value === today.toISOString().split('T')[0]) {
+        // Get current time
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        
+        // Get selected time
+        const [selectedHours, selectedMinutes] = startTimeInput.value.split(':').map(Number);
+        
+        // Compare times
+        if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
+          startTimeInput.setCustomValidity('For today, start time must be later than current time');
+        } else {
+          startTimeInput.setCustomValidity('');
+        }
+      } else {
+        // If date is not today, no time restriction
+        startTimeInput.setCustomValidity('');
+      }
+    }
+    
+    // Add event listeners for both date and time fields to trigger validation
+    startTimeInput.addEventListener('input', validateStartTime);
+    dateInput.addEventListener('input', validateStartTime);
+    
+    // Run validation at page load
+    validateStartTime();
+    
     // custom validation for end time
     endTimeInput.addEventListener('input', function() {
         if (startTimeInput.value && this.value <= startTimeInput.value) {
@@ -68,6 +100,9 @@ function onSignIn(googleUser) {
         } else {
             this.setCustomValidity('');
         }
+        
+        // Also re-validate start time to make sure both validations work together
+        validateStartTime();
     });
 
     // also check when start time changes
@@ -77,6 +112,8 @@ function onSignIn(googleUser) {
         } else {
             endTimeInput.setCustomValidity('');
         }
+        
+        // The validateStartTime function will be called from the general input event listener above
     });
 
     const form = document.querySelector('form');
