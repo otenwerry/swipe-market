@@ -387,7 +387,7 @@ def edit_listing(listing_id):
         # Update the listing with new values
         listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
         listing.date = request.form.get('date')
-        listing.start_time = request.form.get('edit_start_time')
+        listing.start_time = request.form.get('start_time')
         listing.end_time = request.form.get('end_time')
         try:
             listing.price = float(request.form.get('price'))
