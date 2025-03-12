@@ -125,22 +125,25 @@ def update_expired_listings():
     for listing in active_sellers:
         try:
             expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating SellerListing {listing.id}: {e}")
+        except ValueError:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M:%S")
+        expiration = ny_tz.localize(expiration)
+        if now > expiration:
+          listing.is_active = False
     
     # Update BuyerListings
     active_buyers = BuyerListing.query.filter_by(is_active=True).all()
     for listing in active_buyers:
         try:
             expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M")
-            expiration = ny_tz.localize(expiration)
-            if now > expiration:
-                listing.is_active = False
-        except Exception as e:
-            print(f"Error updating BuyerListing {listing.id}: {e}")
+        except ValueError:
+            expiration = datetime.strptime(f"{listing.date} {listing.end_time}", "%Y-%m-%d %H:%M:%S")
+
+        expiration = ny_tz.localize(expiration)
+        if now > expiration:
+          listing.is_active = False
+
+    #commit changes to database
     db.session.commit()
 
 #route for taking seller listings from the form
