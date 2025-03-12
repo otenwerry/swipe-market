@@ -410,8 +410,8 @@ function onSignIn(googleUser) {
     
     google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
       console.log('Token revoked');
-      // Reload the page to reset all UI elements
-      window.location.reload();
+      // Redirect to the homepage 
+      window.location.href = '/';
     });
   }
   // --- UTILITY FUNCTIONS ---
