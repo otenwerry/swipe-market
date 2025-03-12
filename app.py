@@ -336,7 +336,8 @@ def delete_listing(listing_id):
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 def edit_listing(listing_id):
     print("Method: ", request.method)
-    user_email = request.form.get('poster_email')
+    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
+    #user_email = request.form.get('poster_email')
     print("User email: ", user_email)
     if not user_email:
         return redirect(url_for('index'))
