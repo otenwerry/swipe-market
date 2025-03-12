@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Listing</title>
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/general.css">
+    <link rel="stylesheet" href="../static/swipemarket.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D26R1LF247"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload" data-client_id="362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false">
+</head>
+<body>
+    <main>
+        <div class="back-button-container">
+            <a href="/">
+                <button type="button" class="sell-button">Back to Swipe Market</button>
+            </a>
+        </div>
+        <section style="max-width: 800px; margin: 20px auto; padding: 20px;">
+            <div class="seller-form">
+                <h2>Edit Listing</h2>
+                <form action="/edit_listing/{{ listing.id }}" method="POST">
+                    <input type="hidden" name="poster_name" id="poster_name">
+                    <input type="hidden" name="poster_email" id="poster_email">
+                    <div>
+                        <label for="dining_hall">Dining hall:</label>
+                        <select id="dining_hall" name="dining_hall[]" multiple required>
+                            {% set selected_halls = listing.dining_hall.split(', ') %}
+                            <option value="John Jay" {% if "John Jay" in selected_halls %}selected{% endif %}>John Jay</option>
+                            <option value="JJ's" {% if "JJ's" in selected_halls %}selected{% endif %}>JJ's</option>
+                            <option value="Ferris" {% if "Ferris" in selected_halls %}selected{% endif %}>Ferris</option>
+                            <option value="Faculty House" {% if "Faculty House" in selected_halls %}selected{% endif %}>Faculty House</option>
+                            <option value="Chef Mike's" {% if "Chef Mike's" in selected_halls %}selected{% endif %}>Chef Mike's</option>
+                            <option value="Chef Don's" {% if "Chef Don's" in selected_halls %}selected{% endif %}>Chef Don's</option>
+                            <option value="Grace Dodge" {% if "Grace Dodge" in selected_halls %}selected{% endif %}>Grace Dodge</option>
+                            <option value="Fac Shack" {% if "Fac Shack" in selected_halls %}selected{% endif %}>Fac Shack</option>
+                            <option value="Johnny's" {% if "Johnny's" in selected_halls %}selected{% endif %}>Johnny's</option>
+                            <option value="Hewitt" {% if "Hewitt" in selected_halls %}selected{% endif %}>Hewitt Dining</option>
+                            <option value="Diana" {% if "Diana" in selected_halls %}selected{% endif %}>Diana</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="date" value="{{ listing.date }}" required>
+                    </div>
+                    <div>
+                        <label for="start_time">Start:</label>
+                        <input type="time" id="edit_start_time" name="edit_start_time" value="{{ listing.start_time }}" required>
+                    </div>
+                    <div>
+                        <label for="end_time">End:</label>
+                        <input type="time" id="end_time" name="end_time" value="{{ listing.end_time }}" required>
+                    </div>
+                    <div>
+                        <label for="price">Price in dollars:</label>
+                        <input type="number" id="price" name="price" step="0.01" value="{{ listing.price }}" required>
+                    </div>
+                    <div>
+                        <label for="payment_methods">Payment Methods:</label>
+                        <select id="payment_methods" name="payment_methods[]" multiple required>
+                            {% set selected_methods = listing.payment_methods.split(', ') %}
+                            <option value="Venmo" {% if 'Venmo' in selected_methods %}selected{% endif %}>Venmo</option>
+                            <option value="PayPal" {% if 'PayPal' in selected_methods %}selected{% endif %}>PayPal</option>
+                            <option value="Cash App" {% if 'Cash App' in selected_methods %}selected{% endif %}>Cash App</option>
+                            <option value="Zelle" {% if 'Zelle' in selected_methods %}selected{% endif %}>Zelle</option>
+                            <option value="Cash" {% if 'Cash' in selected_methods %}selected{% endif %}>Cash</option>
+                            <option value="Any" {% if 'Any' in selected_methods %}selected{% endif %}>Any</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="sell-button">Update Listing</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <script src="../static/functions.js"></script>
+</body>
+</html> 

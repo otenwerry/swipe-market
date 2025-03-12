@@ -33,29 +33,33 @@ function onSignIn(googleUser) {
   //sets default date and time for seller listings.
   //formats date and time as YYYY-MM-DD HH:MM.
   document.addEventListener('DOMContentLoaded', function() {
+    disableContactedListings();
+    handlePopup();
     // set default date to today
     const today = new Date();
     const dateInput = document.getElementById('date');
     const startTimeInput = document.getElementById('start_time');
     const endTimeInput = document.getElementById('end_time');
-    
-    // format today's date as YYYY-MM-DD
-    const formattedDate = today.toISOString().split('T')[0];
-    dateInput.value = formattedDate;
-    dateInput.min = formattedDate; // prevent selecting past dates
+    const isEditPage = window.location.pathname.includes('/edit_listing/');
 
-    // set default start time to current time (rounded to nearest 15 minutes)
-    const minutes = today.getMinutes();
-    const roundedMinutes = Math.ceil(minutes / 15) * 15;
-    today.setMinutes(roundedMinutes);
-    today.setSeconds(0);
-    today.setMilliseconds(0);
-    
-    // format time as HH:MM
-    const hours = String(today.getHours()).padStart(2, '0');
-    const mins = String(today.getMinutes()).padStart(2, '0');
-    startTimeInput.value = `${hours}:${mins}`;
+    if (!isEditPage) {
+      // format today's date as YYYY-MM-DD
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.value = formattedDate;
+      dateInput.min = formattedDate; // prevent selecting past dates
 
+      // set default start time to current time (rounded to nearest 15 minutes)
+      const minutes = today.getMinutes();
+      const roundedMinutes = Math.ceil(minutes / 15) * 15;
+      today.setMinutes(roundedMinutes);
+      today.setSeconds(0);
+      today.setMilliseconds(0);
+      
+      // format time as HH:MM
+      const hours = String(today.getHours()).padStart(2, '0');
+      const mins = String(today.getMinutes()).padStart(2, '0');
+      startTimeInput.value = `${hours}:${mins}`;
+    }
     // custom validation for end time
     endTimeInput.addEventListener('input', function() {
         if (startTimeInput.value && this.value <= startTimeInput.value) {
@@ -194,20 +198,26 @@ function onSignIn(googleUser) {
   function openForm(button) {
     const credential = localStorage.getItem('googleCredential');
     if (!credential) {
-      //alert('Please sign in with your Columbia/Barnard email.');
-      document.getElementById('g_id_signin').style.display = 'block';
-      /*
-      google.accounts.id.prompt();
-      if (window.google && google.accounts && google.accounts.id) {
-        alert('inside if')
-        google.accounts.id.prompt();
-      }*/
-      return false; // Stop the function from continuing
+        document.getElementById('g_id_signin').style.display = 'block';
+        return false;
     }
-    const form = document.getElementById("myForm");
-    const listingIdInput = form.querySelector('input[name="listing_id"]');
+
+    // Get or initialize contacted listings array from localStorage
+    const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
     const listingId = button.getAttribute('data-listing-id');
     
+    // Add this listing to contacted listings
+    if (!contactedListings.includes(listingId)) {
+        contactedListings.push(listingId);
+        localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
+    }
+
+    // Disable the button
+    button.disabled = true;
+    button.classList.add('contacted');
+    
+    const form = document.getElementById("myForm");
+    const listingIdInput = form.querySelector('input[name="listing_id"]');
     listingIdInput.value = listingId;
     form.style.display = "block";
   }
@@ -332,6 +342,14 @@ function onSignIn(googleUser) {
 
   //deletes listing.
   function deleteListing(listingId) {
+    const credential = localStorage.getItem('googleCredential');
+    /*
+    const poster_email = localStorage.getItem('userEmail');
+    const poster_name = localStorage.getItem('userName');*/
+    if (!credential) {
+        alert('Please sign in to delete listings');
+        return;
+    }
     if (confirm('Are you sure you want to delete this listing?')) {
         fetch(`/delete_listing/${listingId}`, {
             method: 'POST',
@@ -341,8 +359,44 @@ function onSignIn(googleUser) {
 
   //shows edit form.
   function editListing(listingId) {
-    window.location.href = `/edit_listing/${listingId}`;
+    const credential = localStorage.getItem('googleCredential');
+    /*const poster_email = localStorage.getItem('userEmail');
+    const poster_name = localStorage.getItem('userName');*/
+    console.log('credential: ' + credential)
+    if (!credential) {
+        alert('Please sign in to edit listings');
+        return;
+    }
+    if (confirm('Are you sure you want to edit this listing?')) {
+        window.location.href = `/edit_listing/${listingId}`;
+    }
   }
+
+  //check and disable previously contacted listings
+  function disableContactedListings() {
+    const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
+    document.querySelectorAll('.contact-button').forEach(button => {
+        const listingId = button.getAttribute('data-listing-id');
+        if (contactedListings.includes(listingId)) {
+            button.disabled = true;
+            button.classList.add('contacted');
+        }
+    });
+  }
+  
+  // add this function to handle the popup
+  function handlePopup() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_popup') === 'true') {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'block';
+        
+        // remove the query parameter without refreshing the page
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+    }
+  }
+  
   
   
   
