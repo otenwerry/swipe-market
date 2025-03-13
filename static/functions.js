@@ -817,7 +817,7 @@ function onSignIn(googleUser) {
     handlePopup();
     
     // Format time displays when DOM is loaded
-    formatTimeDisplay();
+    //formatTimeDisplay();
   });
 
   // Add styles for contacted buttons if they don't exist
