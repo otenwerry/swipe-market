@@ -745,10 +745,7 @@ function onSignIn(googleUser) {
         alert('Please sign in to edit listings');
         return;
     }
-    if (confirm('Are you sure you want to edit this listing?')) {
-        // Redirect to edit page with user email as query parameter
-        window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`;
-    }
+    window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`; 
   }
 
   //check and disable previously contacted listings
