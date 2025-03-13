@@ -45,7 +45,6 @@ function onSignIn(googleUser) {
     if (!isEditPage) {
       // format today's date as YYYY-MM-DD
       const formattedDate = today.toISOString().split('T')[0];
-      console.log('made it to edit page')
       dateInput.value = formattedDate;
       dateInput.min = formattedDate; // prevent selecting past dates
 
@@ -60,6 +59,10 @@ function onSignIn(googleUser) {
       const hours = String(today.getHours()).padStart(2, '0');
       const mins = String(today.getMinutes()).padStart(2, '0');
       startTimeInput.value = `${hours}:${mins}`;
+    } else {
+      // For edit page, still set the minimum date to today
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.min = formattedDate; // prevent selecting past dates
     }
     
     // Function to validate start time for today's date
@@ -399,15 +402,12 @@ function onSignIn(googleUser) {
   
     //hide profile icon and show sign in button
     
-    // Clear contacted listings to reset all buttons
-    localStorage.removeItem('contactedListings');
-    
     // Reset UI: hide profile icon and show sign in button
     document.getElementById('profile-menu').style.display = 'none';
     document.getElementById('g_id_signin').style.display = 'block';
-    
+  
     console.log('User logged out');
-    
+  
     google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
       console.log('Token revoked');
       // Redirect to the homepage 
@@ -493,10 +493,10 @@ function onSignIn(googleUser) {
     
     const credential = localStorage.getItem('googleCredential');
     if (!credential) {
-      document.getElementById('g_id_signin').style.display = 'block';
-      return false;
+        document.getElementById('g_id_signin').style.display = 'block';
+        return false;
     }
-    
+
     const listingId = button.getAttribute('data-listing-id');
     const listingType = button.getAttribute('data-listing-type');
     
@@ -662,25 +662,25 @@ function onSignIn(googleUser) {
   // attach click listeners to all contact buttons
   document.querySelectorAll('.contact-button').forEach(function(button) {
     button.addEventListener('click', function(event) {
-      if (!requireSignIn(event)) return;
+    if (!requireSignIn(event)) return;
       
       // Pull name/user from local storage set during signin
-      var userName = localStorage.getItem('userName');
-      var userEmail = localStorage.getItem('userEmail');
-      
+    var userName = localStorage.getItem('userName');
+    var userEmail = localStorage.getItem('userEmail');
+  
       // Populate hidden fields in contact form
-      document.getElementById('sender_name').value = userName;
-      document.getElementById('sender_email').value = userEmail;
-      
+    document.getElementById('sender_name').value = userName;
+    document.getElementById('sender_email').value = userEmail;
+  
       // Pull listing id and type from contact button
-      var listingId = this.getAttribute('data-listing-id');
+    var listingId = this.getAttribute('data-listing-id');
       var listingType = this.getAttribute('data-listing-type');
       
-      if (listingId) {
-        document.getElementById('listing_id').value = listingId;
+    if (listingId) {
+      document.getElementById('listing_id').value = listingId;
         document.getElementById('listing_type').value = listingType;
-      }
-      
+    }
+  
       document.getElementById('myForm').style.display = 'block';
     });
   });
@@ -750,12 +750,26 @@ function onSignIn(googleUser) {
 
   //check and disable previously contacted listings
   function disableContactedListings() {
-    const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
+    // Get the current user's email
+    const userEmail = localStorage.getItem('userEmail');
+    
+    // If no user is logged in, don't disable any buttons
+    if (!userEmail) {
+      return;
+    }
+    
+    // Get contacted listings for this specific user
+    const contactedListingsKey = `contactedListings_${userEmail}`;
+    const contactedListings = JSON.parse(localStorage.getItem(contactedListingsKey) || '[]');
+    
     document.querySelectorAll('.contact-button').forEach(button => {
         const listingId = button.getAttribute('data-listing-id');
         if (contactedListings.includes(listingId)) {
             button.disabled = true;
             button.classList.add('contacted');
+      } else {
+        button.disabled = false;
+        button.classList.remove('contacted');
         }
     });
   }
@@ -815,9 +829,6 @@ function onSignIn(googleUser) {
     
     disableContactedListings();
     handlePopup();
-    
-    // Format time displays when DOM is loaded
-    //formatTimeDisplay();
   });
 
   // Add styles for contacted buttons if they don't exist
