@@ -210,8 +210,8 @@ function onSignIn(googleUser) {
       }
     });
     
-    // Disable contact buttons for previously contacted listings
-    disableContactedListings();
+    // Fetch contacted listings from the server and update the UI
+    fetchContactedListings();
   
     console.log('User logged in:', responsePayload.email);
   }
