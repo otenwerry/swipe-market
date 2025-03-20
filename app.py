@@ -432,163 +432,140 @@ def contact_form():
 
 @app.route('/send_connection_email', methods=['POST'])
 def send_connection_email():
-  try:
-    listing_id = request.form.get('listing_id')
-    listing_type = request.form.get('listing_type')
-    sender_email = request.form.get('sender_email')
+  listing_id = request.form.get('listing_id')
+  listing_type = request.form.get('listing_type')
+  sender_email = request.form.get('sender_email')
+  
+  # Create a record of this contact
+  contact_record = ContactRecord(
+    listing_id=int(listing_id),  # Convert listing_id to integer
+    listing_type=listing_type,
+    user_email=sender_email
+  )
+  db.session.add(contact_record)
+  
+  if listing_type == 'seller':
+    receiver_listing = SellerListing.query.get(listing_id)
+    if not receiver_listing:
+      flash("Error: Seller listing not found.", "error")
+      return redirect(url_for('index'))
+  else:
+    receiver_listing = BuyerListing.query.get(listing_id)
+    if not receiver_listing:
+      flash("Error: Buyer listing not found.", "error")
+      return redirect(url_for('index'))
+  
+  # If receiver is buyer
+  if isinstance(receiver_listing, BuyerListing):
+    buyer_listing = receiver_listing
+    buyer_name = buyer_listing.buyer_name
+    buyer_email = buyer_listing.buyer_email
+    buyer_phone = buyer_listing.buyer_phone
+    # And sender is seller
+    seller_name = request.form.get('sender_name')
+    seller_email = request.form.get('sender_email')
     
-    # Validate inputs
-    if not listing_id or not listing_type or not sender_email:
-      flash("Missing required information", "error")
-      return redirect(url_for('index', error='true'))
-    
-    try:
-      listing_id = int(listing_id)
-    except ValueError:
-      flash("Invalid listing ID", "error")
-      return redirect(url_for('index', error='true'))
-    
-    # Validate listing_type
-    if listing_type not in ['seller', 'buyer']:
-      flash("Invalid listing type", "error")
-      return redirect(url_for('index', error='true'))
-    
-    # Create a record of this contact
-    contact_record = ContactRecord(
-      listing_id=listing_id,  # Already converted to integer
-      listing_type=listing_type,
-      user_email=sender_email
+    # Get sender's phone if available
+    seller_phone = ""
+    sender_user = User.query.filter_by(email=seller_email).first()
+    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
+      seller_phone = sender_user.phone
+
+    # Format times to 12-hour format
+    start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
+    end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
+
+    # Compose email
+    subject = "[Swipe Market] Potential Sale"
+    price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
+    body = (
+      f"Hello {buyer_name},\n\n"
+      f"{seller_name} is interested in selling a swipe to you. "
+      f"You can reach them at {seller_email}"
     )
-    db.session.add(contact_record)
     
-    # Try to find the listing
-    if listing_type == 'seller':
-      receiver_listing = SellerListing.query.get(listing_id)
-      if not receiver_listing:
-        flash("Error: Seller listing not found.", "error")
-        db.session.rollback()
-        return redirect(url_for('index', error='true'))
-    else:
-      receiver_listing = BuyerListing.query.get(listing_id)
-      if not receiver_listing:
-        flash("Error: Buyer listing not found.", "error")
-        db.session.rollback()
-        return redirect(url_for('index', error='true'))
+    # Add phone numbers if available
+    if seller_phone and seller_phone.strip() != "":
+      body += f" or via phone at {seller_phone}"
     
-    # If receiver is buyer
-    if isinstance(receiver_listing, BuyerListing):
-      buyer_listing = receiver_listing
-      buyer_name = buyer_listing.buyer_name
-      buyer_email = buyer_listing.buyer_email
-      buyer_phone = buyer_listing.buyer_phone
-      # And sender is seller
-      seller_name = request.form.get('sender_name')
-      seller_email = request.form.get('sender_email')
-      
-      # Get sender's phone if available
-      seller_phone = ""
-      sender_user = User.query.filter_by(email=seller_email).first()
-      if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-        seller_phone = sender_user.phone
-
-      # Format times to 12-hour format
-      start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
-      end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
-
-      # Compose email
-      subject = "[Swipe Market] Potential Sale"
-      price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
-      body = (
-        f"Hello {buyer_name},\n\n"
-        f"{seller_name} is interested in selling a swipe to you. "
-        f"You can reach them at {seller_email}"
-      )
-      
-      # Add phone numbers if available
-      if seller_phone and seller_phone.strip() != "":
-        body += f" or via phone at {seller_phone}"
-      
-      body += ".\n\n"
-      
-      if buyer_phone and buyer_phone.strip() != "":
-        body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.\n\n"
-      else:
-        body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
-      
-      body += (
-        f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
-        f"between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
-        f"They can pay via {buyer_listing.payment_methods}.\n\n"
-        f"{buyer_name}, remember to delete your listing once you've agreed to the sale.\n\n"
-        "Best regards,\n"
-        "Swipe Market Team"
-      )
-      
-    # If receiver is seller
+    body += ".\n\n"
+    
+    if buyer_phone and buyer_phone.strip() != "":
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.\n\n"
     else:
-      seller_listing = receiver_listing
-      seller_name = seller_listing.seller_name
-      seller_email = seller_listing.seller_email
-      seller_phone = seller_listing.seller_phone
-      # And sender is buyer
-      buyer_name = request.form.get('sender_name')
-      buyer_email = request.form.get('sender_email')
-      
-      # Get sender's phone if available
-      buyer_phone = ""
-      sender_user = User.query.filter_by(email=buyer_email).first()
-      if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-        buyer_phone = sender_user.phone
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
+    
+    body += (
+      f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
+      f"between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
+      f"They can pay via {buyer_listing.payment_methods}.\n\n"
+      f"{buyer_name}, remember to delete your listing once you've agreed to the sale.\n\n"
+      "Best regards,\n"
+      "Swipe Market Team"
+    )
+    
+  # If receiver is seller
+  else:
+    seller_listing = receiver_listing
+    seller_name = seller_listing.seller_name
+    seller_email = seller_listing.seller_email
+    seller_phone = seller_listing.seller_phone
+    # And sender is buyer
+    buyer_name = request.form.get('sender_name')
+    buyer_email = request.form.get('sender_email')
+    
+    # Get sender's phone if available
+    buyer_phone = ""
+    sender_user = User.query.filter_by(email=buyer_email).first()
+    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
+      buyer_phone = sender_user.phone
 
-      # Format times to 12-hour format
-      start_time_formatted = format_time_to_12hour(seller_listing.start_time)
-      end_time_formatted = format_time_to_12hour(seller_listing.end_time)
+    # Format times to 12-hour format
+    start_time_formatted = format_time_to_12hour(seller_listing.start_time)
+    end_time_formatted = format_time_to_12hour(seller_listing.end_time)
 
-      # Compose email
-      subject = "[Swipe Market] Potential Sale"
-      price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
-      body = (
-        f"Hello {seller_name},\n\n"
-        f"{buyer_name} is interested in buying a swipe from you. "
-        f"You can reach them at {buyer_email}"
-      )
-      
-      # Add phone numbers if available
-      if buyer_phone and buyer_phone.strip() != "":
-        body += f" or via phone at {buyer_phone}"
-      
-      body += ".\n\n"
-      
-      if seller_phone and seller_phone.strip() != "":
-        body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.\n\n"
-      else:
-        body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
-      
-      body += (
-        f"As a reminder, the listing is for {seller_listing.dining_hall} from "
-        f"{start_time_formatted} to {end_time_formatted} and costs "
-        f"${price_str}. "
-        f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
-        f"{seller_name}, if this is the only swipe you want to sell today, "
-        "remember to delete your listing once you've agreed to the sale.\n\n"
-        "Best regards,\n"
-        "Swipe Market Team"
-      )
+    # Compose email
+    subject = "[Swipe Market] Potential Sale"
+    price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
+    body = (
+      f"Hello {seller_name},\n\n"
+      f"{buyer_name} is interested in buying a swipe from you. "
+      f"You can reach them at {buyer_email}"
+    )
+    
+    # Add phone numbers if available
+    if buyer_phone and buyer_phone.strip() != "":
+      body += f" or via phone at {buyer_phone}"
+    
+    body += ".\n\n"
+    
+    if seller_phone and seller_phone.strip() != "":
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.\n\n"
+    else:
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
+    
+    body += (
+      f"As a reminder, the listing is for {seller_listing.dining_hall} from "
+      f"{start_time_formatted} to {end_time_formatted} and costs "
+      f"${price_str}. "
+      f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
+      f"{seller_name}, if this is the only swipe you want to sell today, "
+      "remember to delete your listing once you've agreed to the sale.\n\n"
+      "Best regards,\n"
+      "Swipe Market Team"
+    )
 
-    # Send email
-    recipients = [seller_email, buyer_email]
-    msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
-    msg.body = body
+  # Send email
+  recipients = [seller_email, buyer_email]
+  msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
+  msg.body = body
 
+  try:
     mail.send(msg)
     db.session.commit()  # Commit the contact record after successfully sending the email
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
-  
   except Exception as e:
-    # Log the error for debugging
-    print(f"Error in send_connection_email: {str(e)}")
     db.session.rollback()  # Rollback on error
-    flash("An error occurred. Please try again.", "error")
     return redirect(url_for('index', error='true'))
 
 
