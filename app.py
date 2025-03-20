@@ -438,7 +438,7 @@ def send_connection_email():
   
   # Create a record of this contact
   contact_record = ContactRecord(
-    listing_id=listing_id,
+    listing_id=int(listing_id),  # Convert listing_id to integer
     listing_type=listing_type,
     user_email=sender_email
   )
