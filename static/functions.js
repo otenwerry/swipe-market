@@ -335,7 +335,14 @@ function onSignIn(googleUser) {
       // Add event listeners
       document.getElementById('save-phone-btn').addEventListener('click', function() {
         const phone = document.getElementById('new-phone').value.trim();
+        
+        // Validate phone number format
         if (phone) {
+          const phoneRegex = /^[0-9()+\-\s]*$/;
+          if (!phoneRegex.test(phone)) {
+            alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
+            return;
+          }
           saveNewUser(phone);
           modal.style.display = 'none';
         } else {
