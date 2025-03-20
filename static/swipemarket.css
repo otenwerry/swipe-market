@@ -276,3 +276,11 @@
   .edit-button{
     background-color:#4a90e2;
   }
+
+  /* Style for read-only inputs to appear greyed out */
+  input[readonly] {
+    background-color: #f0f0f0;
+    color: #666;
+    cursor: not-allowed;
+    border: 1px solid #ddd;
+  }
