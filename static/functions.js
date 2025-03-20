@@ -657,6 +657,9 @@ function onSignIn(googleUser) {
     
     // Format time displays on page load
     formatTimeDisplay();
+    
+    // Fetch contacted listings from the database
+    fetchContactedListings();
   };
   
   // attach click listeners to all contact buttons
@@ -748,7 +751,37 @@ function onSignIn(googleUser) {
     window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`; 
   }
 
-  //check and disable previously contacted listings
+  // Function to fetch contacted listings from the database
+  function fetchContactedListings() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      return;
+    }
+    
+    fetch('/api/get_contacted_listings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userEmail }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Store the contacted listings in a data attribute on the body for quick access
+        const contactedIds = data.contacted_listings.map(item => item.id.toString());
+        document.body.setAttribute('data-contacted-listings', JSON.stringify(contactedIds));
+        
+        // Disable contact buttons for previously contacted listings
+        disableContactedListings();
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching contacted listings:', error);
+    });
+  }
+
+  // Updated function to disable contacted buttons using server data
   function disableContactedListings() {
     // Get the current user's email
     const userEmail = localStorage.getItem('userEmail');
@@ -758,22 +791,42 @@ function onSignIn(googleUser) {
       return;
     }
     
-    // Get contacted listings for this specific user
-    const contactedListingsKey = `contactedListings_${userEmail}`;
-    const contactedListings = JSON.parse(localStorage.getItem(contactedListingsKey) || '[]');
+    // Get contacted listings from data attribute
+    const contactedListingsJSON = document.body.getAttribute('data-contacted-listings');
+    if (!contactedListingsJSON) {
+      return;
+    }
+    
+    const contactedListings = JSON.parse(contactedListingsJSON);
     
     document.querySelectorAll('.contact-button').forEach(button => {
-        const listingId = button.getAttribute('data-listing-id');
-        if (contactedListings.includes(listingId)) {
-            button.disabled = true;
-            button.classList.add('contacted');
+      const listingId = button.getAttribute('data-listing-id');
+      if (contactedListings.includes(listingId)) {
+        button.disabled = true;
+        button.classList.add('contacted');
       } else {
         button.disabled = false;
         button.classList.remove('contacted');
-        }
+      }
     });
   }
-  
+
+  // When the contact form is submitted, we'll let the server handle recording the contact
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fetch contacted listings on page load
+    fetchContactedListings();
+    
+    const contactForm = document.getElementById('myForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(event) {
+        // No need to manually update localStorage here as the server will record this contact
+        // We'll refresh the list of contacted listings when the page reloads after form submission
+      });
+    }
+    
+    handlePopup();
+  });
+
   // add this function to handle the popup
   function handlePopup() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -784,19 +837,9 @@ function onSignIn(googleUser) {
         // Get contacted_id from URL parameters
         const contactedId = urlParams.get('contacted_id');
         if (contactedId) {
-            // Store the contacted listing ID in localStorage
-            const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
-            if (!contactedListings.includes(contactedId)) {
-                contactedListings.push(contactedId);
-                localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
-            }
-
-            // Disable the corresponding button
-            const button = document.querySelector(`button[data-listing-id="${contactedId}"]`);
-            if (button) {
-                button.disabled = true;
-                button.classList.add('contacted');
-            }
+            // Since we're now tracking contacts in the database,
+            // we'll just fetch the latest data
+            fetchContactedListings();
         }
         
         const newUrl = window.location.pathname;
@@ -804,33 +847,6 @@ function onSignIn(googleUser) {
     }
   }
   
-  // When the contact form is submitted, mark the listing as contacted right away
-  document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('myForm');
-    if (contactForm) {
-      contactForm.addEventListener('submit', function(event) {
-        const listingId = document.getElementById('listing_id').value;
-        if (listingId) {
-          // Store the contacted listing ID in localStorage
-          const contactedListings = JSON.parse(localStorage.getItem('contactedListings') || '[]');
-          if (!contactedListings.includes(listingId)) {
-            contactedListings.push(listingId);
-            localStorage.setItem('contactedListings', JSON.stringify(contactedListings));
-          }
-          // Disable the corresponding button immediately
-          const button = document.querySelector(`button[data-listing-id="${listingId}"]`);
-          if (button) {
-            button.disabled = true;
-            button.classList.add('contacted');
-          }
-        }
-      });
-    }
-    
-    disableContactedListings();
-    handlePopup();
-  });
-
   // Add styles for contacted buttons if they don't exist
   if (!document.getElementById('contacted-button-styles')) {
     const style = document.createElement('style');

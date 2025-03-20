@@ -27,6 +27,9 @@ mail = Mail(app)
 
 ny_tz = pytz.timezone('America/New_York')
 
+
+#DB MODEL CLASSES
+
 #class for seller listings
 class SellerListing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,7 +68,7 @@ class BuyerListing(db.Model):
     def __repr__(self):
         return f'<BuyerListing {self.id} - {self.buyer_name}>'
 
-# User model to store user information
+# model to store user information
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -75,6 +78,23 @@ class User(db.Model):
     
     def __repr__(self):
         return f'<User {self.id} - {self.name}>'
+
+# model to store contact records
+class ContactRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    listing_id = db.Column(db.Integer, nullable=False)
+    listing_type = db.Column(db.String(10), nullable=False)  # "seller" or "buyer"
+    user_email = db.Column(db.String(100), nullable=False)
+    contact_time = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ContactRecord {self.id} - {self.user_email} contacted {self.listing_type} {self.listing_id}>'
+
+
+
+
+#SOME OTHER SHIT
+
 
 # function to format time from 24-hour to 12-hour format with AM/PM
 def format_time_to_12hour(time_str):
@@ -143,9 +163,6 @@ def update_expired_listings():
 
     #commit changes to database
     db.session.commit()
-
-
-
 
 
 # PAGE ROUTES
@@ -417,6 +434,15 @@ def contact_form():
 def send_connection_email():
   listing_id = request.form.get('listing_id')
   listing_type = request.form.get('listing_type')
+  sender_email = request.form.get('sender_email')
+  
+  # Create a record of this contact
+  contact_record = ContactRecord(
+    listing_id=listing_id,
+    listing_type=listing_type,
+    user_email=sender_email
+  )
+  db.session.add(contact_record)
   
   if listing_type == 'seller':
     receiver_listing = SellerListing.query.get(listing_id)
@@ -536,8 +562,10 @@ def send_connection_email():
 
   try:
     mail.send(msg)
+    db.session.commit()  # Commit the contact record after successfully sending the email
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
   except Exception as e:
+    db.session.rollback()  # Rollback on error
     return redirect(url_for('index', error='true'))
 
 
@@ -623,6 +651,28 @@ def save_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/get_contacted_listings', methods=['POST'])
+def get_contacted_listings():
+    data = request.get_json()
+    email = data.get('email')
+    
+    if not email:
+        return jsonify({"success": False, "error": "Email is required"}), 400
+    
+    # Query the database for all contacts by this user
+    contacts = ContactRecord.query.filter_by(user_email=email).all()
+    
+    # Format the result as a list of listing IDs with types
+    contacted_listings = [{
+        "id": contact.listing_id, 
+        "type": contact.listing_type
+    } for contact in contacts]
+    
+    return jsonify({
+        "success": True,
+        "contacted_listings": contacted_listings
+    })
 
 if __name__ == '__main__':
    with app.app_context():
