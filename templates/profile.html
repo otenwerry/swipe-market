@@ -160,6 +160,13 @@
         if (userEmail) document.getElementById('email').value = userEmail;
         if (userPhone) document.getElementById('phone').value = userPhone;
         
+        // Function to validate phone number format
+        function isValidPhoneNumber(phone) {
+          // Regex to allow only digits 0-9 and characters + - ( )
+          const phoneRegex = /^[0-9()+\-\s]*$/;
+          return phoneRegex.test(phone);
+        }
+        
         // Handle save button click
         document.getElementById('save-profile').addEventListener('click', function() {
           const name = document.getElementById('name').value;
@@ -169,6 +176,14 @@
           // Validate inputs
           if (!name || !email) {
             showError('Name and email are required');
+            return;
+          }
+          
+          // Validate phone number format
+          if (phone && !isValidPhoneNumber(phone)) {
+            alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
+            // Reset phone field to original value
+            document.getElementById('phone').value = localStorage.getItem('userPhone') || '';
             return;
           }
           
