@@ -26,29 +26,6 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 
 ny_tz = pytz.timezone('America/New_York')
-# test comment
-
-# Utility function to format time from 24-hour to 12-hour format with AM/PM
-def format_time_to_12hour(time_str):
-    # Return early if the time_str is empty or invalid
-    if not time_str or ':' not in time_str:
-        return time_str
-    
-    try:
-        # Parse the time string
-        hours, minutes = map(int, time_str.split(':'))
-        
-        # Determine period and convert hour to 12-hour format
-        period = 'pm' if hours >= 12 else 'am'
-        hour12 = hours % 12
-        if hour12 == 0:
-            hour12 = 12  # 0 hours in 24-hour time is 12 AM
-            
-        # Format the result
-        return f"{hour12}:{minutes:02d} {period}"
-    except (ValueError, TypeError):
-        # Return the original string if parsing fails
-        return time_str
 
 #class for seller listings
 class SellerListing(db.Model):
@@ -69,17 +46,6 @@ class SellerListing(db.Model):
     def __repr__(self):
         return f'<SellerListing {self.id} - {self.seller_name}>'
 
-# User model to store user information
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    phone = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    def __repr__(self):
-        return f'<User {self.id} - {self.name}>'
-
 #class for buyer listings
 class BuyerListing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -98,6 +64,39 @@ class BuyerListing(db.Model):
 
     def __repr__(self):
         return f'<BuyerListing {self.id} - {self.buyer_name}>'
+
+# User model to store user information
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    phone = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<User {self.id} - {self.name}>'
+
+# function to format time from 24-hour to 12-hour format with AM/PM
+def format_time_to_12hour(time_str):
+    # Return early if the time_str is empty or invalid
+    if not time_str or ':' not in time_str:
+        return time_str
+    
+    try:
+        # Parse the time string
+        hours, minutes = map(int, time_str.split(':'))
+        
+        # Determine period and convert hour to 12-hour format
+        period = 'pm' if hours >= 12 else 'am'
+        hour12 = hours % 12
+        if hour12 == 0:
+            hour12 = 12  # 0 hours in 24-hour time is 12 AM
+            
+        # Format the result
+        return f"{hour12}:{minutes:02d} {period}"
+    except (ValueError, TypeError):
+        # Return the original string if parsing fails
+        return time_str
 
 # Update expired listings: sets is_active to False for listings whose end time has passed
 def update_expired_listings():
@@ -144,6 +143,133 @@ def update_expired_listings():
 
     #commit changes to database
     db.session.commit()
+
+
+
+
+
+# PAGE ROUTES
+
+#regular route for the Swipe Market page
+@app.route('/')
+def index():
+    update_expired_listings()
+    # Convert string date and time to datetime for sorting
+    def get_sort_key(listing):
+        try:
+            # Primary sort: date and start time
+            date_str = listing.date
+            time_str = listing.start_time
+            start_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            
+            # Secondary sort: end time
+            end_time = datetime.strptime(listing.end_time, "%H:%M").time()
+            
+            # Tertiary sort: price (lower prices first)
+            price = float(listing.price) if listing.price is not None else float('inf')
+            
+            return (start_time, end_time, price)
+        except:
+            return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
+
+    # Get all listings and sort them
+    seller_listings = SellerListing.query.filter_by(is_active=True).all()
+    buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
+    
+    # Sort listings by multiple criteria
+    seller_listings = sorted(seller_listings, key=get_sort_key)
+    buyer_listings = sorted(buyer_listings, key=get_sort_key)
+    
+    return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
+
+#regular route for the listings page
+@app.route('/listings/<int:listing_id>', methods=['GET'])
+@app.route('/listings', methods=['GET'])
+def listings(listing_id=None):
+    if listing_id:
+        # Try to find the listing in both seller and buyer tables
+        listing = SellerListing.query.get(listing_id)
+        is_seller = True
+        if not listing:
+            listing = BuyerListing.query.get(listing_id)
+            is_seller = False
+            if not listing:
+                return redirect(url_for('index'))
+        return render_template('listings.html', listing=listing, is_seller=is_seller)
+    return render_template('listings.html', listing=None)
+
+"""
+@app.route('/clear_database')
+def clear_database():
+    try:
+        # delete all records from both tables
+        SellerListing.query.delete()
+        BuyerListing.query.delete()
+        # commit changes
+        db.session.commit()
+        return "Database cleared successfully"
+    except Exception as e:
+        db.session.rollback()
+        return f"Error clearing database: {str(e)}"
+"""
+
+@app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
+def edit_listing(listing_id):
+    print("Method: ", request.method)
+    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
+    #user_email = request.form.get('poster_email')
+    print("User email: ", user_email)
+    if not user_email:
+        return redirect(url_for('index'))
+    
+    listing = SellerListing.query.get(listing_id)
+    if not listing:
+        listing = BuyerListing.query.get_or_404(listing_id)
+
+    is_seller = isinstance(listing, SellerListing)
+
+    # Check if the user owns the listing
+    if (is_seller and listing.seller_email != user_email) or \
+       (not is_seller and listing.buyer_email != user_email):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST' and 'dining_hall[]' in request.form:
+        print("Form data received: ", request.form)
+        # Update the listing with new values
+        listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
+        listing.date = request.form.get('date')
+        listing.start_time = request.form.get('start_time')
+        listing.end_time = request.form.get('end_time')
+        try:
+            listing.price = float(request.form.get('price'))
+        except (ValueError, TypeError):
+            listing.price = -1.0
+        listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
+        
+        try:
+            print("Before commit - start_time:", listing.start_time)  # Debug log
+            db.session.commit()
+            print("After commit - start_time:", listing.start_time)  # Debug log
+            return redirect(url_for('index'))
+        except Exception as e:
+            print("Error updating:", str(e))
+            db.session.rollback()
+            return "Error updating listing", 500
+
+    # Show the edit form for both GET requests and initial POST verification
+    return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+
+
+
+
+#OTHER ROUTES
+
+
 
 #route for taking buyer listings from the form
 #and putting them into the database, then send
@@ -414,68 +540,7 @@ def send_connection_email():
   except Exception as e:
     return redirect(url_for('index', error='true'))
 
-#regular route for the Swipe Market page
-@app.route('/')
-def index():
-    update_expired_listings()
-    # Convert string date and time to datetime for sorting
-    def get_sort_key(listing):
-        try:
-            # Primary sort: date and start time
-            date_str = listing.date
-            time_str = listing.start_time
-            start_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
-            
-            # Secondary sort: end time
-            end_time = datetime.strptime(listing.end_time, "%H:%M").time()
-            
-            # Tertiary sort: price (lower prices first)
-            price = float(listing.price) if listing.price is not None else float('inf')
-            
-            return (start_time, end_time, price)
-        except:
-            return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
 
-    # Get all listings and sort them
-    seller_listings = SellerListing.query.filter_by(is_active=True).all()
-    buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
-    
-    # Sort listings by multiple criteria
-    seller_listings = sorted(seller_listings, key=get_sort_key)
-    buyer_listings = sorted(buyer_listings, key=get_sort_key)
-    
-    return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
-
-#regular route for the listings page
-@app.route('/listings/<int:listing_id>', methods=['GET'])
-@app.route('/listings', methods=['GET'])
-def listings(listing_id=None):
-    if listing_id:
-        # Try to find the listing in both seller and buyer tables
-        listing = SellerListing.query.get(listing_id)
-        is_seller = True
-        if not listing:
-            listing = BuyerListing.query.get(listing_id)
-            is_seller = False
-            if not listing:
-                return redirect(url_for('index'))
-        return render_template('listings.html', listing=listing, is_seller=is_seller)
-    return render_template('listings.html', listing=None)
-
-"""
-@app.route('/clear_database')
-def clear_database():
-    try:
-        # delete all records from both tables
-        SellerListing.query.delete()
-        BuyerListing.query.delete()
-        # commit changes
-        db.session.commit()
-        return "Database cleared successfully"
-    except Exception as e:
-        db.session.rollback()
-        return f"Error clearing database: {str(e)}"
-"""
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
 def delete_listing(listing_id):
@@ -501,51 +566,6 @@ def delete_listing(listing_id):
     db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
-def edit_listing(listing_id):
-    print("Method: ", request.method)
-    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
-    #user_email = request.form.get('poster_email')
-    print("User email: ", user_email)
-    if not user_email:
-        return redirect(url_for('index'))
-    
-    listing = SellerListing.query.get(listing_id)
-    if not listing:
-        listing = BuyerListing.query.get_or_404(listing_id)
-
-    is_seller = isinstance(listing, SellerListing)
-
-    # Check if the user owns the listing
-    if (is_seller and listing.seller_email != user_email) or \
-       (not is_seller and listing.buyer_email != user_email):
-        return redirect(url_for('index'))
-
-    if request.method == 'POST' and 'dining_hall[]' in request.form:
-        print("Form data received: ", request.form)
-        # Update the listing with new values
-        listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
-        listing.date = request.form.get('date')
-        listing.start_time = request.form.get('start_time')
-        listing.end_time = request.form.get('end_time')
-        try:
-            listing.price = float(request.form.get('price'))
-        except (ValueError, TypeError):
-            listing.price = -1.0
-        listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
-        
-        try:
-            print("Before commit - start_time:", listing.start_time)  # Debug log
-            db.session.commit()
-            print("After commit - start_time:", listing.start_time)  # Debug log
-            return redirect(url_for('index'))
-        except Exception as e:
-            print("Error updating:", str(e))
-            db.session.rollback()
-            return "Error updating listing", 500
-
-    # Show the edit form for both GET requests and initial POST verification
-    return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
 
 # Routes for user profile management
 @app.route('/api/check_user', methods=['POST'])
@@ -603,10 +623,6 @@ def save_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/profile')
-def profile():
-    return render_template('profile.html')
 
 if __name__ == '__main__':
    with app.app_context():
