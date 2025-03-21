@@ -571,7 +571,7 @@ def send_connection_email():
     subject = "[Swipe Market] Potential Sale"
     price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
     body = (
-      f"Hello {buyer_name},\n\n"
+      f"Hi {buyer_name},\n\n"
       f"{seller_name} is interested in selling a swipe to you. "
       f"You can reach them at {seller_email}"
     )
@@ -621,7 +621,7 @@ def send_connection_email():
     subject = "[Swipe Market] Potential Sale"
     price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
     body = (
-      f"Hello {seller_name},\n\n"
+      f"Hi {seller_name},\n\n"
       f"{buyer_name} is interested in buying a swipe from you. "
       f"You can reach them at {buyer_email}"
     )
