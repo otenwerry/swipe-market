@@ -171,7 +171,7 @@ function onSignIn(googleUser) {
     .then(response => response.json())
     .then(data => {
       if (data.banned) {
-        alert('Please use your Columbia or Barnard email to sign in.');
+        alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
         return;
       }
       
