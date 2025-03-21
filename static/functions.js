@@ -212,9 +212,9 @@ function onSignIn(googleUser) {
     
     // Fetch contacted listings from the server and update the UI
     fetchContactedListings();
-
-    // Send the user's email to the server for block filtering
-    sendUserEmailToServer();
+    
+    // Check for blocks and update UI accordingly
+    checkBlockedListings();
   
     console.log('User logged in:', responsePayload.email);
   }
