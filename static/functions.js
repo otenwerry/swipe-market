@@ -156,67 +156,93 @@ function onSignIn(googleUser) {
       return;
     }
     
-    // Extract just the first name
-    const fullName = responsePayload.name;
-    const firstName = fullName.split(' ')[0];
+    // Extract UNI from email
+    const emailParts = responsePayload.email.split('@');
+    const uni = emailParts[0].toLowerCase();
     
-    // Store the credential in localStorage
-    localStorage.setItem('googleCredential', response.credential);
-    localStorage.setItem('userName', firstName);
-    localStorage.setItem('userImage', responsePayload.picture);
-    localStorage.setItem('userEmail', responsePayload.email);
-  
-    //hide sign in button
-    document.getElementById('g_id_signin').style.display = 'none';
-  
-    //display profile icon
-    const profileIcon = document.getElementById('profile-icon');
-    profileIcon.src = responsePayload.picture;
-    document.getElementById('profile-menu').style.display = 'inline-block';
-  
-    //toggle dropdown
-    profileIcon.addEventListener('click', function() {
-      this.parentElement.classList.toggle('active');
-    });
-
-    // Check if user exists in our database
-    checkUserExistence(responsePayload.email);
-  
-    // Try to populate form fields if they exist
-    const posterNameField = document.getElementById('poster_name');
-    const posterEmailField = document.getElementById('poster_email');
-    
-    if (posterNameField) {
-      posterNameField.value = firstName;
-    }
-    if (posterEmailField) {
-      posterEmailField.value = responsePayload.email;
-    }
-  
-    // Update UI based on user's email
-    const userEmail = responsePayload.email;
-    
-    // Show edit/delete buttons for listings owned by this user
-    document.querySelectorAll('.listing-actions').forEach(actions => {
-      const isOwner = actions.dataset.ownerEmail === userEmail;
-      const contactButton = actions.previousElementSibling;
-      
-      if (isOwner) {
-        actions.style.display = 'inline-block';
-        contactButton.style.display = 'none';
-      } else {
-        actions.style.display = 'none';
-        contactButton.style.display = 'inline-block';
+    // Check if UNI is banned before proceeding
+    fetch('/api/check_banned_uni', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uni: uni }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.banned) {
+        alert('Please use your Columbia or Barnard email to sign in.');
+        return;
       }
+      
+      // Continue with the normal sign-in process
+      // Extract just the first name
+      const fullName = responsePayload.name;
+      const firstName = fullName.split(' ')[0];
+      
+      // Store the credential in localStorage
+      localStorage.setItem('googleCredential', response.credential);
+      localStorage.setItem('userName', firstName);
+      localStorage.setItem('userImage', responsePayload.picture);
+      localStorage.setItem('userEmail', responsePayload.email);
+    
+      //hide sign in button
+      document.getElementById('g_id_signin').style.display = 'none';
+    
+      //display profile icon
+      const profileIcon = document.getElementById('profile-icon');
+      profileIcon.src = responsePayload.picture;
+      document.getElementById('profile-menu').style.display = 'inline-block';
+    
+      //toggle dropdown
+      profileIcon.addEventListener('click', function() {
+        this.parentElement.classList.toggle('active');
+      });
+
+      // Check if user exists in our database
+      checkUserExistence(responsePayload.email);
+    
+      // Try to populate form fields if they exist
+      const posterNameField = document.getElementById('poster_name');
+      const posterEmailField = document.getElementById('poster_email');
+      
+      if (posterNameField) {
+        posterNameField.value = firstName;
+      }
+      if (posterEmailField) {
+        posterEmailField.value = responsePayload.email;
+      }
+    
+      // Update UI based on user's email
+      const userEmail = responsePayload.email;
+      
+      // Show edit/delete buttons for listings owned by this user
+      document.querySelectorAll('.listing-actions').forEach(actions => {
+        const isOwner = actions.dataset.ownerEmail === userEmail;
+        const contactButton = actions.previousElementSibling;
+        
+        if (isOwner) {
+          actions.style.display = 'inline-block';
+          contactButton.style.display = 'none';
+        } else {
+          actions.style.display = 'none';
+          contactButton.style.display = 'inline-block';
+        }
+      });
+      
+      // Fetch contacted listings from the server and update the UI
+      fetchContactedListings();
+      
+      // Check for blocks and update UI accordingly
+      checkBlockedListings();
+    
+      console.log('User logged in:', responsePayload.email);
+    })
+    .catch(error => {
+      console.error('Error checking banned UNI:', error);
+      // If there's an error checking the ban status, deny login to be safe
+      alert('An error occurred during sign in. Please try again later.');
     });
-    
-    // Fetch contacted listings from the server and update the UI
-    fetchContactedListings();
-    
-    // Check for blocks and update UI accordingly
-    checkBlockedListings();
-  
-    console.log('User logged in:', responsePayload.email);
   }
 
   // Function to check if user exists in our database
