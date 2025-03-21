@@ -987,25 +987,52 @@ function onSignIn(googleUser) {
     const autoDeleteId = urlParams.get('auto_delete');
     
     if (autoDeleteId) {
-      // First, clean the URL to prevent this function running again on page reload
-      const url = new URL(window.location);
-      url.searchParams.delete('auto_delete');
-      window.history.replaceState({}, '', url);
-      
       // Wait for Google sign-in to complete
       const checkCredentialAndDelete = setInterval(function() {
         const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
           clearInterval(checkCredentialAndDelete);
           
-          // Use the existing deleteListing function which already has confirm dialog
-          deleteListing(autoDeleteId);
+          // Trigger the delete with confirmation
+          if (confirm('Are you sure you want to delete this listing?')) {
+            const formData = new FormData();
+            formData.append('user_email', userEmail);
+            
+            fetch(`/delete_listing/${autoDeleteId}`, {
+              method: 'POST',
+              body: formData
+            }).then(response => {
+              if (response.ok) {
+                // Show success message
+                alert('Listing deleted successfully!');
+                // Clean URL and reload
+                const url = new URL(window.location);
+                url.searchParams.delete('auto_delete');
+                window.history.replaceState({}, '', url);
+                window.location.reload();
+              } else {
+                alert('You can only delete your own listings.');
+              }
+            }).catch(error => {
+              console.error('Error deleting listing:', error);
+              alert('Error deleting listing. Please try again.');
+            });
+          } else {
+            // Clean URL if user cancels
+            const url = new URL(window.location);
+            url.searchParams.delete('auto_delete');
+            window.history.replaceState({}, '', url);
+          }
         }
       }, 500); // Check every 500ms
       
       // Add a timeout after 10 seconds to avoid infinite checking
       setTimeout(function() {
         clearInterval(checkCredentialAndDelete);
+        // Clean URL if authentication didn't happen
+        const url = new URL(window.location);
+        url.searchParams.delete('auto_delete');
+        window.history.replaceState({}, '', url);
       }, 10000);
     }
   }
