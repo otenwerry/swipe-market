@@ -263,7 +263,7 @@
     margin-top: 10px;
   }
   
-  .delete-button,.edit-button {
+  .delete-button,.edit-button, .block-button {
     font-size: 1.5rem;
     padding: 10px 20px;
     background-color: #ff4444;

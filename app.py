@@ -90,6 +90,21 @@ class ContactRecord(db.Model):
     def __repr__(self):
         return f'<ContactRecord {self.id} - {self.user_email} contacted {self.listing_type} {self.listing_id}>'
 
+# model to store blocked users
+class BlockedUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    blocker_uni = db.Column(db.String(20), nullable=False)
+    blocked_uni = db.Column(db.String(20), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Ensure a user can't block the same UNI twice
+    __table_args__ = (
+        db.UniqueConstraint('blocker_uni', 'blocked_uni', name='unique_block'),
+    )
+    
+    def __repr__(self):
+        return f'<BlockedUser {self.id} - {self.blocker_uni} blocked {self.blocked_uni}>'
+
 
 
 
@@ -436,6 +451,45 @@ def send_connection_email():
   listing_type = request.form.get('listing_type')
   sender_email = request.form.get('sender_email')
   
+  # Get the listing and owner's email
+  if listing_type == 'seller':
+    receiver_listing = SellerListing.query.get(listing_id)
+    if not receiver_listing:
+      flash("Error: Seller listing not found.", "error")
+      return redirect(url_for('index'))
+    receiver_email = receiver_listing.seller_email
+  else:
+    receiver_listing = BuyerListing.query.get(listing_id)
+    if not receiver_listing:
+      flash("Error: Buyer listing not found.", "error")
+      return redirect(url_for('index'))
+    receiver_email = receiver_listing.buyer_email
+  
+  # Extract UNIs for block checking
+  sender_uni = extract_uni(sender_email)
+  receiver_uni = extract_uni(receiver_email)
+  
+  # Check if sender has blocked receiver
+  if sender_uni and receiver_uni:
+    sender_blocked_receiver = BlockedUser.query.filter_by(
+      blocker_uni=sender_uni, 
+      blocked_uni=receiver_uni
+    ).first()
+    
+    if sender_blocked_receiver:
+      # User tried to contact someone they blocked
+      return redirect(url_for('index', show_popup='true', blocked='you-blocked-them'))
+  
+    # Check if receiver has blocked sender
+    receiver_blocked_sender = BlockedUser.query.filter_by(
+      blocker_uni=receiver_uni, 
+      blocked_uni=sender_uni
+    ).first()
+    
+    if receiver_blocked_sender:
+      # User was blocked by the listing owner
+      return redirect(url_for('index', show_popup='true', blocked='they-blocked-you'))
+  
   # Create a record of this contact
   contact_record = ContactRecord(
     listing_id=int(listing_id),  # Convert listing_id to integer
@@ -443,17 +497,6 @@ def send_connection_email():
     user_email=sender_email
   )
   db.session.add(contact_record)
-  
-  if listing_type == 'seller':
-    receiver_listing = SellerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Seller listing not found.", "error")
-      return redirect(url_for('index'))
-  else:
-    receiver_listing = BuyerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Buyer listing not found.", "error")
-      return redirect(url_for('index'))
   
   # If receiver is buyer
   if isinstance(receiver_listing, BuyerListing):
@@ -674,6 +717,117 @@ def get_contacted_listings():
     return jsonify({
         "success": True,
         "contacted_listings": contacted_listings
+    })
+
+# Extract UNI from an email address
+def extract_uni(email):
+    if not email:
+        return None
+    
+    # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
+    if '@columbia.edu' in email or '@barnard.edu' in email:
+        return email.split('@')[0].lower()
+    
+    return None
+
+# Routes for blocked users
+@app.route('/api/block_user', methods=['POST'])
+def block_user():
+    data = request.get_json()
+    blocker_email = data.get('blocker_email')
+    blocked_uni = data.get('blocked_uni', '').strip().lower()
+    
+    if not blocker_email:
+        return jsonify({"success": False, "error": "Your email is required"}), 400
+    
+    if not blocked_uni:
+        return jsonify({"success": False, "error": "UNI to block is required"}), 400
+    
+    # Extract blocker's UNI
+    blocker_uni = extract_uni(blocker_email)
+    if not blocker_uni:
+        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+    
+    # Don't allow self-blocking
+    if blocker_uni == blocked_uni:
+        return jsonify({"success": False, "error": "You cannot block yourself"}), 400
+    
+    # Check if block already exists
+    existing_block = BlockedUser.query.filter_by(
+        blocker_uni=blocker_uni,
+        blocked_uni=blocked_uni
+    ).first()
+    
+    if existing_block:
+        return jsonify({"success": True, "message": "User was already blocked"})
+    
+    # Create new block
+    new_block = BlockedUser(
+        blocker_uni=blocker_uni,
+        blocked_uni=blocked_uni
+    )
+    
+    try:
+        db.session.add(new_block)
+        db.session.commit()
+        return jsonify({"success": True, "message": "User blocked successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/unblock_user', methods=['POST'])
+def unblock_user():
+    data = request.get_json()
+    blocker_email = data.get('blocker_email')
+    blocked_uni = data.get('blocked_uni', '').strip().lower()
+    
+    if not blocker_email or not blocked_uni:
+        return jsonify({"success": False, "error": "Both emails are required"}), 400
+    
+    # Extract blocker's UNI
+    blocker_uni = extract_uni(blocker_email)
+    if not blocker_uni:
+        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+    
+    # Find and remove the block
+    block = BlockedUser.query.filter_by(
+        blocker_uni=blocker_uni,
+        blocked_uni=blocked_uni
+    ).first()
+    
+    if not block:
+        return jsonify({"success": True, "message": "User was not blocked"})
+    
+    try:
+        db.session.delete(block)
+        db.session.commit()
+        return jsonify({"success": True, "message": "User unblocked successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/get_blocked_users', methods=['POST'])
+def get_blocked_users():
+    data = request.get_json()
+    email = data.get('email')
+    
+    if not email:
+        return jsonify({"success": False, "error": "Email is required"}), 400
+    
+    # Extract user's UNI
+    user_uni = extract_uni(email)
+    if not user_uni:
+        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+    
+    # Get all blocked users
+    blocked_users = BlockedUser.query.filter_by(blocker_uni=user_uni).all()
+    
+    # Format the result
+    blocked_unis = [block.blocked_uni for block in blocked_users]
+    
+    return jsonify({
+        "success": True,
+        "blocked_unis": blocked_unis
     })
 
 if __name__ == '__main__':
