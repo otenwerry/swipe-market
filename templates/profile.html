@@ -152,6 +152,23 @@
             <button id="save-profile" type="button">Save Changes</button>
           </div>
         </div>
+        
+        <!-- Block User Section -->
+        <div class="profile-form" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
+          <p style="color: #666;">Enter the UNI of users you'd like to block. Blocked users won't be able to contact you or see your listings.</p>
+          <div style="display: flex; flex-direction: column;">
+            <label for="block-uni">UNI to Block</label>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="block-uni" placeholder="abc1234" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+              <button id="block-button" class="block-button" style="background-color: #f44336;">Block</button>
+            </div>
+          </div>
+          
+          <div id="blocked-list">
+            <p id="no-blocks-message" style="color: #666; font-style: italic;">You haven't blocked any users yet.</p>
+            <ul id="blocked-unis-list" style="list-style-type: none; padding: 0;"></ul>
+          </div>
+        </div>
       </div>
       
       <div class="footer"><p></p></div>
@@ -224,6 +241,182 @@
             console.error('Error:', error);
           });
         });
+        
+        // Block User Functionality
+        const blockUniInput = document.getElementById('block-uni');
+        const blockButton = document.getElementById('block-button');
+        const blockedUnisList = document.getElementById('blocked-unis-list');
+        const noBlocksMessage = document.getElementById('no-blocks-message');
+        
+        // Function to load blocked UNIs
+        function loadBlockedUsers() {
+          const userEmail = localStorage.getItem('userEmail');
+          if (!userEmail) return;
+          
+          fetch('/api/get_blocked_users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: userEmail
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const blockedUnis = data.blocked_unis || [];
+              updateBlockedUnisList(blockedUnis);
+            } else {
+              showError(data.error || 'Error loading blocked users');
+            }
+          })
+          .catch(error => {
+            showError('Error connecting to server');
+            console.error('Error:', error);
+          });
+        }
+        
+        // Function to update the blocked UNIs list in the UI
+        function updateBlockedUnisList(blockedUnis) {
+          blockedUnisList.innerHTML = '';
+          
+          if (blockedUnis.length === 0) {
+            noBlocksMessage.style.display = 'block';
+            return;
+          }
+          
+          noBlocksMessage.style.display = 'none';
+          
+          blockedUnis.forEach(uni => {
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+            li.style.padding = '8px 0';
+            li.style.borderBottom = '1px solid #eee';
+            
+            const uniSpan = document.createElement('span');
+            uniSpan.textContent = uni;
+            uniSpan.style.fontWeight = '500';
+            
+            const unblockButton = document.createElement('button');
+            unblockButton.textContent = 'Unblock';
+            unblockButton.style.backgroundColor = '#f1f1f1';
+            unblockButton.style.color = '#333';
+            unblockButton.style.border = 'none';
+            unblockButton.style.padding = '8px 12px';
+            unblockButton.style.borderRadius = '4px';
+            unblockButton.style.cursor = 'pointer';
+            unblockButton.style.fontSize = '14px';
+            unblockButton.style.transition = 'background-color 0.3s';
+            
+            unblockButton.addEventListener('mouseover', function() {
+              this.style.backgroundColor = '#e0e0e0';
+            });
+            
+            unblockButton.addEventListener('mouseout', function() {
+              this.style.backgroundColor = '#f1f1f1';
+            });
+            
+            unblockButton.addEventListener('click', function() {
+              unblockUser(uni);
+            });
+            
+            li.appendChild(uniSpan);
+            li.appendChild(unblockButton);
+            blockedUnisList.appendChild(li);
+          });
+        }
+        
+        // Function to block a user
+        function blockUser(uni) {
+          const userEmail = localStorage.getItem('userEmail');
+          if (!userEmail) {
+            showError('You must be logged in to block users');
+            return;
+          }
+          
+          fetch('/api/block_user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              blocker_email: userEmail,
+              blocked_uni: uni
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showSuccess(data.message || 'User blocked successfully');
+              loadBlockedUsers();
+              blockUniInput.value = '';
+            } else {
+              showError(data.error || 'Error blocking user');
+            }
+          })
+          .catch(error => {
+            showError('Error connecting to server');
+            console.error('Error:', error);
+          });
+        }
+        
+        // Function to unblock a user
+        function unblockUser(uni) {
+          const userEmail = localStorage.getItem('userEmail');
+          if (!userEmail) {
+            showError('You must be logged in to unblock users');
+            return;
+          }
+          
+          fetch('/api/unblock_user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              blocker_email: userEmail,
+              blocked_uni: uni
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showSuccess(data.message || 'User unblocked successfully');
+              loadBlockedUsers();
+            } else {
+              showError(data.error || 'Error unblocking user');
+            }
+          })
+          .catch(error => {
+            showError('Error connecting to server');
+            console.error('Error:', error);
+          });
+        }
+        
+        // Handle block button click
+        blockButton.addEventListener('click', function() {
+          const uni = blockUniInput.value.trim().toLowerCase();
+          
+          if (!uni) {
+            showError('Please enter a UNI to block');
+            return;
+          }
+          
+          // Basic UNI validation (simple pattern check)
+          const uniPattern = /^[a-z0-9]{2,8}$/;
+          if (!uniPattern.test(uni)) {
+            showError('Please enter a valid UNI (letters and numbers only, 2-8 characters)');
+            return;
+          }
+          
+          blockUser(uni);
+        });
+        
+        // Load blocked UNIs on page load
+        loadBlockedUsers();
         
         function showSuccess(message) {
           const successMsg = document.getElementById('success-message');
