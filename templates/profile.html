@@ -178,7 +178,7 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         // Get banned words list from server
-        const bannedWords = {{ banned_words|tojson }};
+        const bannedWords = JSON.parse('{{ banned_words|tojson|safe }}');
         
         // Populate form with user data from localStorage
         const userName = localStorage.getItem('userName');
@@ -373,8 +373,8 @@
           .then(data => {
             if (data.success) {
               showSuccess(data.message || 'User blocked successfully');
-              loadBlockedUsers();
-              blockUniInput.value = '';
+              // Reload the home page with email parameter to apply filtering
+              window.location.href = `/?email=${encodeURIComponent(userEmail)}`;
             } else {
               showError(data.error || 'Error blocking user');
             }
@@ -407,7 +407,8 @@
           .then(data => {
             if (data.success) {
               showSuccess(data.message || 'User unblocked successfully');
-              loadBlockedUsers();
+              // Reload the home page with email parameter to apply filtering
+              window.location.href = `/?email=${encodeURIComponent(userEmail)}`;
             } else {
               showError(data.error || 'Error unblocking user');
             }
