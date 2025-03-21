@@ -35,6 +35,8 @@ function onSignIn(googleUser) {
   document.addEventListener('DOMContentLoaded', function() {
     disableContactedListings();
     handlePopup();
+    // Check for auto delete parameter
+    checkAutoDelete();
     // set default date to today
     const today = new Date();
     const dateInput = document.getElementById('date');
@@ -895,8 +897,13 @@ function onSignIn(googleUser) {
 
   // add this function to handle the popup
   function handlePopup() {
+    // Check if URL has show_popup=true
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('show_popup') === 'true') {
+    const showPopup = urlParams.get('show_popup');
+    const contactedId = urlParams.get('contacted_id');
+    const error = urlParams.get('error');
+    
+    if (showPopup === 'true') {
         const popup = document.getElementById('popup');
         const popupMessage = document.getElementById('popup-message');
         
@@ -905,7 +912,6 @@ function onSignIn(googleUser) {
         popupMessage.style.color = '#000'; // Reset to default color
         
         // Check which listing was contacted
-        const contactedId = urlParams.get('contacted_id');
         if (contactedId) {
             const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
             allButtons.forEach(button => {
@@ -916,9 +922,25 @@ function onSignIn(googleUser) {
         
         popup.style.display = 'block';
         
-        // Remove popup parameters from URL without reloading page
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
+        // Automatically hide the popup after 3 seconds
+        setTimeout(function() {
+            popup.style.display = 'none';
+        }, 3000);
+        
+        // Clean up the URL by removing the query parameter
+        const url = new URL(window.location);
+        url.searchParams.delete('show_popup');
+        url.searchParams.delete('contacted_id');
+        window.history.replaceState({}, '', url);
+    }
+    
+    if (error === 'true') {
+        alert('There was an error sending the connection email. Please try again later.');
+        
+        // Clean up the URL
+        const url = new URL(window.location);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, '', url);
     }
   }
   
@@ -956,6 +978,62 @@ function onSignIn(googleUser) {
       if (window.location.href !== currentUrl.href) {
         window.location.href = currentUrl.href;
       }
+    }
+  }
+
+  // Function to check if auto_delete parameter is in the URL and trigger delete if it is
+  function checkAutoDelete() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoDeleteId = urlParams.get('auto_delete');
+    
+    if (autoDeleteId) {
+      // Wait for Google sign-in to complete
+      const checkCredentialAndDelete = setInterval(function() {
+        const userEmail = localStorage.getItem('userEmail');
+        if (userEmail) {
+          clearInterval(checkCredentialAndDelete);
+          
+          // Trigger the delete with confirmation
+          if (confirm('Are you sure you want to delete this listing?')) {
+            const formData = new FormData();
+            formData.append('user_email', userEmail);
+            
+            fetch(`/delete_listing/${autoDeleteId}`, {
+              method: 'POST',
+              body: formData
+            }).then(response => {
+              if (response.ok) {
+                // Show success message
+                alert('Listing deleted successfully!');
+                // Clean URL and reload
+                const url = new URL(window.location);
+                url.searchParams.delete('auto_delete');
+                window.history.replaceState({}, '', url);
+                window.location.reload();
+              } else {
+                alert('You can only delete your own listings.');
+              }
+            }).catch(error => {
+              console.error('Error deleting listing:', error);
+              alert('Error deleting listing. Please try again.');
+            });
+          } else {
+            // Clean URL if user cancels
+            const url = new URL(window.location);
+            url.searchParams.delete('auto_delete');
+            window.history.replaceState({}, '', url);
+          }
+        }
+      }, 500); // Check every 500ms
+      
+      // Add a timeout after 10 seconds to avoid infinite checking
+      setTimeout(function() {
+        clearInterval(checkCredentialAndDelete);
+        // Clean URL if authentication didn't happen
+        const url = new URL(window.location);
+        url.searchParams.delete('auto_delete');
+        window.history.replaceState({}, '', url);
+      }, 10000);
     }
   }
   
