@@ -833,6 +833,20 @@ def get_blocked_users():
         "blocked_unis": blocked_unis
     })
 
+@app.route('/api/check_banned_uni', methods=['POST'])
+def check_banned_uni():
+    data = request.get_json()
+    uni = data.get('uni', '').lower()
+    
+    if not uni:
+        return jsonify({"banned": False})
+    
+    # Get banned UNIs from environment variable
+    banned_unis_str = os.environ.get('BANNED_UNIS', '')
+    banned_unis = [u.strip().lower() for u in banned_unis_str.split(',')] if banned_unis_str else []
+    
+    return jsonify({"banned": uni in banned_unis})
+
 if __name__ == '__main__':
    with app.app_context():
      db.create_all()
