@@ -204,15 +204,66 @@ def index():
         except:
             return (datetime.max, time.max, float('inf'))  # Put invalid entries at the end
 
-    # Get all listings and sort them
+    # Get all active listings
     seller_listings = SellerListing.query.filter_by(is_active=True).all()
     buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
+    
+    # Try to get user email from multiple sources
+    current_user_email = request.args.get('email')
+    if not current_user_email:
+        current_user_email = request.cookies.get('userEmail')
+    if not current_user_email:
+        current_user_email = session.get('user_email')
+    
+    print(f"Current user email: {current_user_email}")
+    
+    if current_user_email:
+        current_user_uni = extract_uni(current_user_email)
+        print(f"Current user UNI: {current_user_uni}")
+        
+        if current_user_uni:
+            # Get lists of UNIs that the current user has blocked and that have blocked the current user
+            blocked_by_user = [block.blocked_uni for block in BlockedUser.query.filter_by(blocker_uni=current_user_uni).all()]
+            blocked_user = [block.blocker_uni for block in BlockedUser.query.filter_by(blocked_uni=current_user_uni).all()]
+            
+            # Combine both lists to get all UNIs that should be filtered out
+            all_blocked_unis = set(blocked_by_user + blocked_user)
+            print(f"All blocked UNIs: {all_blocked_unis}")
+            
+            # Filter seller listings
+            filtered_seller_listings = []
+            for listing in seller_listings:
+                seller_uni = extract_uni(listing.seller_email)
+                if seller_uni not in all_blocked_unis:
+                    filtered_seller_listings.append(listing)
+                else:
+                    print(f"Filtering out seller listing {listing.id} from {seller_uni}")
+            
+            # Filter buyer listings
+            filtered_buyer_listings = []
+            for listing in buyer_listings:
+                buyer_uni = extract_uni(listing.buyer_email)
+                if buyer_uni not in all_blocked_unis:
+                    filtered_buyer_listings.append(listing)
+                else:
+                    print(f"Filtering out buyer listing {listing.id} from {buyer_uni}")
+            
+            seller_listings = filtered_seller_listings
+            buyer_listings = filtered_buyer_listings
     
     # Sort listings by multiple criteria
     seller_listings = sorted(seller_listings, key=get_sort_key)
     buyer_listings = sorted(buyer_listings, key=get_sort_key)
     
-    return render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings)
+    # Create a response
+    response = make_response(render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings))
+    
+    # If we have a user email, store it in the session and as a cookie
+    if current_user_email:
+        session['user_email'] = current_user_email
+        response.set_cookie('userEmail', current_user_email, max_age=86400)
+    
+    return response
 
 #regular route for the listings page
 @app.route('/listings/<int:listing_id>', methods=['GET'])
@@ -472,26 +523,21 @@ def send_connection_email():
   sender_uni = extract_uni(sender_email)
   receiver_uni = extract_uni(receiver_email)
   
-  # Check if sender has blocked receiver
+  # Check if sender has blocked receiver or receiver has blocked sender
   if sender_uni and receiver_uni:
     sender_blocked_receiver = BlockedUser.query.filter_by(
       blocker_uni=sender_uni, 
       blocked_uni=receiver_uni
     ).first()
     
-    if sender_blocked_receiver:
-      # User tried to contact someone they blocked
-      return redirect(url_for('index', show_popup='true', blocked='you-blocked-them'))
-  
-    # Check if receiver has blocked sender
     receiver_blocked_sender = BlockedUser.query.filter_by(
       blocker_uni=receiver_uni, 
       blocked_uni=sender_uni
     ).first()
     
-    if receiver_blocked_sender:
-      # User was blocked by the listing owner
-      return redirect(url_for('index', show_popup='true', blocked='they-blocked-you'))
+    # If either user has blocked the other, just redirect back to index page silently
+    if sender_blocked_receiver or receiver_blocked_sender:
+      return redirect(url_for('index'))
   
   # Create a record of this contact
   contact_record = ContactRecord(

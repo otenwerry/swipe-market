@@ -212,9 +212,9 @@ function onSignIn(googleUser) {
     
     // Fetch contacted listings from the server and update the UI
     fetchContactedListings();
-    
-    // Check for blocks and update UI accordingly
-    checkBlockedListings();
+
+    // Send the user's email to the server for block filtering
+    sendUserEmailToServer();
   
     console.log('User logged in:', responsePayload.email);
   }
@@ -418,10 +418,14 @@ function onSignIn(googleUser) {
   
     console.log('User logged out');
   
+    // Reload the page to clear blocked listings filter
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('email');
+    
     google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
       console.log('Token revoked');
-      // Redirect to the homepage 
-      window.location.href = '/';
+      // Redirect to the new URL without the email parameter
+      window.location.href = currentUrl.href;
     });
   }
   // --- UTILITY FUNCTIONS ---
@@ -658,12 +662,22 @@ function onSignIn(googleUser) {
 
         // Check if user exists in database on page load
         checkUserExistence(payload.email);
+        
+        // Send the user's email to the server for block filtering
+        sendUserEmailToServer();
       } else {
         // Token expired, remove it
         localStorage.removeItem('googleCredential');
         console.log('Token expired');  // Debug log
       }
-    };
+    } else {
+      // If user isn't logged in, make sure UI is correct
+      document.getElementById('g_id_signin').style.display = 'block';
+      const profileMenu = document.getElementById('profile-menu');
+      if (profileMenu) {
+        profileMenu.style.display = 'none';
+      }
+    }
   
     document.getElementById('postListingsButton').addEventListener('click', function(event) {
       if(!requireSignIn(event)) return;
@@ -797,80 +811,18 @@ function onSignIn(googleUser) {
 
   // Function to check if listings are from blocked users or users who blocked the current user
   function checkBlockedListings() {
-    const userEmail = localStorage.getItem('userEmail');
-    if (!userEmail) {
-      return;
-    }
-    
-    // Only proceed if the user has a Columbia/Barnard email
-    if (!userEmail.endsWith('@columbia.edu') && !userEmail.endsWith('@barnard.edu')) {
-      return;
-    }
-    
-    // Extract the user's UNI
-    const userUni = userEmail.split('@')[0].toLowerCase();
-    
-    // Check all listings to see if they're from blocked users
-    fetch('/api/get_blocked_users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: userEmail }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const blockedUnis = data.blocked_unis || [];
-        
-        if (blockedUnis.length > 0) {
-          // Check each listing to see if it's from a blocked user
-          document.querySelectorAll('.contact-button').forEach(button => {
-            const listingOwnerEmail = button.parentElement.querySelector('.listing-actions')?.dataset?.ownerEmail;
-            
-            if (listingOwnerEmail && 
-                (listingOwnerEmail.endsWith('@columbia.edu') || listingOwnerEmail.endsWith('@barnard.edu'))) {
-              const ownerUni = listingOwnerEmail.split('@')[0].toLowerCase();
-              
-              if (blockedUnis.includes(ownerUni)) {
-                // This listing is from a user we blocked
-                button.disabled = true;
-                button.classList.add('contacted');
-                button.setAttribute('data-blocked', 'you-blocked-them');
-                button.setAttribute('title', 'You have blocked this user');
-                
-                // Update click handler to show block message
-                button.onclick = function() {
-                  showBlockMessage('You have blocked this user');
-                  return false;
-                };
-              }
-            }
-          });
-        }
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching blocked users:', error);
-    });
-    
-    // Also check if the current user is blocked by any listing owners
-    // This would require a new API endpoint that's beyond the scope here
-    // but in a real implementation, you'd check this as well
+    // This function is now empty as blocking will be handled by the server
+    // Listings from blocked users will be filtered out before display
+    return;
   }
 
   // Function to show block message popup
   function showBlockMessage(message) {
-    const popup = document.getElementById('popup');
-    const popupMessage = document.getElementById('popup-message');
-    
-    popupMessage.textContent = message;
-    popupMessage.style.color = '#f44336'; // Red color for block messages
-    
-    popup.style.display = 'block';
+    // This function is no longer needed
+    return;
   }
 
-  // Updated function to disable contacted buttons using server data and check blocks
+  // Updated function to disable contacted buttons using server data
   function disableContactedListings() {
     // Get the current user's email
     const userEmail = localStorage.getItem('userEmail');
@@ -896,8 +848,7 @@ function onSignIn(googleUser) {
       }
     });
     
-    // Also check for blocked listings
-    checkBlockedListings();
+    // We no longer need to check for blocked listings
   }
 
   // When the contact form is submitted, we'll let the server handle recording the contact
@@ -923,33 +874,25 @@ function onSignIn(googleUser) {
         const popup = document.getElementById('popup');
         const popupMessage = document.getElementById('popup-message');
         
-        // Check if this is a block message
-        const blockedStatus = urlParams.get('blocked');
-        if (blockedStatus) {
-          if (blockedStatus === 'you-blocked-them') {
-            popupMessage.textContent = 'You have blocked this user. The message was not sent.';
-            popupMessage.style.color = '#f44336'; // Red color for block messages
-          } else if (blockedStatus === 'they-blocked-you') {
-            popupMessage.textContent = 'This user has blocked you. The message was not sent.';
-            popupMessage.style.color = '#f44336'; // Red color for block messages
-          }
-        } else {
-          // Regular success message
-          popupMessage.textContent = 'Connection email sent! Check your inbox';
-          popupMessage.style.color = '#000'; // Reset to default color
-          
-          // Get contacted_id from URL parameters
-          const contactedId = urlParams.get('contacted_id');
-          if (contactedId) {
-              // Since we're now tracking contacts in the database,
-              // we'll just fetch the latest data
-              fetchContactedListings();
-          }
+        // Regular success message
+        popupMessage.textContent = 'Connection email sent! Check your inbox';
+        popupMessage.style.color = '#000'; // Reset to default color
+        
+        // Check which listing was contacted
+        const contactedId = urlParams.get('contacted_id');
+        if (contactedId) {
+            const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
+            allButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('contacted');
+            });
         }
         
         popup.style.display = 'block';
+        
+        // Remove popup parameters from URL without reloading page
         const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
+        window.history.replaceState({}, document.title, newUrl);
     }
   }
   
@@ -971,6 +914,23 @@ function onSignIn(googleUser) {
       }
     `;
     document.head.appendChild(style);
+  }
+  
+  // Function to ensure user's email is sent to the server for blocking logic
+  function sendUserEmailToServer() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      // Get the current URL
+      const currentUrl = new URL(window.location.href);
+      
+      // Add or update the email parameter
+      currentUrl.searchParams.set('email', userEmail);
+      
+      // Only redirect if we're not already on a URL with the email parameter
+      if (window.location.href !== currentUrl.href) {
+        window.location.href = currentUrl.href;
+      }
+    }
   }
   
   
