@@ -27,6 +27,71 @@
       gtag('js', new Date());
       gtag('config', 'G-D26R1LF247');
     </script>
+    <style>
+      .form-group {
+        margin-bottom: 20px;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+      
+      .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      
+      .checkbox-item input[type="checkbox"] {
+        margin-right: 8px;
+      }
+      
+      .form-group input[type="date"],
+      .form-group input[type="time"],
+      .form-group input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      
+      .sell-button, .buy-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+      }
+      
+      .sell-button {
+        background-color: #4CAF50;
+        color: white;
+      }
+      
+      .buy-button {
+        background-color: #2196F3;
+        color: white;
+      }
+    </style>
   </head>
   <body>
     <main>
@@ -81,60 +146,119 @@
       <section style="max-width: 800px; margin: 20px auto; padding: 20px;">
         <div class="seller-form">
           <h2>Details</h2>
-        <form action="/submit_seller" method="POST">
-            <div>
-                <label for="dining_hall">Dining hall:</label>
-                <select id="dining_hall" name="dining_hall[]" multiple required>
-                    <option value="" disabled selected>Select dining halls</option>
-                    <option value="John Jay">John Jay</option>
-                    <option value="JJ's">JJ's</option>
-                    <option value="Ferris">Ferris</option>
-                    <option value="Faculty House">Faculty House</option>
-                    <option value="Chef Mike's">Chef Mike's</option>
-                    <option value="Chef Don's">Chef Don's</option>
-                    <option value="Grace Dodge">Grace Dodge</option>
-                    <option value="Fac Shack">Fac Shack</option>
-                    <option value="Johnny's">Johnny's</option>
-                    <option value="Hewitt">Hewitt</option>
-                    <option value="Diana">Diana</option>
-                </select>
+          <form action="/submit_seller" method="POST">
+            <div class="form-group">
+              <label>Dining hall:</label>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="john_jay" name="dining_hall[]" value="John Jay">
+                  <label for="john_jay">John Jay</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="jjs" name="dining_hall[]" value="JJ's">
+                  <label for="jjs">JJ's</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="ferris" name="dining_hall[]" value="Ferris">
+                  <label for="ferris">Ferris</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="faculty_house" name="dining_hall[]" value="Faculty House">
+                  <label for="faculty_house">Faculty House</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="chef_mikes" name="dining_hall[]" value="Chef Mike's">
+                  <label for="chef_mikes">Chef Mike's</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="chef_dons" name="dining_hall[]" value="Chef Don's">
+                  <label for="chef_dons">Chef Don's</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="grace_dodge" name="dining_hall[]" value="Grace Dodge">
+                  <label for="grace_dodge">Grace Dodge</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="fac_shack" name="dining_hall[]" value="Fac Shack">
+                  <label for="fac_shack">Fac Shack</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="johnnys" name="dining_hall[]" value="Johnny's">
+                  <label for="johnnys">Johnny's</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="hewitt" name="dining_hall[]" value="Hewitt">
+                  <label for="hewitt">Hewitt</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="diana" name="dining_hall[]" value="Diana">
+                  <label for="diana">Diana</label>
+                </div>
+              </div>
             </div>
-            <div>
+            
+            <div class="form-group">
               <label for="date">Date:</label>
-              <input type="date" id="date" name="date" placeholder="" required>
+              <input type="date" id="date" name="date" required>
             </div>
-            <div>
-                <label for="start_time">Start:</label>
-                <input type="time" id="start_time" name="start_time" placeholder="4:00 pm" required>
+            
+            <div class="form-group">
+              <label for="start_time">Start:</label>
+              <input type="time" id="start_time" name="start_time" required>
             </div>
-            <div>
+            
+            <div class="form-group">
               <label for="end_time">End:</label>
-              <input type="time" id="end_time" name="end_time" placeholder="6:00 pm" required>
-          </div>
-            <div>
-                <label for="price">Price in dollars:</label>
-                <input type="number" id="price" name="price" step="0.01" placeholder="Enter price" required>
+              <input type="time" id="end_time" name="end_time" required>
             </div>
-            <div>
-                <label for="payment_methods">Payment Methods:</label>
-                <select id="payment_methods" name="payment_methods[]" multiple required>
-                    <option value="" disabled selected>Select payment methods</option>
-                    <option value="Venmo">Venmo</option>
-                    <option value="PayPal">PayPal</option>
-                    <option value="Cash App">Cash App</option>
-                    <option value="Zelle">Zelle</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Any">Any</option>
-                    <option value="Other">Other</option>
-                </select>
+            
+            <div class="form-group">
+              <label for="price">Price in dollars:</label>
+              <input type="number" id="price" name="price" step="0.01" placeholder="Enter price" required>
             </div>
+            
+            <div class="form-group">
+              <label>Payment Methods:</label>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="venmo" name="payment_methods[]" value="Venmo">
+                  <label for="venmo">Venmo</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="paypal" name="payment_methods[]" value="PayPal">
+                  <label for="paypal">PayPal</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="cashapp" name="payment_methods[]" value="Cash App">
+                  <label for="cashapp">Cash App</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="zelle" name="payment_methods[]" value="Zelle">
+                  <label for="zelle">Zelle</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="cash" name="payment_methods[]" value="Cash">
+                  <label for="cash">Cash</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="any" name="payment_methods[]" value="Any">
+                  <label for="any">Any</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="other" name="payment_methods[]" value="Other">
+                  <label for="other">Other</label>
+                </div>
+              </div>
+            </div>
+            
             <input type="hidden" name="poster_name" id="poster_name" value="">
             <input type="hidden" name="poster_email" id="poster_email" value="">
-            <div>
-                <button type="submit" class="sell-button" formaction="/submit_seller">Sell</button>
-                <button type="submit" class="buy-button" formaction="/submit_buyer">Buy</button>
+            
+            <div class="form-group button-group">
+              <button type="submit" class="sell-button" formaction="/submit_seller">Sell</button>
+              <button type="submit" class="buy-button" formaction="/submit_buyer">Buy</button>
             </div>
-        </form>
+          </form>
         </div>
       </section>
       <div class="footer"><p></p></div>
