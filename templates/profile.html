@@ -151,6 +151,9 @@
     <script src="../static/functions.js" type="text/javascript"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        // Get banned words list from server
+        const bannedWords = {{ banned_words|tojson }};
+        
         // Populate form with user data from localStorage
         const userName = localStorage.getItem('userName');
         const userEmail = localStorage.getItem('userEmail');
@@ -167,6 +170,19 @@
           return phoneRegex.test(phone);
         }
         
+        // Function to check for banned words
+        function containsBannedWord(text) {
+          if (!text || !bannedWords.length) return false;
+          
+          const lowerText = text.toLowerCase();
+          for (const word of bannedWords) {
+            if (word && lowerText.includes(word.toLowerCase())) {
+              return true;
+            }
+          }
+          return false;
+        }
+        
         // Handle save button click
         document.getElementById('save-profile').addEventListener('click', function() {
           const name = document.getElementById('name').value;
@@ -176,6 +192,12 @@
           // Validate inputs
           if (!name || !email) {
             showError('Name and email are required');
+            return;
+          }
+          
+          // Check for banned words in name
+          if (containsBannedWord(name)) {
+            showError('Invalid name');
             return;
           }
           
