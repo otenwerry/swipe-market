@@ -591,8 +591,8 @@ def send_connection_email():
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
       f"between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
-      f"{buyer_name}, remember to delete your listing once you've agreed to the sale. Click "
-      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a>.\n\n"
+      f"{buyer_name}, remember to delete your listing "
+      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a> once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
     )
@@ -643,8 +643,8 @@ def send_connection_email():
       f"${price_str}. "
       f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell from this listing, "
-      f"remember to delete your listing once you've agreed to the sale. Click "
-      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a>.\n\n"
+      f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a>"
+      f"once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
     )
