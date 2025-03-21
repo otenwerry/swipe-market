@@ -278,7 +278,10 @@ def edit_listing(listing_id):
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html')
+    # Get banned words from environment variable
+    banned_words_str = os.environ.get('BANNED_WORDS', '')
+    banned_words = [word.strip() for word in banned_words_str.split(',')] if banned_words_str else []
+    return render_template('profile.html', banned_words=banned_words)
 
 
 
