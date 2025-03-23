@@ -9,10 +9,10 @@
     border-collapse: separate;
     border-spacing: 0;
     margin-top: 20px;
-    background-color: #1e1e1e;
+    background-color: #FFFFFF;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   }
   
   th, td {
@@ -22,8 +22,8 @@
   }
   
   th {
-    background-color: #2c2c2c;
-    color: #e0e0e0;
+    background-color: #f5f5f5;
+    color: #000000;
     font-weight: 500;
     text-transform: uppercase;
     font-size: 0.9rem;
@@ -31,7 +31,7 @@
   }
   
   td {
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e0e0e0;
   }
   
   tr:last-child td {
@@ -39,7 +39,7 @@
   }
   
   tr:hover td {
-    background-color: #252525;
+    background-color: #f9f9f9;
   }
   
   .sell-button-container {
@@ -70,10 +70,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #1e1e1e;
+    background-color: #FFFFFF;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   }
   
   .seller-form label{
@@ -81,7 +81,7 @@
     margin-bottom: 8px;
     margin-top: 16px;
     font-size: 16px;
-    color: #e0e0e0;
+    color: #000000;
     font-weight: 500;
   }
   
@@ -92,9 +92,9 @@
     padding: 25px 40px;
     border: none;
     border-radius: 10px;
-    background-color: #1e1e1e;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    color: #c0c0c0;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    color: #000000;
     line-height: 1.6;
   }
   
@@ -183,34 +183,34 @@
   }
   
   .form-container {
-    background-color: #1e1e1e;
+    background-color: #FFFFFF;
     max-width: 500px;
     padding: 30px;
     border-radius: 10px;
     position: relative;
     margin: 15% auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
   }
   
   .form-container input[type=text] {
     width: 100%;
     padding: 14px;
     margin: 8px 0;
-    border: 1px solid #333;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
-    background-color: #252525;
-    color: #e0e0e0;
+    background-color: #FFFFFF;
+    color: #000000;
   }
   
   .form-container label {
     font-weight: 500;
     margin-top: 10px;
     display: block;
-    color: #e0e0e0;
+    color: #000000;
   }
   
   .form-container .btn {
@@ -335,10 +335,10 @@
 
   /* Style for read-only inputs */
   input[readonly] {
-    background-color: #252525;
-    color: #777;
+    background-color: #f5f5f5;
+    color: #666666;
     cursor: not-allowed;
-    border: 1px solid #333;
+    border: 1px solid #e0e0e0;
   }
 
   /* Form styling for listings and profile pages */
@@ -358,9 +358,9 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
     padding: 16px;
-    border: 1px solid #333;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
-    background-color: #252525;
+    background-color: #FFFFFF;
   }
 
   .checkbox-item {
@@ -397,7 +397,7 @@
   }
 
   .checkbox-item label {
-    color: #ffffff;
+    color: #000000;
     font-weight: normal;
   }
 
@@ -409,11 +409,11 @@
   input[type="tel"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid #333;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 16px;
-    background-color: #252525;
-    color: #e0e0e0;
+    background-color: #FFFFFF;
+    color: #000000;
     box-sizing: border-box;
   }
 
