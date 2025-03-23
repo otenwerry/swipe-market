@@ -138,8 +138,8 @@
     color: #e0e0e0;
   }
   .contact-button {
-    font-size: 1rem;
-    padding: 10px 16px;
+    font-size: 0.9rem;
+    padding: 8px 12px;
     background-color: #4285f4;
     color: white;
     border: none;
@@ -147,6 +147,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
+    width: auto;
+    white-space: nowrap;
   }
   .contact-button:hover {
     background-color: #5a95f5;
@@ -371,6 +373,11 @@
     accent-color: #4285f4;
   }
 
+  .checkbox-item label {
+    color: #ffffff;
+    font-weight: normal;
+  }
+
   input[type="date"], 
   input[type="time"], 
   input[type="number"],
@@ -385,4 +392,39 @@
     background-color: #252525;
     color: #e0e0e0;
     box-sizing: border-box;
+  }
+
+  /* Make back button blue */
+  .back-button-container button {
+    background-color: #4285f4;
+    color: white;
+    transition: all 0.2s ease;
+  }
+
+  .back-button-container button:hover {
+    background-color: #5a95f5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
+  }
+
+  /* Make sell and buy buttons consistent */
+  .sell-button, .buy-button {
+    font-size: 1.1rem;
+    padding: 14px 30px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+    transition: all 0.2s ease;
+    height: auto;
+    line-height: normal;
+  }
+
+  .sell-button:hover, .buy-button:hover {
+    background-color: #5a95f5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
   }
