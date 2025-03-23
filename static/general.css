@@ -1,16 +1,24 @@
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
 div{
-    font-family: Inconsolata;
+    font-family: 'Poppins', sans-serif;
     font-size: 1.125rem;
   }
   
   a{
     text-decoration: none;
-    color: black;
-    transition: color 0.15s;
+    color: #e0e0e0;
+    transition: all 0.2s ease;
   }
   
   a:hover{
-    color: rgb(105, 179, 231); 
+    color: #4285f4;
   }
   .container{
     display: flex;
@@ -26,7 +34,7 @@ div{
   .col {
     display: flex;
     flex-direction: column;
-    transition: color 0.15s;
+    transition: all 0.2s ease;
     font-size: 1.5rem;/*1.5rem*/
     align-items: flex-start;
     flex: 1 1 calc(16% - 2rem); /* 20% width for 5 items per row, minus gap */
@@ -47,21 +55,21 @@ div{
   
   button {
     border: none;
-    /*background-color: rgb(105, 179, 231); */
-    /*color: rgb(247,95,28);  halloween */
-    color: rgb(105, 179, 231); 
+    background-color: #4285f4;
     color: white;
-    font-weight: medium;
+    font-weight: 500;
     cursor: pointer;
-    border-radius: 5px;
-    font-family: "Inconsolata";
-    font-size: 24px;
-    padding: 10px 30px 10px 30px;
-    transition: opacity 0.15s;
+    border-radius: 6px;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    padding: 12px 24px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
   
   button:hover{
-    opacity: .75;
+    background-color: #5a95f5;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
   
   
@@ -95,27 +103,28 @@ div{
   
   .meal-button {
     display: inline-block;
-    padding: 10px 30px 10px 30px;
-    background-color: rgb(105, 179, 231); 
+    padding: 12px 24px;
+    background-color: #4285f4;
     color: white;
     text-decoration: none;
     border: none;
     border-radius: 6px;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     margin: 5px;
     cursor: pointer;
-    transition: 0.15s;
-    font-weight: medium;
-    font-size: 26px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
   
   .meal-button:hover {
-    opacity: 0.75;
+    background-color: #5a95f5;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     color: white;
   }
   
   .meal-button.active {
-    background-color: rgb(1, 33, 105);
+    background-color: #2c5aa0;
   }
   
   .barrier{
