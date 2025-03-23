@@ -475,3 +475,8 @@
   .contact-button:hover, .edit-button:hover {
     background-color: #2b7de9;
   }
+
+  /* Ensure delete button stays red on hover */
+  .delete-button:hover {
+    background-color: #b71c1c; /* Darker red */
+  }
