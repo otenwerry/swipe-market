@@ -716,6 +716,9 @@ function onSignIn(googleUser) {
     
     // Fetch contacted listings from the database
     fetchContactedListings();
+    
+    // Set up periodic token validity checking
+    setupTokenExpirationCheck();
   };
   
   // attach click listeners to all contact buttons
@@ -1035,6 +1038,81 @@ function onSignIn(googleUser) {
         window.history.replaceState({}, '', url);
       }, 10000);
     }
+  }
+  
+  // Add this function to periodically check token validity
+  function setupTokenExpirationCheck() {
+    // Check token validity every 5 minutes
+    const checkInterval = 5 * 60 * 1000;
+    
+    setInterval(() => {
+      const credential = localStorage.getItem('googleCredential');
+      if (credential) {
+        try {
+          const payload = jwt_decode(credential);
+          const expirationTime = payload.exp * 1000;
+          
+          // If token is expired, reset UI
+          if (Date.now() >= expirationTime) {
+            console.log('Token expired during session');
+            handleTokenExpiration();
+          }
+        } catch (error) {
+          console.error('Error checking token:', error);
+          // If we can't decode the token, consider it invalid
+          handleTokenExpiration();
+        }
+      }
+    }, checkInterval);
+    
+    // Also check on user interaction after potential inactivity
+    document.addEventListener('click', () => {
+      const credential = localStorage.getItem('googleCredential');
+      if (credential) {
+        try {
+          const payload = jwt_decode(credential);
+          const expirationTime = payload.exp * 1000;
+          
+          if (Date.now() >= expirationTime) {
+            console.log('Token expired, detected on user interaction');
+            handleTokenExpiration();
+          }
+        } catch (error) {
+          console.error('Error checking token on interaction:', error);
+          handleTokenExpiration();
+        }
+      }
+    }, { passive: true });
+  }
+
+  // Handle token expiration (similar to sign out but without explicit revoke)
+  function handleTokenExpiration() {
+    // Clear user data
+    localStorage.removeItem('googleCredential');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userImage');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userPhone');
+
+    // Reset UI: hide profile icon and show sign in button
+    document.getElementById('profile-menu').style.display = 'none';
+    document.getElementById('g_id_signin').style.display = 'block';
+    
+    // Reset contacted buttons
+    resetContactButtons();
+    
+    console.log('Session expired, UI reset');
+  }
+
+  // Function to reset all contact buttons to enabled state
+  function resetContactButtons() {
+    document.querySelectorAll('.contact-button.contacted').forEach(button => {
+      button.disabled = false;
+      button.classList.remove('contacted');
+    });
+    
+    // Also clear the stored contacted listings
+    document.body.removeAttribute('data-contacted-listings');
   }
   
   
