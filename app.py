@@ -673,7 +673,7 @@ def send_connection_email():
   # Send email
   recipients = [seller_email, buyer_email]
   msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
-  msg.body = body
+  msg.html = body
 
   try:
     mail.send(msg)
