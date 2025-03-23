@@ -55,7 +55,7 @@ div{
   
   button {
     border: none;
-    background-color: #4285f4;
+    background-color: #1a73e8;
     color: white;
     font-weight: 500;
     cursor: pointer;
@@ -68,7 +68,7 @@ div{
   }
   
   button:hover{
-    background-color: #5a95f5;
+    background-color: #2b7de9;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
   
