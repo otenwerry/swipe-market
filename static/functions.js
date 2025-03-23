@@ -478,6 +478,24 @@ function onSignIn(googleUser) {
   updateTime();
   setInterval(updateTime, 1000);
   
+  // Function to format date by omitting the year
+  function formatDateWithoutYear(dateStr) {
+    // Return early if dateStr is empty or invalid
+    if (!dateStr || !dateStr.includes('-')) return dateStr;
+    
+    try {
+      // Parse the date string (expected format: YYYY-MM-DD)
+      const date = new Date(dateStr);
+      
+      // Format to "Month Day" (e.g., "January 15")
+      const options = { month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateStr; // Return original string if there's an error
+    }
+  }
+  
   // Function to format time from 24-hour to 12-hour format with AM/PM
   function formatTimeDisplay() {
     // Get all table cells that contain time information
@@ -499,6 +517,17 @@ function onSignIn(googleUser) {
       
       // Update the cell with the new formatted time
       cell.textContent = `${formattedStartTime} - ${formattedEndTime}`;
+    });
+    
+    // Format dates (which are in the second column of each table)
+    const dateCells = document.querySelectorAll('table tbody tr td:nth-child(2)');
+    
+    dateCells.forEach(cell => {
+      const dateText = cell.textContent.trim();
+      // Format the date without year
+      const formattedDate = formatDateWithoutYear(dateText);
+      // Update the cell content
+      cell.textContent = formattedDate;
     });
   }
   

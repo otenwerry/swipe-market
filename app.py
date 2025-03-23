@@ -133,6 +133,23 @@ def format_time_to_12hour(time_str):
         # Return the original string if parsing fails
         return time_str
 
+# Function to format date without year (YYYY-MM-DD -> Month Day)
+def format_date_without_year(date_str):
+    # Return early if the date_str is empty or invalid
+    if not date_str or '-' not in date_str:
+        return date_str
+    
+    try:
+        # Parse the date string
+        from datetime import datetime
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        
+        # Format to "Month Day" (e.g., "January 15")
+        return date_obj.strftime("%B %d")
+    except (ValueError, TypeError):
+        # Return the original string if parsing fails
+        return date_str
+
 # Update expired listings: sets is_active to False for listings whose end time has passed
 def update_expired_listings():
     now = datetime.now(ny_tz)
@@ -566,6 +583,8 @@ def send_connection_email():
     # Format times to 12-hour format
     start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
     end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
+    # Format date without year
+    date_formatted = format_date_without_year(buyer_listing.date)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
@@ -589,7 +608,7 @@ def send_connection_email():
     
     body += (
       f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
-      f"between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
+      f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
       f"{buyer_name}, remember to delete your listing "
       f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a> once you've agreed to the sale.\n\n"
@@ -616,6 +635,8 @@ def send_connection_email():
     # Format times to 12-hour format
     start_time_formatted = format_time_to_12hour(seller_listing.start_time)
     end_time_formatted = format_time_to_12hour(seller_listing.end_time)
+    # Format date without year
+    date_formatted = format_date_without_year(seller_listing.date)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
@@ -638,8 +659,8 @@ def send_connection_email():
       body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
     
     body += (
-      f"As a reminder, the listing is for {seller_listing.dining_hall} from "
-      f"{start_time_formatted} to {end_time_formatted} and costs "
+      f"As a reminder, the listing is for {seller_listing.dining_hall} on "
+      f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
       f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell from this listing, "
