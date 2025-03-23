@@ -73,15 +73,15 @@
       </div>
       <div class="tables-container">
       <table>
-        <caption>Seller Listings</caption>
+        <caption>Swipes People Will Sell to You</caption>
         <thead>
           <tr>
-            <th>Dining hall(s)</th>
+            <th>Dining Hall(s)</th>
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
-            <th>Payment methods</th>
-            <th>Contact seller</th>
+            <th>Payment Methods</th>
+            <th>Contact Seller</th>
           </tr>
         </thead>
         <tbody>
@@ -96,7 +96,7 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="seller" 
-                      onclick="openForm(this)">Contact</button>
+                      onclick="openForm(this)">Contact Seller</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
                 <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
@@ -112,15 +112,15 @@
         </tbody>
       </table>
       <table>
-        <caption>Buyer Listings</caption>
+        <caption>Swipes People Will Buy From You</caption>
         <thead>
           <tr>
-            <th>Dining hall(s)</th>
+            <th>Dining Hall(s)</th>
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
-            <th>Payment methods</th>
-            <th>Contact buyer</th>
+            <th>Payment Methods</th>
+            <th>Contact Buyer</th>
           </tr>
         </thead>
         <tbody>
@@ -135,7 +135,7 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="buyer" 
-                      onclick="openForm(this)">Contact</button>
+                      onclick="openForm(this)">Contact Buyer</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
                 <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
                 <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
