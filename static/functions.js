@@ -1069,7 +1069,7 @@ function handlePopup() {
   const showPopup = urlParams.get('show_popup');
   const contactedId = urlParams.get('contacted_id');
   const error = urlParams.get('error');
-  
+  //alert('before showPopup')
   if (showPopup === 'true') {
       const popup = document.getElementById('popup');
       const popupMessage = document.getElementById('popup-message');
