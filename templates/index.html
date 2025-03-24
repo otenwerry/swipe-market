@@ -44,11 +44,14 @@
       <p id="output"></p>
       <div class="top">
         <div class="top-left">
+          <div id="current-time"></div>
+          <a href="https://liondine.com/" target="_blank">
+            &lt; Lion Dine
+          </a>
         </div>
         <div class="top-right">
-          <div id="current-time"></div>
-          <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank">
-            <div class="feedback">Feedback</div>
+          <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank" class="feedback">
+            Feedback
           </a>
           <div id="g_id_signin" class="g_id_signin" data-type="standard"></div>
           <div id="profile-menu" class="profile-menu" style="display: none;">
@@ -64,24 +67,31 @@
         <a href="/">Swipe Market &#128722;</a> 
       </header>
       <div class="sell-button-container">
-        <!--
-        <div id="g_id_signin" class="g_id_signin" style="background-color:green;" >Post Listing Test</div>
-        -->
         <a href="/listings">
           <button type="button" class="sell-button" id="postListingsButton">Buy or Sell a Swipe</button>
         </a>
       </div>
+      <div class="terms-of-service">
+        <p style="line-height: 1.6; text-align: justify;">
+          Swipe Market lets students pay other students to swipe them 
+          into Columbia and Barnard dining halls. Fill out our "buy or sell a 
+          swipe" form to let other students contact you, or hit the contact 
+          button on a listing below to get an email sent to both you and the 
+          listing's owner. Once we put you in contact with your buyer/seller, 
+          it's up to you to coordinate a meeting and exchange payment details.
+        </p>
+      </div>
       <div class="tables-container">
       <table>
-        <caption>Seller Listings</caption>
+        <caption>Get Swiped In</caption>
         <thead>
           <tr>
-            <th>Dining hall(s)</th>
+            <th>Dining Hall(s)</th>
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
-            <th>Payment methods</th>
-            <th>Contact seller</th>
+            <th>Payment Methods</th>
+            <th>Contact Seller</th>
           </tr>
         </thead>
         <tbody>
@@ -96,11 +106,11 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="seller" 
-                      onclick="openForm(this)">Contact</button>
+                      onclick="openForm(this)">Contact Seller</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
-                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
-                <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
+                <button onclick="deleteListing('{{ listing.id }}', 'seller')" class="delete-button">x</button>
+                <button onclick="editListing('{{ listing.id }}', 'seller')" class="edit-button">Edit</button>
               </div>
             </td>
           </tr>
@@ -112,15 +122,15 @@
         </tbody>
       </table>
       <table>
-        <caption>Buyer Listings</caption>
+        <caption>Swipe Someone Else In</caption>
         <thead>
           <tr>
-            <th>Dining hall(s)</th>
+            <th>Dining Hall(s)</th>
             <th>Date</th>
             <th>Time</th>
             <th>Price</th>
-            <th>Payment methods</th>
-            <th>Contact buyer</th>
+            <th>Payment Methods</th>
+            <th>Contact Buyer</th>
           </tr>
         </thead>
         <tbody>
@@ -135,10 +145,10 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="buyer" 
-                      onclick="openForm(this)">Contact</button>
+                      onclick="openForm(this)">Contact Buyer</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
-                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">Delete</button>
-                <button onclick="editListing('{{ listing.id }}')" class="edit-button">Edit</button>
+                <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">x</button>
+                <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
               </div>
             </td>
           </tr>

@@ -18,6 +18,9 @@ function onSignIn(googleUser) {
     const userEmail = localStorage.getItem('userEmail');
     
     if (userName && userEmail) {
+      // Make sure the email is stored in lowercase for consistency
+      storeUserEmail(userEmail);
+      
       const posterNameField = document.getElementById('poster_name');
       const posterEmailField = document.getElementById('poster_email');
       
@@ -25,7 +28,7 @@ function onSignIn(googleUser) {
         posterNameField.value = userName;
       }
       if (posterEmailField) {
-        posterEmailField.value = userEmail;
+        posterEmailField.value = userEmail.toLowerCase();
       }
     }
   });
@@ -147,6 +150,38 @@ function onSignIn(googleUser) {
     paymentMethodsSelect.dispatchEvent(new Event('change'));
   });
   
+  // Add a global debug function that can be called from console
+  window.debugLoginState = function() {
+    console.log("Current login state:");
+    console.log("userEmail:", localStorage.getItem('userEmail'));
+    console.log("userName:", localStorage.getItem('userName'));
+    console.log("googleCredential:", localStorage.getItem('googleCredential') ? "Present (not shown)" : "Not present");
+    
+    // Check all listing actions to see what's visible
+    console.log("Checking listing actions...");
+    document.querySelectorAll('.listing-actions').forEach((actions, index) => {
+      const ownerEmail = actions.dataset.ownerEmail;
+      const listingId = actions.previousElementSibling?.dataset?.listingId;
+      const isVisible = actions.style.display !== 'none';
+      console.log(`Listing #${index} (ID: ${listingId}):`, {
+        ownerEmail: ownerEmail,
+        isVisible: isVisible
+      });
+    });
+    
+    return "Debug information logged to console";
+  };
+
+  // Also fix how we're storing and using email across the app to ensure consistency
+  function storeUserEmail(email) {
+    if (email) {
+      // Always store email in lowercase
+      email = email.toLowerCase();
+      localStorage.setItem('userEmail', email);
+      console.log(`Stored user email consistently as: ${email}`);
+    }
+  }
+
   //gets user's google credential and stores it in localStorage.
   function handleCredentialResponse(response) {
     // Decode the credential response
@@ -157,6 +192,9 @@ function onSignIn(googleUser) {
       alert('Please use your Columbia or Barnard email to sign in.');
       return;
     }
+    
+    // Store email consistently
+    storeUserEmail(responsePayload.email);
     
     // Extract UNI from email
     const emailParts = responsePayload.email.split('@');
@@ -186,7 +224,6 @@ function onSignIn(googleUser) {
       localStorage.setItem('googleCredential', response.credential);
       localStorage.setItem('userName', firstName);
       localStorage.setItem('userImage', responsePayload.picture);
-      localStorage.setItem('userEmail', responsePayload.email);
     
       //hide sign in button
       document.getElementById('g_id_signin').style.display = 'none';
@@ -217,14 +254,23 @@ function onSignIn(googleUser) {
     
       // Update UI based on user's email
       const userEmail = responsePayload.email;
+      console.log('User email from Google sign-in:', userEmail);
       
       // Show edit/delete buttons for listings owned by this user
       document.querySelectorAll('.listing-actions').forEach(actions => {
+        const ownerEmail = actions.dataset.ownerEmail;
+        console.log('Checking ownership after login:', { 
+          ownerEmail: ownerEmail, 
+          userEmail: userEmail, 
+          isMatch: ownerEmail && userEmail && ownerEmail.toLowerCase() === userEmail.toLowerCase() 
+        });
+        
         if (userEmail && actions.dataset.ownerEmail) {
           const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
           const contactButton = actions.previousElementSibling;
           
           if (isOwner) {
+            console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
             actions.style.display = 'inline-block';
             contactButton.style.display = 'none';
           } else {
@@ -596,7 +642,9 @@ function onSignIn(googleUser) {
     
     if (senderNameInput && senderEmailInput) {
       senderNameInput.value = localStorage.getItem('userName');
-      senderEmailInput.value = localStorage.getItem('userEmail');
+      const email = localStorage.getItem('userEmail');
+      // Ensure we're using lowercase email consistently
+      senderEmailInput.value = email ? email.toLowerCase() : email;
     }
     
     form.style.display = "block";
@@ -719,6 +767,11 @@ function onSignIn(googleUser) {
             localStorage.setItem('userName', firstName);
           }
 
+          // Store email consistently
+          if (payload.email) {
+            storeUserEmail(payload.email);
+          }
+
           // Check if user exists in database on page load
           checkUserExistence(payload.email);
           
@@ -761,25 +814,30 @@ function onSignIn(googleUser) {
   // attach click listeners to all contact buttons
   document.querySelectorAll('.contact-button').forEach(function(button) {
     button.addEventListener('click', function(event) {
-    if (!requireSignIn(event)) return;
+      if (!requireSignIn(event)) return;
       
       // Pull name/user from local storage set during signin
-    var userName = localStorage.getItem('userName');
-    var userEmail = localStorage.getItem('userEmail');
-  
+      var userName = localStorage.getItem('userName');
+      var userEmail = localStorage.getItem('userEmail');
+      
+      // Ensure consistent lowercase email
+      if (userEmail) {
+        userEmail = userEmail.toLowerCase();
+      }
+    
       // Populate hidden fields in contact form
-    document.getElementById('sender_name').value = userName;
-    document.getElementById('sender_email').value = userEmail;
-  
+      document.getElementById('sender_name').value = userName;
+      document.getElementById('sender_email').value = userEmail;
+    
       // Pull listing id and type from contact button
-    var listingId = this.getAttribute('data-listing-id');
+      var listingId = this.getAttribute('data-listing-id');
       var listingType = this.getAttribute('data-listing-type');
       
-    if (listingId) {
-      document.getElementById('listing_id').value = listingId;
+      if (listingId) {
+        document.getElementById('listing_id').value = listingId;
         document.getElementById('listing_type').value = listingType;
-    }
-  
+      }
+    
       document.getElementById('myForm').style.display = 'block';
     });
   });
@@ -825,7 +883,7 @@ function onSignIn(googleUser) {
   });
 
   //deletes listing.
-  function deleteListing(listingId) {
+  function deleteListing(listingId, listingType) {
     if (!isUserLoggedIn()) {
       alert('Please sign in to delete listings');
       document.getElementById('g_id_signin').style.display = 'block';
@@ -833,11 +891,12 @@ function onSignIn(googleUser) {
     }
     
     const userEmail = localStorage.getItem('userEmail');
-    console.log(`Attempting to delete listing ${listingId} as ${userEmail}`);
+    console.log(`Attempting to delete listing ${listingId} of type ${listingType} as ${userEmail}`);
     
     if (confirm('Are you sure you want to delete this listing?')) {
       const formData = new FormData();
       formData.append('user_email', userEmail);
+      formData.append('listing_type', listingType);
       
       fetch(`/delete_listing/${listingId}`, {
         method: 'POST',
@@ -860,9 +919,8 @@ function onSignIn(googleUser) {
       });
     }
   }
-
   //shows edit form.
-  function editListing(listingId) {
+  function editListing(listingId, listingType) {
     if (!isUserLoggedIn()) {
       alert('Please sign in to edit listings');
       document.getElementById('g_id_signin').style.display = 'block';
@@ -1034,6 +1092,7 @@ function onSignIn(googleUser) {
   function checkAutoDelete() {
     const urlParams = new URLSearchParams(window.location.search);
     const autoDeleteId = urlParams.get('auto_delete');
+    const listingType = urlParams.get('listing_type') || 'seller'; // Default to seller if not specified
     
     if (autoDeleteId) {
       // Wait for Google sign-in to complete
@@ -1046,11 +1105,13 @@ function onSignIn(googleUser) {
           if (confirm('Are you sure you want to delete this listing?')) {
             const formData = new FormData();
             formData.append('user_email', userEmail);
+            formData.append('listing_type', listingType);
             
             fetch(`/delete_listing/${autoDeleteId}`, {
               method: 'POST',
               body: formData
-            }).then(response => {
+            })
+            .then(response => {
               if (response.ok) {
                 // Show success message
                 alert('Listing deleted successfully!');
@@ -1062,7 +1123,8 @@ function onSignIn(googleUser) {
               } else {
                 alert('You can only delete your own listings.');
               }
-            }).catch(error => {
+            })
+            .catch(error => {
               console.error('Error deleting listing:', error);
               alert('Error deleting listing. Please try again.');
             });

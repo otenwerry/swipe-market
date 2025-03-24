@@ -27,71 +27,6 @@
       gtag('js', new Date());
       gtag('config', 'G-D26R1LF247');
     </script>
-    <style>
-      .form-group {
-        margin-bottom: 20px;
-      }
-      
-      .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-      }
-      
-      .checkbox-group {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-      }
-      
-      .checkbox-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-      }
-      
-      .checkbox-item input[type="checkbox"] {
-        margin-right: 8px;
-      }
-      
-      .form-group input[type="date"],
-      .form-group input[type="time"],
-      .form-group input[type="number"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-      }
-      
-      .button-group {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-      }
-      
-      .sell-button, .buy-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-        border: none;
-      }
-      
-      .sell-button {
-        background-color: #4CAF50;
-        color: white;
-      }
-      
-      .buy-button {
-        background-color: #2196F3;
-        color: white;
-      }
-    </style>
   </head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-V549ZYC27J"></script>
@@ -125,36 +60,10 @@
         </div>
       </div>
       <header class="header" id="index-header">
-        <a href="/listings">Post Listings</a> 
+        <a href="/listings">Buy or Sell a Swipe</a> 
       </header>
-      <div class="back-button-container">
-        <a href="/">
-          <button type="button" class="sell-button">Back to Home</button>
-        </a>
-      </div>
-      <div class="terms-of-service">
-        <!--<h2 style="text-align: center;">How it Works</h2>-->
-        <p style="line-height: 1.6; text-align: justify;">
-          Freshman with extra swipes left at the end of the week? Upperclassman with a meal plan you're
-          not going to finish? Fill out our seller's form and we'll connect you with people looking to 
-          buy individual swipes. All you have to do is commit to being in the same place (ideally near
-          a dining hall) for any amount of time, and be willing to go swipe a buyer into that dining 
-          hall when they ask.
-        </p>
-        <p style="line-height: 1.6; text-align: justify;">
-          When you fill out the seller's form, Swipe Market will add an entry for you, indicating
-          which dining halls you're willing to swipe people into, what time you're available, and
-          how much you're charging. When a buyer is interested, they'll click a button and enter
-          their information, then we'll automatically send an email connecting you to each other. 
-        </p>
-        <p style="line-height: 1.6; text-align: justify;">
-          After we connect you to your buyer, Swipe Market is out of the picture. It's your responsibility as the seller to make sure you get paid, and to use common sense when meeting up with strangers.
-          Happy selling!
-        </p>
-      </div>
       <section style="max-width: 800px; margin: 20px auto; padding: 20px;">
         <div class="seller-form">
-          <h2>Details</h2>
           <form action="/submit_seller" method="POST">
             <div class="form-group">
               <label>Dining hall:</label>
@@ -264,8 +173,8 @@
             <input type="hidden" name="poster_email" id="poster_email" value="">
             
             <div class="form-group button-group">
-              <button type="submit" class="sell-button" formaction="/submit_seller">Sell</button>
-              <button type="submit" class="buy-button" formaction="/submit_buyer">Buy</button>
+              <button type="submit" class="sell-button" formaction="/submit_seller">Offer to Sell</button>
+              <button type="submit" class="buy-button" formaction="/submit_buyer">Offer to Buy</button>
             </div>
           </form>
         </div>
