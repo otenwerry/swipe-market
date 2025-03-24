@@ -512,14 +512,11 @@ function onSignIn(googleUser) {
   
     console.log('User logged out');
   
-    // Reload the page to clear blocked listings filter
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.delete('email');
-    
+    // Revoke token and redirect to home page
     google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
       console.log('Token revoked');
-      // Redirect to the new URL without the email parameter
-      window.location.href = currentUrl.href;
+      // Redirect to home page
+      window.location.href = '/';
     });
   }
   // --- UTILITY FUNCTIONS ---
