@@ -271,10 +271,8 @@
     margin-top: 10px;
     background-color: #FFFFFF;
     min-width: 120px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     z-index: 1;
-    border-radius: 6px;
-    overflow: hidden;
+    border: 1px solid #e0e0e0;
   }
   
   .profile-dropdown button, 
