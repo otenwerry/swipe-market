@@ -928,9 +928,9 @@ function onSignIn(googleUser) {
     }
     
     const userEmail = localStorage.getItem('userEmail');
-    console.log(`Attempting to edit listing ${listingId} as ${userEmail}`);
+    console.log(`Attempting to edit listing ${listingId} of type ${listingType} as ${userEmail}`);
     
-    window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`; 
+    window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}&listing_type=${encodeURIComponent(listingType)}`; 
   }
 
   // Function to fetch contacted listings from the database
