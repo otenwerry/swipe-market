@@ -167,21 +167,25 @@ document.addEventListener('DOMContentLoaded', function() {
   const paymentMethodsSelect = document.getElementById('payment_methods');
 
   // Add validation for multiple select fields
-  diningHallSelect.addEventListener('change', function() {
-      if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
-          this.setCustomValidity('Please select at least one dining hall');
-      } else {
-          this.setCustomValidity('');
-      }
-  });
+  if (diningHallSelect) {
+    diningHallSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one dining hall');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+  }
 
-  paymentMethodsSelect.addEventListener('change', function() {
-      if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
-          this.setCustomValidity('Please select at least one payment method');
-      } else {
-          this.setCustomValidity('');
-      }
-  });
+  if (paymentMethodsSelect) {
+      paymentMethodsSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one payment method');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+  }
 
   // Trigger initial validation
   diningHallSelect.dispatchEvent(new Event('change'));
@@ -1066,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener("DOMContentLoaded", function () {
   // Only apply validation to the listing creation/edit form, not the contact form
-  const listingForm = document.querySelector("form:not(#myForm)");
+  const listingForm = document.getElementById('listingForm');
   if (listingForm) {
     const diningHallCheckboxes = listingForm.querySelectorAll("input[name='dining_hall[]']");
     const paymentMethodCheckboxes = listingForm.querySelectorAll("input[name='payment_methods[]']");
