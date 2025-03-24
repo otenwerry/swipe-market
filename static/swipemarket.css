@@ -528,3 +528,24 @@
   .delete-button:hover {
     background-color: #b71c1c; /* Darker red */
   }
+
+
+  /* Styles for mobile devices */
+@media (max-width: 600px) {
+  .tables-container {
+    flex-direction: column; /* Stack tables vertically */
+    gap: 20px; /* Adjust spacing between tables if needed */
+  }
+  
+  table {
+    width: 100%;
+    font-size: 0.9rem; /* Slightly smaller text to prevent overflow */
+    overflow-x: auto; /* Allow horizontal scrolling if table content is wide */
+    display: block;
+  }
+  
+  th, td {
+    padding: 10px; /* Reduce padding to give more room */
+    word-wrap: break-word; /* Wrap long words */
+  }
+}
