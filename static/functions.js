@@ -313,7 +313,6 @@ function onSignIn(googleUser) {
       alert('An error occurred during sign in. Please try again later.');
     });
   }
-
   // Function to check if user exists in our database
   function checkUserExistence(email) {
     fetch('/api/check_user', {
@@ -1015,6 +1014,29 @@ function onSignIn(googleUser) {
     handlePopup();
   });
 
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form"); // Select the form
+    const checkboxes = document.querySelectorAll("input[name='dining_hall[]']"); // Select checkboxes
+    const paymentMethods = document.querySelectorAll("input[name='payment_methods[]']"); // Payment method checkboxes
+
+    form.addEventListener("submit", function (event) {
+        if (!isAnyCheckboxChecked(checkboxes)) {
+            this.setCustomValidity('Please select at least one dining hall.');
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+        if (!isAnyCheckboxChecked(paymentMethods)) {
+            alert("Please select at least one Payment Method.");
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+    });
+
+    function isAnyCheckboxChecked(checkboxList) {
+        return Array.from(checkboxList).some(checkbox => checkbox.checked);
+    }
+  });
+
   // add this function to handle the popup
   function handlePopup() {
     // Check if URL has show_popup=true
@@ -1267,8 +1289,5 @@ function onSignIn(googleUser) {
       button.classList.remove('contacted');
     });
   }
-  
-  
-  
   
   
