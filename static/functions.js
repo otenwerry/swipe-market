@@ -566,10 +566,10 @@ function onSignIn(googleUser) {
       return false;
     }
     
-    const credential = localStorage.getItem('googleCredential');
-    if (!credential) {
-        document.getElementById('g_id_signin').style.display = 'block';
-        return false;
+    if (!isUserLoggedIn()) {
+      document.getElementById('g_id_signin').style.display = 'block';
+      alert('Please sign in with your Columbia/Barnard email to contact users.');
+      return false;
     }
 
     const listingId = button.getAttribute('data-listing-id');
@@ -597,17 +597,10 @@ function onSignIn(googleUser) {
   
   // checks for valid credential
   function requireSignIn(event) {
-    const credential = localStorage.getItem('googleCredential');
-    if (!credential) {
+    if (!isUserLoggedIn()) {
       event.preventDefault(); // Stop the default navigation
       alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
       document.getElementById('g_id_signin').style.display = 'block';
-      //google.accounts.id.prompt();
-      /*
-      if (window.google && google.accounts && google.accounts.id) {
-        alert('inside if2')
-        google.accounts.id.prompt();
-      }*/
       return false;
     }
     return true;
@@ -630,121 +623,128 @@ function onSignIn(googleUser) {
   
     const credential = localStorage.getItem('googleCredential');
     if (credential) {
-      const payload = jwt_decode(credential);
-      // Check if token is expired
-      const expirationTime = payload.exp * 1000;
-      if (Date.now() < expirationTime) {
-        document.getElementById('g_id_signin').style.display = 'none';
+      try {
+        const payload = jwt_decode(credential);
+        // Check if token is expired
+        const expirationTime = payload.exp * 1000;
+        if (Date.now() < expirationTime) {
+          document.getElementById('g_id_signin').style.display = 'none';
   
-        //display profile icon
-        const profileIcon = document.getElementById('profile-icon');
-        profileIcon.src = payload.picture;
-        document.getElementById('profile-menu').style.display = 'inline-block';
+          //display profile icon
+          const profileIcon = document.getElementById('profile-icon');
+          profileIcon.src = payload.picture;
+          document.getElementById('profile-menu').style.display = 'inline-block';
   
-        //toggle dropdown
-        profileIcon.addEventListener('click', function() {
-          this.parentElement.classList.toggle('active');
-        });
+          //toggle dropdown
+          profileIcon.addEventListener('click', function() {
+            this.parentElement.classList.toggle('active');
+          });
 
-        // Add the dropdown styles if they don't exist
-        if (!document.getElementById('dropdown-styles')) {
-          const style = document.createElement('style');
-          style.id = 'dropdown-styles';
-          style.textContent = `
-            .profile-menu {
-              position: relative;
-              display: inline-block;
-            }
-            
-            .profile-menu img {
-              width: 35px;
-              height: 35px;
-              border-radius: 50%;
-              cursor: pointer;
-              transition: opacity 0.3s;
-            }
-            
-            .profile-menu img:hover {
-              opacity: 0.8;
-            }
-            
-            .profile-dropdown {
-              display: none;
-              position: absolute;
-              right: 0;
-              background-color: white;
-              min-width: 150px;
-              box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-              z-index: 1;
-              border-radius: 4px;
-              padding: 5px 0;
-            }
-            
-            .profile-menu.active .profile-dropdown {
-              display: block;
-            }
-            
-            .profile-dropdown button, .profile-dropdown a button {
-              width: 100%;
-              padding: 10px 15px;
-              text-align: left;
-              background: none;
-              border: none;
-              cursor: pointer;
-              font-size: 14px;
-              color: #333;
-              transition: background-color 0.3s;
-            }
-            
-            .profile-dropdown button:hover, .profile-dropdown a button:hover {
-              background-color: #f1f1f1;
-            }
-            
-            .profile-dropdown a {
-              display: block;
-              text-decoration: none;
-              color: inherit;
-            }
-          `;
-          document.head.appendChild(style);
+          // Add the dropdown styles if they don't exist
+          if (!document.getElementById('dropdown-styles')) {
+            const style = document.createElement('style');
+            style.id = 'dropdown-styles';
+            style.textContent = `
+              .profile-menu {
+                position: relative;
+                display: inline-block;
+              }
+              
+              .profile-menu img {
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: opacity 0.3s;
+              }
+              
+              .profile-menu img:hover {
+                opacity: 0.8;
+              }
+              
+              .profile-dropdown {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: white;
+                min-width: 150px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                border-radius: 4px;
+                padding: 5px 0;
+              }
+              
+              .profile-menu.active .profile-dropdown {
+                display: block;
+              }
+              
+              .profile-dropdown button, .profile-dropdown a button {
+                width: 100%;
+                padding: 10px 15px;
+                text-align: left;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+                color: #333;
+                transition: background-color 0.3s;
+              }
+              
+              .profile-dropdown button:hover, .profile-dropdown a button:hover {
+                background-color: #f1f1f1;
+              }
+              
+              .profile-dropdown a {
+                display: block;
+                text-decoration: none;
+                color: inherit;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+  
+          console.log('User is logged in:', payload.email);  // Debug log
+
+          // Extract first name in case token was stored before this feature was added
+          if (payload.name) {
+            const firstName = payload.name.split(' ')[0];
+            localStorage.setItem('userName', firstName);
+          }
+
+          // Check if user exists in database on page load
+          checkUserExistence(payload.email);
+          
+          // Send the user's email to the server for block filtering
+          sendUserEmailToServer();
+        } else {
+          // Token expired, remove it and reset UI
+          console.log('Token expired on page load');
+          handleTokenExpiration();
         }
-  
-        console.log('User is logged in:', payload.email);  // Debug log
-
-        // Extract first name in case token was stored before this feature was added
-        if (payload.name) {
-          const firstName = payload.name.split(' ')[0];
-          localStorage.setItem('userName', firstName);
-        }
-
-        // Check if user exists in database on page load
-        checkUserExistence(payload.email);
-        
-        // Send the user's email to the server for block filtering
-        sendUserEmailToServer();
-      } else {
-        // Token expired, remove it
-        localStorage.removeItem('googleCredential');
-        console.log('Token expired');  // Debug log
+      } catch (error) {
+        // Invalid token, handle as expired
+        console.error('Error decoding token:', error);
+        handleTokenExpiration();
       }
     } else {
       // If user isn't logged in, make sure UI is correct
-      document.getElementById('g_id_signin').style.display = 'block';
-      const profileMenu = document.getElementById('profile-menu');
-      if (profileMenu) {
-        profileMenu.style.display = 'none';
-      }
+      resetUIForLoggedOutUser();
     }
   
-    document.getElementById('postListingsButton').addEventListener('click', function(event) {
-      if(!requireSignIn(event)) return;
-    });
+    const postListingsButton = document.getElementById('postListingsButton');
+    if (postListingsButton) {
+      postListingsButton.addEventListener('click', function(event) {
+        if(!requireSignIn(event)) return;
+      });
+    }
     
     // Format time displays on page load
     formatTimeDisplay();
     
-    // Fetch contacted listings from the database
-    fetchContactedListings();
+    // Fetch contacted listings from the database only if user is logged in
+    if (isUserLoggedIn()) {
+      fetchContactedListings();
+    }
     
     // Set up periodic token validity checking
     setupTokenExpirationCheck();
@@ -810,32 +810,33 @@ function onSignIn(googleUser) {
 
   //deletes listing.
   function deleteListing(listingId) {
-    const credential = localStorage.getItem('googleCredential');
-    const userEmail = localStorage.getItem('userEmail');
-    if (!credential) {
-        alert('Please sign in to delete listings');
-        return;
+    if (!isUserLoggedIn()) {
+      alert('Please sign in to delete listings');
+      document.getElementById('g_id_signin').style.display = 'block';
+      return;
     }
+    
+    const userEmail = localStorage.getItem('userEmail');
     if (confirm('Are you sure you want to delete this listing?')) {
-        const formData = new FormData();
-        formData.append('user_email', userEmail);
-        
-        fetch(`/delete_listing/${listingId}`, {
-            method: 'POST',
-            body: formData
-        }).then(() => window.location.reload());
+      const formData = new FormData();
+      formData.append('user_email', userEmail);
+      
+      fetch(`/delete_listing/${listingId}`, {
+        method: 'POST',
+        body: formData
+      }).then(() => window.location.reload());
     }
   }
 
   //shows edit form.
   function editListing(listingId) {
-    const credential = localStorage.getItem('googleCredential');
-    const userEmail = localStorage.getItem('userEmail');
-    
-    if (!credential || !userEmail) {
-        alert('Please sign in to edit listings');
-        return;
+    if (!isUserLoggedIn()) {
+      alert('Please sign in to edit listings');
+      document.getElementById('g_id_signin').style.display = 'block';
+      return;
     }
+    
+    const userEmail = localStorage.getItem('userEmail');
     window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}`; 
   }
 
@@ -1123,12 +1124,8 @@ function onSignIn(googleUser) {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userPhone');
 
-    // Reset UI: hide profile icon and show sign in button
-    document.getElementById('profile-menu').style.display = 'none';
-    document.getElementById('g_id_signin').style.display = 'block';
-    
-    // Reset contacted buttons
-    resetContactButtons();
+    // Reset UI for logged out user
+    resetUIForLoggedOutUser();
     
     console.log('Session expired, UI reset');
   }
@@ -1142,6 +1139,42 @@ function onSignIn(googleUser) {
     
     // Also clear the stored contacted listings
     document.body.removeAttribute('data-contacted-listings');
+  }
+
+  // Function to check if user is properly logged in with valid token
+  function isUserLoggedIn() {
+    const credential = localStorage.getItem('googleCredential');
+    if (!credential) return false;
+    
+    try {
+      const payload = jwt_decode(credential);
+      const expirationTime = payload.exp * 1000;
+      return Date.now() < expirationTime;
+    } catch (error) {
+      console.error('Error checking login status:', error);
+      return false;
+    }
+  }
+
+  // Function to reset UI for logged out users
+  function resetUIForLoggedOutUser() {
+    document.getElementById('g_id_signin').style.display = 'block';
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) {
+      profileMenu.style.display = 'none';
+    }
+    
+    // Hide edit/delete buttons
+    document.querySelectorAll('.listing-actions').forEach(actions => {
+      actions.style.display = 'none';
+    });
+    
+    // Show all contact buttons
+    document.querySelectorAll('.contact-button').forEach(button => {
+      button.style.display = 'inline-block';
+      button.disabled = false;
+      button.classList.remove('contacted');
+    });
   }
   
   
