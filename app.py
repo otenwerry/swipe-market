@@ -689,6 +689,7 @@ def send_connection_email():
 def delete_listing(listing_id):
     # Get the user's email from the request
     user_email = request.form.get('user_email')
+    print(f"User email: {user_email}")
     if not user_email:
         return "Unauthorized - Please log in", 401
 
@@ -702,8 +703,8 @@ def delete_listing(listing_id):
     # Check if the user owns the listing
     if (is_seller and listing.seller_email != user_email) or \
        (not is_seller and listing.buyer_email != user_email):
+        print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {listing.seller_email if is_seller else listing.buyer_email}")
         return "Unauthorized - You don't own this listing", 403
-
     #set is_active to false``
     listing.is_active = False
     db.session.commit()
