@@ -357,13 +357,8 @@ def edit_listing(listing_id):
         listing.end_time = request.form.get('end_time')
         try:
             listing.price = float(request.form.get('price'))
-            if listing.price < 0:
-                flash("Error: Price cannot be negative.", "error")
-                return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
         except (ValueError, TypeError):
-            flash("Error: Please enter a valid price (number).", "error")
-            return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
-        
+            listing.price = -1.0
         listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
         
         try:
@@ -440,12 +435,8 @@ def submit_buyer():
 
   try:
     price_value = float(price)
-    if price_value < 0:
-        flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('listings'))
   except (ValueError, TypeError):
-    flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('listings'))
+    price_value = -1.0 
 
   #create new BuyerListing instance
   new_listing = BuyerListing(
@@ -511,12 +502,8 @@ def submit_seller():
 
   try:
     price_value = float(price)
-    if price_value < 0:
-        flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('listings'))
   except (ValueError, TypeError):
-    flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('listings'))
+    price_value = -1.0 
 
   #create new SellerListing instance
   new_listing = SellerListing(
