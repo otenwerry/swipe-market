@@ -63,10 +63,6 @@
     transition: all 0.2s ease;
   }
 
-  .how-it-works-button {
-    background-color: #4285f4;
-  }
-
   .sell-button:hover, .how-it-works-button:hover {
     background-color: #2b7de9;
     transform: translateY(-2px);
