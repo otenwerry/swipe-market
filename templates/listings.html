@@ -69,6 +69,10 @@
               <label>Dining hall:</label>
               <div class="checkbox-group">
                 <div class="checkbox-item">
+                  <input type="checkbox" id="any" name="dining_hall[]" value="Any">
+                  <label for="any">Any</label>
+                </div>
+                <div class="checkbox-item">
                   <input type="checkbox" id="john_jay" name="dining_hall[]" value="John Jay">
                   <label for="john_jay">John Jay</label>
                 </div>
@@ -182,6 +186,9 @@
       <div class="footer"><p></p></div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-    <script src="../static/functions.js" type="text/javascript"></script>
+    <script src="../static/utility.js"></script>
+    <script src="../static/signin.js"></script>
+    <script src="../static/formlogic.js"></script>
+    <script src="../static/listingslogic.js"></script>
   </body>
 </html>
