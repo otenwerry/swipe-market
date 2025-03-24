@@ -711,7 +711,7 @@ def delete_listing(listing_id):
         return "Unauthorized - Please log in", 401
     
     if not listing_type or listing_type not in ['seller', 'buyer']:
-        return "Invalid listing type - must be 'seller' or 'buyer'", 400
+        return f"Invalid listing type: {listing_type} - must be 'seller' or 'buyer'", 400
 
     # Get the listing based on the specified type
     if listing_type == 'seller':
