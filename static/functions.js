@@ -45,7 +45,20 @@ function onSignIn(googleUser) {
     const dateInput = document.getElementById('date');
     const startTimeInput = document.getElementById('start_time');
     const endTimeInput = document.getElementById('end_time');
+    const priceInput = document.getElementById('price');
     const isEditPage = window.location.pathname.includes('/edit_listing/');
+
+    // Add validation for price input
+    if (priceInput) {
+      priceInput.addEventListener('input', function() {
+        const price = parseFloat(this.value);
+        if (isNaN(price) || price < 0) {
+          this.setCustomValidity('Price must be at least 0.');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+    }
 
     if (!isEditPage) {
       // format today's date as YYYY-MM-DD
