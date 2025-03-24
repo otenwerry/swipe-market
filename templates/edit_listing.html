@@ -115,7 +115,7 @@
       </header>
         <section style="max-width: 800px; margin: 20px auto; padding: 20px;">
             <div class="seller-form">
-                <form action="/edit_listing/{{ listing.id }}" method="POST">
+                <form id="listingForm" action="/edit_listing/{{ listing.id }}" method="POST">
                     <input type="hidden" name="poster_name" id="poster_name">
                     <input type="hidden" name="poster_email" id="poster_email" value="{{ user_email }}">
                     <input type="hidden" name="listing_type" value="{{ listing_type }}">
