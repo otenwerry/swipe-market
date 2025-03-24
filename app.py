@@ -317,8 +317,7 @@ def clear_database():
 def edit_listing(listing_id):
     print("Method: ", request.method)
     user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
-    #user_email = request.form.get('poster_email')
-    print("User email: ", user_email)
+    print(f"Edit attempt - User email: {user_email}")
     if not user_email:
         return redirect(url_for('index'))
     
@@ -327,11 +326,17 @@ def edit_listing(listing_id):
         listing = BuyerListing.query.get_or_404(listing_id)
 
     is_seller = isinstance(listing, SellerListing)
+    owner_email = listing.seller_email if is_seller else listing.buyer_email
+    print(f"Edit attempt - Listing owner email: {owner_email}")
+    print(f"Edit attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
 
-    # Check if the user owns the listing
-    if (is_seller and listing.seller_email != user_email) or \
-       (not is_seller and listing.buyer_email != user_email):
+    # Check if the user owns the listing (case insensitive comparison)
+    if (is_seller and listing.seller_email.lower() != user_email.lower()) or \
+       (not is_seller and listing.buyer_email.lower() != user_email.lower()):
+        print(f"Edit unauthorized - User {user_email} does not own listing {listing_id}")
         return redirect(url_for('index'))
+        
+    print(f"Edit authorized - User {user_email} owns listing {listing_id}")
 
     if request.method == 'POST' and 'dining_hall[]' in request.form:
         print("Form data received: ", request.form)
@@ -689,7 +694,7 @@ def send_connection_email():
 def delete_listing(listing_id):
     # Get the user's email from the request
     user_email = request.form.get('user_email')
-    print(f"User email: {user_email}")
+    print(f"Delete attempt - User email: {user_email}")
     if not user_email:
         return "Unauthorized - Please log in", 401
 
@@ -700,11 +705,17 @@ def delete_listing(listing_id):
         listing = BuyerListing.query.get_or_404(listing_id)
         is_seller = False
 
-    # Check if the user owns the listing
-    if (is_seller and listing.seller_email != user_email) or \
-       (not is_seller and listing.buyer_email != user_email):
-        print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {listing.seller_email if is_seller else listing.buyer_email}")
+    owner_email = listing.seller_email if is_seller else listing.buyer_email
+    print(f"Delete attempt - Listing owner email: {owner_email}")
+    print(f"Delete attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
+    
+    # Check if the user owns the listing (case insensitive comparison)
+    if (is_seller and listing.seller_email.lower() != user_email.lower()) or \
+       (not is_seller and listing.buyer_email.lower() != user_email.lower()):
+        print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}")
         return "Unauthorized - You don't own this listing", 403
+        
+    print(f"Delete authorized - User {user_email} owns listing {listing_id}")
     #set is_active to false``
     listing.is_active = False
     db.session.commit()
