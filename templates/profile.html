@@ -107,10 +107,10 @@
     <main>
       <div class="top">
         <div class="top-left">
-          <div id="current-time"></div>
           <a href="/">&lt; Swipe Market</a>
         </div>
         <div class="top-right">
+          <div id="current-time"></div>
           <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank" class="feedback">
             Feedback
           </a>
@@ -376,7 +376,8 @@
           .then(data => {
             if (data.success) {
               showSuccess(data.message || 'User blocked successfully');
-              window.location.reload();
+              // Reload the home page with email parameter to apply filtering
+              window.location.href = `/?email=${encodeURIComponent(userEmail)}`;
             } else {
               showError(data.error || 'Error blocking user');
             }
@@ -409,7 +410,8 @@
           .then(data => {
             if (data.success) {
               showSuccess(data.message || 'User unblocked successfully');
-              window.location.reload();
+              // Reload the home page with email parameter to apply filtering
+              window.location.href = `/?email=${encodeURIComponent(userEmail)}`;
             } else {
               showError(data.error || 'Error unblocking user');
             }
