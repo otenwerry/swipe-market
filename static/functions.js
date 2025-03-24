@@ -870,19 +870,6 @@ function onSignIn(googleUser) {
     });
   }
 
-  // Function to check if listings are from blocked users or users who blocked the current user
-  function checkBlockedListings() {
-    // This function is now empty as blocking will be handled by the server
-    // Listings from blocked users will be filtered out before display
-    return;
-  }
-
-  // Function to show block message popup
-  function showBlockMessage(message) {
-    // This function is no longer needed
-    return;
-  }
-
   // Updated function to disable contacted buttons using server data
   function disableContactedListings() {
     // Get the current user's email
@@ -918,12 +905,6 @@ function onSignIn(googleUser) {
     fetchContactedListings();
     
     const contactForm = document.getElementById('myForm');
-    if (contactForm) {
-      contactForm.addEventListener('submit', function(event) {
-        // No need to manually update localStorage here as the server will record this contact
-        // We'll refresh the list of contacted listings when the page reloads after form submission
-      });
-    }
     
     handlePopup();
   });
