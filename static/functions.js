@@ -40,6 +40,31 @@ document.addEventListener('DOMContentLoaded', function() {
   handlePopup();
   // Check for auto delete parameter
   checkAutoDelete();
+
+  // Add how-it-works popup functionality
+  const howItWorksButton = document.getElementById('howItWorksButton');
+  const howItWorksPopup = document.getElementById('howItWorksPopup');
+
+  if (howItWorksButton && howItWorksPopup) {
+    howItWorksButton.addEventListener('click', function() {
+      howItWorksPopup.style.display = 'block';
+    });
+
+    // Close popup when clicking outside
+    howItWorksPopup.addEventListener('click', function(event) {
+      if (event.target === howItWorksPopup) {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+
+    // Close popup when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && howItWorksPopup.style.display === 'block') {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+  }
+
   // set default date to today
   const today = new Date();
   const dateInput = document.getElementById('date');
