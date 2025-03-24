@@ -255,11 +255,23 @@ function onSignIn(googleUser) {
     
       //toggle dropdown
       if (profileIcon) {
-        profileIcon.addEventListener('click', function() {
+        profileIcon.addEventListener('click', function(event) {
+          event.stopPropagation(); // Prevent the click from bubbling up
           const profileMenu = this.parentElement;
           profileMenu.classList.toggle('active');
         });
       }
+
+      // Add document click listener to close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        const profileMenu = document.getElementById('profile-menu');
+        const profileIcon = document.getElementById('profile-icon');
+        
+        // Check if click is outside the profile menu and icon
+        if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
+          profileMenu.classList.remove('active');
+        }
+      });
 
       // Check if user exists in our database
       checkUserExistence(responsePayload.email);
@@ -709,8 +721,20 @@ function onSignIn(googleUser) {
           document.getElementById('profile-menu').style.display = 'inline-block';
   
           //toggle dropdown
-          profileIcon.addEventListener('click', function() {
+          profileIcon.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent the click from bubbling up
             this.parentElement.classList.toggle('active');
+          });
+
+          // Add document click listener to close dropdown when clicking outside
+          document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profile-menu');
+            const profileIcon = document.getElementById('profile-icon');
+            
+            // Check if click is outside the profile menu and icon
+            if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
+              profileMenu.classList.remove('active');
+            }
           });
 
           // Add the dropdown styles if they don't exist
