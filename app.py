@@ -713,7 +713,7 @@ def delete_listing(listing_id):
     if (is_seller and listing.seller_email.lower() != user_email.lower()) or \
        (not is_seller and listing.buyer_email.lower() != user_email.lower()):
         print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}")
-        return "Unauthorized - You don't own this listing", 403
+        return "Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}", 403
         
     print(f"Delete authorized - User {user_email} owns listing {listing_id}")
     #set is_active to false``
