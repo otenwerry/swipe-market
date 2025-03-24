@@ -40,6 +40,31 @@ document.addEventListener('DOMContentLoaded', function() {
   handlePopup();
   // Check for auto delete parameter
   checkAutoDelete();
+
+  // Add how-it-works popup functionality
+  const howItWorksButton = document.getElementById('howItWorksButton');
+  const howItWorksPopup = document.getElementById('howItWorksPopup');
+
+  if (howItWorksButton && howItWorksPopup) {
+    howItWorksButton.addEventListener('click', function() {
+      howItWorksPopup.style.display = 'block';
+    });
+
+    // Close popup when clicking outside
+    howItWorksPopup.addEventListener('click', function(event) {
+      if (event.target === howItWorksPopup) {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+
+    // Close popup when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && howItWorksPopup.style.display === 'block') {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+  }
+
   // set default date to today
   const today = new Date();
   const dateInput = document.getElementById('date');
@@ -1041,25 +1066,59 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector("form"); // Select the form
-  const checkboxes = document.querySelectorAll("input[name='dining_hall[]']"); // Select checkboxes
-  const paymentMethods = document.querySelectorAll("input[name='payment_methods[]']"); // Payment method checkboxes
+  const diningHallCheckboxes = document.querySelectorAll("input[name='dining_hall[]']"); // Select dining hall checkboxes
+  const paymentMethodCheckboxes = document.querySelectorAll("input[name='payment_methods[]']"); // Payment method checkboxes
+
+  // Function to check if any checkbox in a group is checked
+  function isAnyCheckboxChecked(checkboxList) {
+    return Array.from(checkboxList).some(checkbox => checkbox.checked);
+  }
+
+  // Function to show error message
+  function showError(message) {
+    alert(message);
+  }
 
   form.addEventListener("submit", function (event) {
-      if (!isAnyCheckboxChecked(checkboxes)) {
-          this.setCustomValidity('Please select at least one dining hall.');
-          event.preventDefault(); // Prevent form submission
-          return;
-      }
-      if (!isAnyCheckboxChecked(paymentMethods)) {
-          alert("Please select at least one Payment Method.");
-          event.preventDefault(); // Prevent form submission
-          return;
-      }
+    let hasError = false;
+    
+    // Check dining halls
+    if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
+      showError("Please select at least one dining hall.");
+      hasError = true;
+      event.preventDefault();
+      return;
+    }
+
+    // Check payment methods
+    if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+      showError("Please select at least one payment method.");
+      hasError = true;
+      event.preventDefault();
+      return;
+    }
   });
 
-  function isAnyCheckboxChecked(checkboxList) {
-      return Array.from(checkboxList).some(checkbox => checkbox.checked);
-  }
+  // Add real-time validation feedback
+  diningHallCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
+        this.setCustomValidity('Please select at least one dining hall.');
+      } else {
+        this.setCustomValidity('');
+      }
+    });
+  });
+
+  paymentMethodCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+        this.setCustomValidity('Please select at least one payment method.');
+      } else {
+        this.setCustomValidity('');
+      }
+    });
+  });
 });
 
 // add this function to handle the popup
