@@ -243,13 +243,23 @@ function onSignIn(googleUser) {
     
       //display profile icon
       const profileIcon = document.getElementById('profile-icon');
-      profileIcon.src = responsePayload.picture;
-      document.getElementById('profile-menu').style.display = 'inline-block';
+      if (profileIcon) {
+        profileIcon.src = responsePayload.picture;
+        profileIcon.style.display = 'block';
+      }
+      
+      const profileMenu = document.getElementById('profile-menu');
+      if (profileMenu) {
+        profileMenu.style.display = 'inline-block';
+      }
     
       //toggle dropdown
-      profileIcon.addEventListener('click', function() {
-        this.parentElement.classList.toggle('active');
-      });
+      if (profileIcon) {
+        profileIcon.addEventListener('click', function() {
+          const profileMenu = this.parentElement;
+          profileMenu.classList.toggle('active');
+        });
+      }
 
       // Check if user exists in our database
       checkUserExistence(responsePayload.email);

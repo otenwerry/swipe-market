@@ -20,6 +20,62 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D26R1LF247"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <div id="g_id_onload" data-client_id="362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false">
+    <style>
+        .profile-menu {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-menu img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .profile-menu img:hover {
+            opacity: 0.8;
+        }
+        
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            padding: 5px 0;
+        }
+        
+        .profile-menu.active .profile-dropdown {
+            display: block;
+        }
+        
+        .profile-dropdown button, .profile-dropdown a button {
+            width: 100%;
+            padding: 10px 15px;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+        
+        .profile-dropdown button:hover, .profile-dropdown a button:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .profile-dropdown a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V549ZYC27J"></script>
