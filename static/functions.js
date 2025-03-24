@@ -290,7 +290,7 @@ function onSignIn(googleUser) {
       fetchContactedListings();
       
       // Check for blocks and update UI accordingly
-      checkBlockedListings();
+      //checkBlockedListings();
     
       console.log('User logged in:', responsePayload.email);
     })
