@@ -160,7 +160,6 @@ def update_expired_listings():
     for listing in active_sellers:
         try:
             expiration_str = f"{listing.date} {listing.end_time}"
-            print(f"Processing seller listing {listing.id}, expiration string: {expiration_str}")
             expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
             expiration = ny_tz.localize(expiration)
             print(f"Seller listing {listing.id}: expiration={expiration}, now={now}")
@@ -179,7 +178,6 @@ def update_expired_listings():
     for listing in active_buyers:
         try:
             expiration_str = f"{listing.date} {listing.end_time}"
-            print(f"Processing buyer listing {listing.id}, expiration string: {expiration_str}")
             expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
             expiration = ny_tz.localize(expiration)
             print(f"Buyer listing {listing.id}: expiration={expiration}, now={now}")
@@ -549,6 +547,8 @@ def send_connection_email():
   listing_id = request.form.get('listing_id')
   listing_type = request.form.get('listing_type')
   sender_email = request.form.get('sender_email')
+
+  print(f"Sending connection email - Listing ID: {listing_id}, Listing type: {listing_type}, Sender email: {sender_email}")
   
   # Get the listing and owner's email
   if listing_type == 'seller':
