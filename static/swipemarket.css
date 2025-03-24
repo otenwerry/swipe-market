@@ -321,33 +321,21 @@
     animation: fadeIn 0.2s ease;
   }
   
-  .profile-dropdown button,
-.profile-dropdown a button,
-.profile-dropdown a {
+  .profile-dropdown button{
   border: none;
   background: none;
   width: 100%;
-  padding: 12px 16px;
-  text-align: left;
+  padding: 12px;
   cursor: pointer;
   color: #333;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   box-sizing: border-box;
   text-decoration: none;
-  border-radius: 0;    /* Remove rounded corners */
-  box-shadow: none;    /* Remove any shadow effects */
-  transition: none;    /* Optional: Remove transitions if not needed */
+  border-radius: 0;
+  box-shadow: none; 
+  transition: none;
 }
-
-.profile-dropdown button:hover,
-.profile-dropdown a:hover,
-.profile-dropdown a button:hover {
-  background-color: transparent;  /* Remove hover background shading */
-  color: #4285f4;
-}
-
-
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
