@@ -1314,3 +1314,54 @@ function resetUIForLoggedOutUser() {
     button.classList.remove('contacted');
   });
 }
+
+// Function to show the "How it Works" popup
+function showHowItWorksPopup() {
+    // Create popup container if it doesn't exist
+    if (!document.getElementById('how-it-works-popup')) {
+        const popup = document.createElement('div');
+        popup.id = 'how-it-works-popup';
+
+        const container = document.createElement('div');
+        container.className = 'form-container';
+
+        // Add heading
+        const heading = document.createElement('h3');
+        heading.textContent = 'How Swipe Market Works';
+        container.appendChild(heading);
+
+        // Add explanation text
+        const explanation = document.createElement('p');
+        explanation.innerHTML = '<i>Swipe Market is a platform that connects Columbia students with excess meal swipes or dining dollars with those in need of meals. Sellers can list their available meal swipes or dining dollars, while buyers can browse listings and contact sellers to arrange transfers. Our goal is to create a community where no meal goes to waste and every student has access to dining options.</i>';
+        container.appendChild(explanation);
+
+        // Add close button
+        const closeButton = document.createElement('button');
+        closeButton.className = 'btn';
+        closeButton.textContent = 'Close';
+        closeButton.onclick = closeHowItWorksPopup;
+        container.appendChild(closeButton);
+
+        popup.appendChild(container);
+        document.body.appendChild(popup);
+    }
+
+    // Show the popup
+    const popup = document.getElementById('how-it-works-popup');
+    popup.style.display = 'flex';
+}
+
+function closeHowItWorksPopup() {
+    const popup = document.getElementById('how-it-works-popup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+// Initialize How It Works button click handler
+document.addEventListener('DOMContentLoaded', function() {
+    const howItWorksButton = document.querySelector('.how-it-works-btn');
+    if (howItWorksButton) {
+        howItWorksButton.addEventListener('click', showHowItWorksPopup);
+    }
+});
