@@ -918,9 +918,8 @@ function onSignIn(googleUser) {
       });
     }
   }
-
   //shows edit form.
-  function editListing(listingId) {
+  function editListing(listingId, listingType) {
     if (!isUserLoggedIn()) {
       alert('Please sign in to edit listings');
       document.getElementById('g_id_signin').style.display = 'block';
