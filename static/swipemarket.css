@@ -327,10 +327,6 @@
     text-decoration: none;
   }
   
-  .profile-dropdown a {
-    padding: 0;
-  }
-  
   .profile-dropdown button:hover, 
   .profile-dropdown a:hover,
   .profile-dropdown a button:hover {
