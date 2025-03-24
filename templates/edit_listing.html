@@ -29,7 +29,7 @@
   gtag('js', new Date());
 
   gtag('config', 'G-V549ZYC27J');
-</script>
+</script>    
 <body>
     <main>
         <p id="output"></p>
@@ -65,6 +65,10 @@
                         <label>Dining hall:</label>
                         <div class="checkbox-group">
                             {% set selected_halls = listing.dining_hall.split(', ') %}
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="any" name="dining_hall[]" value="Any"  {% if "John Jay" in selected_halls %}checked{% endif %}>
+                                <label for="any">Any</label>
+                              </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="john_jay" name="dining_hall[]" value="John Jay" {% if "John Jay" in selected_halls %}checked{% endif %}>
                                 <label for="john_jay">John Jay</label>
