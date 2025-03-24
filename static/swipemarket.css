@@ -366,7 +366,6 @@
 
   .form-group label {
     display: block;
-    margin-bottom: 8px;
     font-weight: 500;
     color: #000000;
   }
@@ -387,15 +386,17 @@
   }
 
   .checkbox-item input[type="checkbox"] {
-    margin-right: 10px;
     accent-color: #FFFFFF;
     border: 1px solid #444;
+    border-radius: 4px;
     appearance: none;
     -webkit-appearance: none;
     width: 18px;
     height: 18px;
-    position: relative;
     cursor: pointer;
+    position: relative;
+    margin: 0 8px 0 0;
+    flex-shrink: 0;
   }
 
   .checkbox-item input[type="checkbox"]:checked {
@@ -416,6 +417,10 @@
   .checkbox-item label {
     color: #000000;
     font-weight: normal;
+    line-height: 18px;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
   }
 
   input[type="date"], 
