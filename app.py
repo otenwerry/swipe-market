@@ -348,8 +348,21 @@ def edit_listing(listing_id):
 
     if request.method == 'POST' and 'dining_hall[]' in request.form:
         print("Form data received: ", request.form)
+        
+        # Validate dining halls
+        dining_halls = request.form.getlist('dining_hall[]')
+        if not dining_halls:
+            flash("Error: Please select at least one dining hall.", "error")
+            return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
+            
+        # Validate payment methods
+        payment_methods_list = request.form.getlist('payment_methods[]')
+        if not payment_methods_list:
+            flash("Error: Please select at least one payment method.", "error")
+            return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
+            
         # Update the listing with new values
-        listing.dining_hall = ", ".join(request.form.getlist('dining_hall[]'))
+        listing.dining_hall = ", ".join(dining_halls)
         listing.date = request.form.get('date')
         listing.start_time = request.form.get('start_time')
         listing.end_time = request.form.get('end_time')
@@ -362,7 +375,7 @@ def edit_listing(listing_id):
             flash("Error: Please enter a valid price (number).", "error")
             return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
         
-        listing.payment_methods = ", ".join(request.form.getlist('payment_methods[]'))
+        listing.payment_methods = ", ".join(payment_methods_list)
         
         try:
             print("Before commit - start_time:", listing.start_time)  # Debug log
@@ -399,13 +412,22 @@ def profile():
 def submit_buyer():
   #get values from the form
   dining_halls = request.form.getlist('dining_hall[]')
+  if not dining_halls:
+    flash("Error: Please select at least one dining hall.", "error")
+    return redirect(url_for('listings'))
+    
   dining_halls_str = ", ".join(dining_halls)
   date = request.form.get('date')
   start_time = request.form.get('start_time')
   end_time = request.form.get('end_time')
   price = request.form.get('price')
   payment_methods_list = request.form.getlist('payment_methods[]')
-  payment_methods=', '.join(payment_methods_list)
+  
+  if not payment_methods_list:
+    flash("Error: Please select at least one payment method.", "error")
+    return redirect(url_for('listings'))
+    
+  payment_methods = ', '.join(payment_methods_list)
   
   buyer_name = request.form.get('poster_name')
   buyer_email = request.form.get('poster_email')
@@ -472,13 +494,22 @@ def submit_buyer():
 def submit_seller():
   #get values from the form
   dining_halls = request.form.getlist('dining_hall[]')
+  if not dining_halls:
+    flash("Error: Please select at least one dining hall.", "error")
+    return redirect(url_for('listings'))
+    
   dining_halls_str = ", ".join(dining_halls)
   date = request.form.get('date')
   start_time = request.form.get('start_time')
   end_time = request.form.get('end_time')
   price = request.form.get('price')
   payment_methods_list = request.form.getlist('payment_methods[]')
-  payment_methods=', '.join(payment_methods_list)
+  
+  if not payment_methods_list:
+    flash("Error: Please select at least one payment method.", "error")
+    return redirect(url_for('listings'))
+    
+  payment_methods = ', '.join(payment_methods_list)
   
   seller_name = request.form.get('poster_name')
   seller_email = request.form.get('poster_email')
