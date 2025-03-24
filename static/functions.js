@@ -629,9 +629,7 @@ function onSignIn(googleUser) {
       return false;
     }
     
-    if (!isUserLoggedIn()) {
-      document.getElementById('g_id_signin').style.display = 'block';
-      alert('Please sign in with your Columbia/Barnard email to contact users.');
+    if (!requireSignIn()) {
       return false;
     }
 
@@ -893,9 +891,7 @@ function onSignIn(googleUser) {
 
   //deletes listing.
   function deleteListing(listingId, listingType) {
-    if (!isUserLoggedIn()) {
-      alert('Please sign in to delete listings');
-      document.getElementById('g_id_signin').style.display = 'block';
+    if (!requireSignIn()) {
       return;
     }
     
@@ -930,9 +926,7 @@ function onSignIn(googleUser) {
   }
   //shows edit form.
   function editListing(listingId, listingType) {
-    if (!isUserLoggedIn()) {
-      alert('Please sign in to edit listings');
-      document.getElementById('g_id_signin').style.display = 'block';
+    if (!requireSignIn()) {
       return;
     }
     
