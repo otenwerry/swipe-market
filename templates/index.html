@@ -109,7 +109,7 @@
                       onclick="openForm(this)">Contact Seller</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
-                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">x</button>
+                <button onclick="deleteListing('{{ listing.id }}', 'seller')" class="delete-button">x</button>
                 <button onclick="editListing('{{ listing.id }}', 'seller')" class="edit-button">Edit</button>
               </div>
             </td>
@@ -147,7 +147,7 @@
                       data-listing-type="buyer" 
                       onclick="openForm(this)">Contact Buyer</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
-                <button onclick="deleteListing('{{ listing.id }}')" class="delete-button">x</button>
+                <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">x</button>
                 <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
               </div>
             </td>
