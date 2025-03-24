@@ -385,3 +385,18 @@ function handleSignOut() {
     window.location.href = currentUrl.href;
   });
 };
+
+// Function to check if user is properly logged in with valid token
+function isUserLoggedIn() {
+  const credential = localStorage.getItem('googleCredential');
+  if (!credential) return false;
+  
+  try {
+    const payload = jwt_decode(credential);
+    const expirationTime = payload.exp * 1000;
+    return Date.now() < expirationTime;
+  } catch (error) {
+    console.error('Error checking login status:', error);
+    return false;
+  }
+};
