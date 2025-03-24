@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8" />
     <title>Edit Listing</title>
-    <script src="../static/functions.js"></script>
     <link rel="stylesheet" href="../static/header.css">
     <link rel="stylesheet" href="../static/general.css">
     <link rel="stylesheet" href="../static/swipemarket.css">
@@ -25,7 +24,7 @@
     <style>
         .profile-menu {
             position: relative;
-            display: inline-block;
+            display: none;
         }
         
         .profile-menu img {
@@ -90,15 +89,15 @@
 </script>    
 <body>
     <main>
-        <p id="output"></p>
-      <div class="top">
+    <p id="output"></p>
+    <div class="top">
         <div class="top-left">
+          <div id="current-time"></div>
           <a href="/">&lt; Swipe Market</a>
         </div>
         <div class="top-right">
-          <div id="current-time"></div>
-          <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank" class="feedback">
-            Feedback
+          <a href="https://forms.gle/7M3JpiJ9RoapZmxF6" target="blank">
+            <div class="feedback">Feedback</div>
           </a>
           <div id="g_id_signin" class="g_id_signin" data-type="standard"></div>
           <div id="profile-menu" class="profile-menu">
@@ -230,5 +229,12 @@
             </div>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="../static/functions.js" type="text/javascript"></script>
+    <div id="popup" class="form-popup">
+        <div class="form-container">
+            <p id="popup-message">Connection email sent! Check your inbox</p>
+        </div>
+    </div>
 </body>
 </html> 
