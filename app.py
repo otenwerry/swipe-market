@@ -43,7 +43,7 @@ class SellerListing(db.Model):
     seller_name = db.Column(db.String(100), nullable=False)
     seller_email = db.Column(db.String(100), nullable=False)
     seller_phone = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.EST)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
@@ -62,7 +62,7 @@ class BuyerListing(db.Model):
     buyer_name = db.Column(db.String(100), nullable=False)
     buyer_email = db.Column(db.String(100), nullable=False)
     buyer_phone = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.EST)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
@@ -74,7 +74,7 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     phone = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.EST)
     
     def __repr__(self):
         return f'<User {self.id} - {self.name}>'
@@ -85,7 +85,7 @@ class ContactRecord(db.Model):
     listing_id = db.Column(db.Integer, nullable=False)
     listing_type = db.Column(db.String(10), nullable=False)  # "seller" or "buyer"
     user_email = db.Column(db.String(100), nullable=False)
-    contact_time = db.Column(db.DateTime, default=datetime.utcnow)
+    contact_time = db.Column(db.DateTime, default=datetime.EST)
 
     def __repr__(self):
         return f'<ContactRecord {self.id} - {self.user_email} contacted {self.listing_type} {self.listing_id}>'
@@ -95,7 +95,7 @@ class BlockedUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     blocker_uni = db.Column(db.String(20), nullable=False)
     blocked_uni = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.EST)
     
     # Ensure a user can't block the same UNI twice
     __table_args__ = (
