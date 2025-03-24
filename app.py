@@ -317,16 +317,26 @@ def clear_database():
 def edit_listing(listing_id):
     print("Method: ", request.method)
     user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
-    print(f"Edit attempt - User email: {user_email}")
+    # Get the listing type from query param (GET) or form data (POST)
+    listing_type = request.args.get('listing_type') if request.method == 'GET' else request.form.get('listing_type')
+    print(f"Edit attempt - User email: {user_email}, Listing type: {listing_type}")
+    
     if not user_email:
         return redirect(url_for('index'))
     
-    listing = SellerListing.query.get(listing_id)
-    if not listing:
-        listing = BuyerListing.query.get_or_404(listing_id)
+    if not listing_type or listing_type not in ['seller', 'buyer']:
+        return "Invalid listing type - must be 'seller' or 'buyer'", 400
 
-    is_seller = isinstance(listing, SellerListing)
-    owner_email = listing.seller_email if is_seller else listing.buyer_email
+    # Get the listing based on the specified type
+    if listing_type == 'seller':
+        listing = SellerListing.query.get_or_404(listing_id)
+        is_seller = True
+        owner_email = listing.seller_email
+    else:  # listing_type == 'buyer'
+        listing = BuyerListing.query.get_or_404(listing_id)
+        is_seller = False
+        owner_email = listing.buyer_email
+
     print(f"Edit attempt - Listing owner email: {owner_email}")
     print(f"Edit attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
 
@@ -362,7 +372,7 @@ def edit_listing(listing_id):
             return "Error updating listing", 500
 
     # Show the edit form for both GET requests and initial POST verification
-    return render_template('edit_listing.html', listing=listing, is_seller=is_seller)
+    return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
 
 @app.route('/profile')
 def profile():
@@ -616,7 +626,7 @@ def send_connection_email():
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {buyer_listing.payment_methods}.\n\n"
       f"{buyer_name}, remember to delete your listing "
-      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a> once you've agreed to the sale.\n\n"
+      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
     )
@@ -669,7 +679,7 @@ def send_connection_email():
       f"${price_str}. "
       f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
       f"{seller_name}, if this is the only swipe you want to sell from this listing, "
-      f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}'>here</a> "
+      f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=seller'>here</a> "
       f"once you've agreed to the sale.\n\n"
       "Best regards,\n"
       "Swipe Market Team"
@@ -694,18 +704,25 @@ def send_connection_email():
 def delete_listing(listing_id):
     # Get the user's email from the request
     user_email = request.form.get('user_email')
-    print(f"Delete attempt - User email: {user_email}")
+    # Get the listing type (seller or buyer) from the request
+    listing_type = request.form.get('listing_type')
+    print(f"Delete attempt - User email: {user_email}, Listing type: {listing_type}")
     if not user_email:
         return "Unauthorized - Please log in", 401
+    
+    if not listing_type or listing_type not in ['seller', 'buyer']:
+        return "Invalid listing type - must be 'seller' or 'buyer'", 400
 
-    # Try to find the listing in both tables
-    listing = SellerListing.query.get(listing_id)
-    is_seller = True
-    if not listing:
+    # Get the listing based on the specified type
+    if listing_type == 'seller':
+        listing = SellerListing.query.get_or_404(listing_id)
+        is_seller = True
+        owner_email = listing.seller_email
+    else:  # listing_type == 'buyer'
         listing = BuyerListing.query.get_or_404(listing_id)
         is_seller = False
+        owner_email = listing.buyer_email
 
-    owner_email = listing.seller_email if is_seller else listing.buyer_email
     print(f"Delete attempt - Listing owner email: {owner_email}")
     print(f"Delete attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
     
@@ -716,7 +733,7 @@ def delete_listing(listing_id):
         return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}", 403
         
     print(f"Delete authorized - User {user_email} owns listing {listing_id}")
-    #set is_active to false``
+    #set is_active to false
     listing.is_active = False
     db.session.commit()
     return redirect(url_for('index'))

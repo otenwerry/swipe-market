@@ -60,6 +60,7 @@
                 <form action="/edit_listing/{{ listing.id }}" method="POST">
                     <input type="hidden" name="poster_name" id="poster_name">
                     <input type="hidden" name="poster_email" id="poster_email" value="{{ user_email }}">
+                    <input type="hidden" name="listing_type" value="{{ listing_type }}">
                     <div class="form-group">
                         <label>Dining hall:</label>
                         <div class="checkbox-group">
