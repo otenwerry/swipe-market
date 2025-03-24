@@ -373,6 +373,10 @@
   color: #4285f4;
 }
 
+.profile-dropdown a {
+  padding: 12px 16px;  /* match the button padding */
+}
+
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
