@@ -883,7 +883,7 @@ function onSignIn(googleUser) {
   });
 
   //deletes listing.
-  function deleteListing(listingId) {
+  function deleteListing(listingId, listingType) {
     if (!isUserLoggedIn()) {
       alert('Please sign in to delete listings');
       document.getElementById('g_id_signin').style.display = 'block';
@@ -891,11 +891,12 @@ function onSignIn(googleUser) {
     }
     
     const userEmail = localStorage.getItem('userEmail');
-    console.log(`Attempting to delete listing ${listingId} as ${userEmail}`);
+    console.log(`Attempting to delete listing ${listingId} of type ${listingType} as ${userEmail}`);
     
     if (confirm('Are you sure you want to delete this listing?')) {
       const formData = new FormData();
       formData.append('user_email', userEmail);
+      formData.append('listing_type', listingType);
       
       fetch(`/delete_listing/${listingId}`, {
         method: 'POST',
@@ -918,9 +919,8 @@ function onSignIn(googleUser) {
       });
     }
   }
-
   //shows edit form.
-  function editListing(listingId) {
+  function editListing(listingId, listingType) {
     if (!isUserLoggedIn()) {
       alert('Please sign in to edit listings');
       document.getElementById('g_id_signin').style.display = 'block';
@@ -1092,6 +1092,7 @@ function onSignIn(googleUser) {
   function checkAutoDelete() {
     const urlParams = new URLSearchParams(window.location.search);
     const autoDeleteId = urlParams.get('auto_delete');
+    const listingType = urlParams.get('listing_type') || 'seller'; // Default to seller if not specified
     
     if (autoDeleteId) {
       // Wait for Google sign-in to complete
@@ -1104,11 +1105,13 @@ function onSignIn(googleUser) {
           if (confirm('Are you sure you want to delete this listing?')) {
             const formData = new FormData();
             formData.append('user_email', userEmail);
+            formData.append('listing_type', listingType);
             
             fetch(`/delete_listing/${autoDeleteId}`, {
               method: 'POST',
               body: formData
-            }).then(response => {
+            })
+            .then(response => {
               if (response.ok) {
                 // Show success message
                 alert('Listing deleted successfully!');
@@ -1120,7 +1123,8 @@ function onSignIn(googleUser) {
               } else {
                 alert('You can only delete your own listings.');
               }
-            }).catch(error => {
+            })
+            .catch(error => {
               console.error('Error deleting listing:', error);
               alert('Error deleting listing. Please try again.');
             });
