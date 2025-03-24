@@ -106,7 +106,7 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="seller" 
-                      onclick="openForm(this)">Contact Seller</button>
+                      onclick="openForm(this)">Get This Swipe</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
                 <button onclick="deleteListing('{{ listing.id }}', 'seller')" class="delete-button">x</button>
@@ -145,7 +145,7 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="buyer" 
-                      onclick="openForm(this)">Contact Buyer</button>
+                      onclick="openForm(this)">Swipe Them In</button>
               <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
                 <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">x</button>
                 <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
@@ -166,6 +166,8 @@
         <input type="hidden" name="listing_type" id="listing_type" value="">
         <input type="hidden" name="sender_name" id="sender_name" value="">
         <input type="hidden" name="sender_email" id="sender_email" value="">
+        <div>Click "Confirm" to receive an email putting you in touch with the person who posted this swipe.
+        </div>
         <button type="submit" class="btn">Confirm</button>
         <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
       </form>
