@@ -57,15 +57,18 @@
         height: 100%;
       }
   
-      /* Add styling for Google sign-in button */
+      .g_id_signin-container {
+        width: 120px;
+        height: 24px;
+        overflow: hidden;
+        top: 0;
+      }
+
       .g_id_signin {
         transform: translateY(0) scale(0.6);
-        width: 120px;
-        height: 40px;
         transform-origin: right center;
         display: flex;
         align-items: center;
-        top: 0;
       }
 
       .feedback {
