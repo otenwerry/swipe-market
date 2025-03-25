@@ -17,6 +17,12 @@
       word-wrap: break-word; /* Wrap long words */
     }
 
+    /* Add specific styling for table headers */
+    th {
+      font-size: 0.5rem; /* Even smaller text for headers */
+      font-weight: 600; /* Keep headers slightly bolder for readability */
+    }
+
     .header {
         font-size: 22px; /* Reduced from 28px */
         letter-spacing: 1px;
