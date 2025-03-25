@@ -9,6 +9,8 @@
     flex-direction: row;
     justify-content: center;
     letter-spacing: 2px;
+    padding: 0 20px;
+    box-sizing: border-box;
   }
   
   #index-header a {
@@ -17,6 +19,7 @@
     background-clip: text;
     color: transparent;
     transition: all 0.3s ease;
+    white-space: nowrap;
   }
   
   .meals-container{
@@ -102,4 +105,44 @@
   
   .pa-menu{
     font-size: 18px;
+  }
+
+  /* Mobile Responsive Styles */
+  @media (max-width: 600px) {
+    .header {
+      font-size: 32px;
+      letter-spacing: 1px;
+      padding: 0 15px;
+    }
+
+    .top {
+      padding: 15px 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .top-right {
+      font-size: 14px;
+      gap: 10px;
+    }
+
+    .feedback {
+      padding: 6px 12px;
+      font-size: 12px;
+      height: 35px;
+    }
+
+    .meals-container {
+      margin: 15px 20px;
+      font-size: 18px;
+      gap: 15px;
+    }
+
+    .contest {
+      font-size: 16px;
+    }
+
+    .pa-menu {
+      font-size: 16px;
+    }
   }
