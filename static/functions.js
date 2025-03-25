@@ -1086,31 +1086,51 @@ document.addEventListener("DOMContentLoaded", function () {
       return Array.from(checkboxList).some(checkbox => checkbox.checked);
     }
 
-    // Add validation for dining hall checkboxes
+    // Function to show error message
+    function showError(message) {
+      alert(message);
+    }
+
+    listingForm.addEventListener("submit", function (event) {
+      let hasError = false;
+      
+      // Check dining halls
+      if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
+        showError("Please select at least one dining hall.");
+        hasError = true;
+        event.preventDefault();
+        return;
+      }
+
+      // Check payment methods
+      if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+        showError("Please select at least one payment method.");
+        hasError = true;
+        event.preventDefault();
+        return;
+      }
+    });
+
+    // Add real-time validation feedback
     diningHallCheckboxes.forEach(checkbox => {
       checkbox.addEventListener('change', function() {
         if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
-          this.setCustomValidity('Please select at least one dining hall');
+          this.setCustomValidity('Please select at least one dining hall.');
         } else {
           this.setCustomValidity('');
         }
       });
     });
 
-    // Add validation for payment method checkboxes
     paymentMethodCheckboxes.forEach(checkbox => {
       checkbox.addEventListener('change', function() {
         if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
-          this.setCustomValidity('Please select at least one payment method');
+          this.setCustomValidity('Please select at least one payment method.');
         } else {
           this.setCustomValidity('');
         }
       });
     });
-
-    // Trigger initial validation
-    diningHallCheckboxes[0].dispatchEvent(new Event('change'));
-    paymentMethodCheckboxes[0].dispatchEvent(new Event('change'));
   }
 });
 
