@@ -64,11 +64,10 @@
         margin-left: auto;
         display: flex;
         align-items: center;
-        top: 0;
         /*position: absolute;
         right: 0;
         top: 0; /* Change from 50% to 0 */
-        /*transform: translateY(0) scale(0.6); /* Remove translateY */
+        transform: translateY(0) scale(0.6); /* Remove translateY */
       }
 
       .feedback {
