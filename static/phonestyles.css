@@ -114,4 +114,18 @@
         font-size: 11px; /* Reduced from 12px */
         padding: 4px 8px; /* Reduced padding */
       }
+
+      /* Adjust delete and edit buttons to match contact button size */
+      .delete-button, .edit-button {
+        font-size: 11px;
+        padding: 4px 8px;
+        min-width: 30px;
+        height: 24px;
+        line-height: 1;
+      }
+
+      .listing-actions {
+        display: inline-flex;
+        gap: 4px;
+      }
   }
