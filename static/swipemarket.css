@@ -49,11 +49,18 @@
     justify-content: center;
     gap: 15px;
   }
+
+  .how-it-works-button {
+    background-color: #8c3dbe;
+  }
+
+  .sell-button {
+    background-color: #1a73e8;
+  }
   
   .sell-button, .how-it-works-button {
     font-size: 1.1rem;
     padding: 14px 30px;
-    background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 6px;
@@ -63,8 +70,14 @@
     transition: all 0.2s ease;
   }
 
-  .sell-button:hover, .how-it-works-button:hover {
+  .sell-button:hover {
     background-color: #2b7de9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
+  }
+
+  .how-it-works-button:hover {
+    background-color: #9b4cc7;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
   }
