@@ -59,8 +59,8 @@
   
       /* Add styling for Google sign-in button */
       .g_id_signin {
-        width: 150px;
-        height: 50px;
+        width: 120px;
+        height: 40px;
         transform-origin: right center;
         display: flex;
         align-items: center;
