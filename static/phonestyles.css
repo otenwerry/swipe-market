@@ -81,9 +81,9 @@
         top: 0;
       }
 
-      /* When the sign-in button exists in the container, adjust feedback position */
-      .top-right:has(.g_id_signin) .feedback {
-        right: 120px;
+      /* Add specific styling for when Google sign-in is present */
+      .g_id_signin + .feedback {
+        right: 120px; /* Adjust position when next to Google sign-in */
       }
   
       .meals-container {
