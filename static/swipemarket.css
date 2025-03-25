@@ -58,12 +58,12 @@
 
   .sell-button {
     background-color: #1a73e8;
+    color: white;
   }
   
   .sell-button, .how-it-works-button {
     font-size: 1.1rem;
     padding: 14px 30px;
-    color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
