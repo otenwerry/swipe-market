@@ -46,22 +46,32 @@
       }
   
       .top-right {
-        font-size: 10px; /* Reduced from 12px */
-        gap: 6px; /* Reduced gap */
+        font-size: 10px;
+        gap: 6px;
         display: flex;
         align-items: center;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        width: auto;
+        height: 100%;
       }
   
       /* Add styling for Google sign-in button */
       .g_id_signin {
         transform: scale(0.6);
         transform-origin: right center;
+        margin-left: 4px;
+        display: flex;
+        align-items: center;
       }
 
       .feedback {
         padding: 4px 8px;
         font-size: 11px;
-        height: 28px; /* Reduced height */
+        height: 28px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
       }
   
       .meals-container {
@@ -138,6 +148,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0 auto; /* Center the buttons horizontally */
       }
 
       .listing-actions {
