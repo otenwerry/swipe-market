@@ -1207,16 +1207,28 @@ if (!document.getElementById('contacted-button-styles')) {
 function sendUserEmailToServer() {
   const userEmail = localStorage.getItem('userEmail');
   if (userEmail) {
-    // Get the current URL
-    const currentUrl = new URL(window.location.href);
-    
-    // Add or update the email parameter
-    currentUrl.searchParams.set('email', userEmail);
-    
-    // Only redirect if we're not already on a URL with the email parameter
-    if (window.location.href !== currentUrl.href) {
-      window.location.href = currentUrl.href;
-    }
+    // Send email to server via POST request
+    fetch('/api/set_user_email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userEmail })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // If we're on a URL with email parameter, clean it up
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('email')) {
+          url.searchParams.delete('email');
+          window.history.replaceState({}, '', url);
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error setting user email:', error);
+    });
   }
 }
 
