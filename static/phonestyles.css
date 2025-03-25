@@ -48,6 +48,8 @@
       .top-right {
         font-size: 10px; /* Reduced from 12px */
         gap: 6px; /* Reduced gap */
+        display: flex;
+        align-items: center;
       }
   
       /* Add styling for Google sign-in button */
