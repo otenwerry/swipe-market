@@ -7,37 +7,37 @@
     
     table {
       width: 100%;
-      font-size: 0.9rem; /* Slightly smaller text to prevent overflow */
+      font-size: 0.6rem; /* Smaller text for tables */
       overflow-x: auto; /* Allow horizontal scrolling if table content is wide */
       display: block;
     }
     
     th, td {
-      padding: 10px; /* Reduce padding to give more room */
+      padding: 8px; /* Reduce padding to give more room */
       word-wrap: break-word; /* Wrap long words */
     }
 
     .header {
-        font-size: 28px;
+        font-size: 22px; /* Reduced from 28px */
         letter-spacing: 1px;
         padding: 0 10px;
       }
   
       .top {
-        padding: 10px 15px;
+        padding: 8px 12px; /* Reduced padding */
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px; /* Reduced gap */
       }
   
       .top-right {
-        font-size: 12px;
-        gap: 8px;
+        font-size: 10px; /* Reduced from 12px */
+        gap: 6px; /* Reduced gap */
       }
   
       .feedback {
         padding: 4px 8px;
         font-size: 11px;
-        height: 30px;
+        height: 28px; /* Reduced height */
       }
   
       .meals-container {
@@ -61,18 +61,18 @@
   
       /* Adjust button sizes */
       .sell-button, .how-it-works-button {
-        font-size: 14px;
-        padding: 8px 16px;
-        margin-top: 15px;
+        font-size: 12px; /* Reduced from 14px */
+        padding: 6px 12px; /* Reduced padding */
+        margin-top: 12px; /* Reduced margin */
       }
   
       /* Adjust table text sizes */
       table {
-        font-size: 12px;
+        font-size: 10px; /* Reduced from 12px */
       }
   
       th, td {
-        padding: 8px;
+        padding: 6px; /* Reduced padding */
       }
   
       /* Adjust form elements */
@@ -93,7 +93,7 @@
   
       /* Adjust contact button */
       .contact-button {
-        font-size: 12px;
-        padding: 6px 10px;
+        font-size: 11px; /* Reduced from 12px */
+        padding: 4px 8px; /* Reduced padding */
       }
   }
