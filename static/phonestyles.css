@@ -34,9 +34,14 @@
         flex-wrap: wrap;
         gap: 6px; /* Reduced gap */
       }
+
+      .top-left {
+        font-size: 8px; /* Reduced from 12px */
+        gap: 6px; /* Reduced gap */
+      }
   
       .top-right {
-        font-size: 10px; /* Reduced from 12px */
+        font-size: 8px; /* Reduced from 12px */
         gap: 6px; /* Reduced gap */
       }
   
