@@ -39,6 +39,11 @@
         font-size: 8px; /* Reduced from 12px */
         gap: 6px; /* Reduced gap */
       }
+
+      /* Add specific style for current-time div */
+      #current-time {
+        font-size: 8px !important; /* Override the general div font size */
+      }
   
       .top-right {
         font-size: 8px; /* Reduced from 12px */
