@@ -77,13 +77,18 @@
         display: flex;
         align-items: center;
         position: absolute; 
-        right: 40px; /* Default position for profile icon */
+        right: 120px; /* Position relative to the right edge */
         top: 0;
       }
 
       /* Add specific styling for when Google sign-in is present */
       .g_id_signin + .feedback {
-        right: 120px; /* Adjust position when next to Google sign-in */
+        right: 120px; /* Keep the same position when next to Google sign-in */
+      }
+
+      /* Add specific styling for when profile icon is present */
+      #profile-menu + .feedback {
+        right: 40px; /* Position closer to the right when profile icon is present */
       }
   
       .meals-container {
