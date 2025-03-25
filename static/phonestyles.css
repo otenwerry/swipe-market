@@ -61,11 +61,9 @@
       .g_id_signin {
         transform: scale(0.6);
         transform-origin: right center;
-        margin-left: auto;
         display: flex;
         align-items: center;
         top: 0;
-
         transform: translateY(0) scale(0.6); /* Remove translateY */
       }
 
