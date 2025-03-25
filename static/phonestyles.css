@@ -1,0 +1,99 @@
+ /* Styles for mobile devices */
+ @media (max-width: 600px) {
+    .tables-container {
+      flex-direction: column; /* Stack tables vertically */
+      gap: 20px; /* Adjust spacing between tables if needed */
+    }
+    
+    table {
+      width: 100%;
+      font-size: 0.9rem; /* Slightly smaller text to prevent overflow */
+      overflow-x: auto; /* Allow horizontal scrolling if table content is wide */
+      display: block;
+    }
+    
+    th, td {
+      padding: 10px; /* Reduce padding to give more room */
+      word-wrap: break-word; /* Wrap long words */
+    }
+
+    .header {
+        font-size: 28px;
+        letter-spacing: 1px;
+        padding: 0 10px;
+      }
+  
+      .top {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+  
+      .top-right {
+        font-size: 12px;
+        gap: 8px;
+      }
+  
+      .feedback {
+        padding: 4px 8px;
+        font-size: 11px;
+        height: 30px;
+      }
+  
+      .meals-container {
+        margin: 10px 15px;
+        font-size: 16px;
+        gap: 10px;
+      }
+  
+      .contest {
+        font-size: 14px;
+      }
+  
+      .pa-menu {
+        font-size: 14px;
+      }
+  
+      /* Adjust body text size */
+      body {
+        font-size: 14px;
+      }
+  
+      /* Adjust button sizes */
+      .sell-button, .how-it-works-button {
+        font-size: 14px;
+        padding: 8px 16px;
+        margin-top: 15px;
+      }
+  
+      /* Adjust table text sizes */
+      table {
+        font-size: 12px;
+      }
+  
+      th, td {
+        padding: 8px;
+      }
+  
+      /* Adjust form elements */
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="date"],
+      input[type="time"],
+      input[type="number"] {
+        font-size: 14px;
+        padding: 8px;
+      }
+  
+      /* Adjust labels */
+      label {
+        font-size: 14px;
+      }
+  
+      /* Adjust contact button */
+      .contact-button {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+  }
