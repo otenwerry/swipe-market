@@ -55,7 +55,6 @@
         justify-content: flex-end;
         width: auto;
         height: 100%;
-        position: relative; /* Add this to contain absolute positioned children */
       }
   
       /* Add styling for Google sign-in button */
@@ -65,10 +64,10 @@
         margin-left: auto;
         display: flex;
         align-items: center;
-        position: absolute;
+        /*position: absolute;
         right: 0;
         top: 0; /* Change from 50% to 0 */
-        transform: translateY(0) scale(0.6); /* Remove translateY */
+        /*transform: translateY(0) scale(0.6); /* Remove translateY */
       }
 
       .feedback {
@@ -77,8 +76,8 @@
         white-space: nowrap;
         display: flex;
         align-items: center;
-        position: absolute; 
-        top: 0;
+        /*position: absolute; 
+        top: 0;*/
       }
   
       .meals-container {
