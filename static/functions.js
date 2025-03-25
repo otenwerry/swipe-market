@@ -64,9 +64,15 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  
+  function getESTDate() {
+    const now = new Date();
+    const estDateString = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+    return new Date(estDateString);
+}
 
   // set default date to today
-  const today = new Date();
+  const today = getESTDate();
   const dateInput = document.getElementById('date');
   const startTimeInput = document.getElementById('start_time');
   const endTimeInput = document.getElementById('end_time');

@@ -27,7 +27,6 @@ mail = Mail(app)
 
 ny_tz = pytz.timezone('America/New_York')
 
-
 #DB MODEL CLASSES
 
 #class for seller listings
