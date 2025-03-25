@@ -127,10 +127,14 @@
         min-width: 30px;
         height: 24px;
         line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .listing-actions {
         display: inline-flex;
         gap: 4px;
+        align-items: center;
       }
   }
