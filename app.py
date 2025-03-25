@@ -995,6 +995,18 @@ def check_banned_uni():
         # Return a safe default rather than an error
         return jsonify({"banned": False, "error": str(e)})
 
+@app.route('/api/set_user_email', methods=['POST'])
+def set_user_email():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        if email:
+            session['user_email'] = email
+            return jsonify({"success": True})
+        return jsonify({"success": False, "error": "No email provided"}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 if __name__ == '__main__':
    with app.app_context():
      db.create_all()
