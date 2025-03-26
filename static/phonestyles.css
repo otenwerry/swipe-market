@@ -76,6 +76,7 @@
 
       .g_id_signin {
         transform: scale(0.6);
+        transform-origin: right center;
         position: relative;
         right: 0;
         top: 0;
@@ -193,13 +194,12 @@
       }
 
       .profile-menu img {
-        width: 20px; /* Reduced from 24px */
-        height: 20px; /* Reduced from 24px */
+        width: 24px;
+        height: 24px;
         border-radius: 50%;
         cursor: pointer;
         transition: opacity 0.3s;
         margin-top: 0;
-        object-fit: cover; /* Ensures image fills the space properly */
       }
 
       .profile-dropdown {

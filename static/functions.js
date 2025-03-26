@@ -4,40 +4,40 @@
 //gets user's basic profile info.
 //hides sign in button.
 function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  document.getElementById('g_id_signin').style.display = 'none';
-
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const userName = localStorage.getItem('userName');
-  const userEmail = localStorage.getItem('userEmail');
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    document.getElementById('g_id_signin').style.display = 'none';
   
-  if (userName && userEmail) {
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const userName = localStorage.getItem('userName');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userName && userEmail) {
     // Make sure the email is stored in lowercase for consistency
     storeUserEmail(userEmail);
     
-    const posterNameField = document.getElementById('poster_name');
-    const posterEmailField = document.getElementById('poster_email');
-    
-    if (posterNameField) {
-      posterNameField.value = userName;
-    }
-    if (posterEmailField) {
+      const posterNameField = document.getElementById('poster_name');
+      const posterEmailField = document.getElementById('poster_email');
+      
+      if (posterNameField) {
+        posterNameField.value = userName;
+      }
+      if (posterEmailField) {
       posterEmailField.value = userEmail.toLowerCase();
+      }
     }
-  }
-});
+  });
 
-//sets default date and time for seller listings.
-//formats date and time as YYYY-MM-DD HH:MM.
-document.addEventListener('DOMContentLoaded', function() {
-  disableContactedListings();
-  handlePopup();
+  //sets default date and time for seller listings.
+  //formats date and time as YYYY-MM-DD HH:MM.
+  document.addEventListener('DOMContentLoaded', function() {
+    disableContactedListings();
+    handlePopup();
   // Check for auto delete parameter
   checkAutoDelete();
 
@@ -71,13 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
     return new Date(estDateString);
 }
 
-  // set default date to today
+    // set default date to today
   const today = getESTDate();
-  const dateInput = document.getElementById('date');
-  const startTimeInput = document.getElementById('start_time');
-  const endTimeInput = document.getElementById('end_time');
+    const dateInput = document.getElementById('date');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
   const priceInput = document.getElementById('price');
-  const isEditPage = window.location.pathname.includes('/edit_listing/');
+    const isEditPage = window.location.pathname.includes('/edit_listing/');
 
   // Add validation for price input
   if (priceInput) {
@@ -91,88 +91,88 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  if (!isEditPage) {
-    // format today's date as YYYY-MM-DD
-    const formattedDate = today.toISOString().split('T')[0];
-    dateInput.value = formattedDate;
-    dateInput.min = formattedDate; // prevent selecting past dates
+    if (!isEditPage) {
+      // format today's date as YYYY-MM-DD
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.value = formattedDate;
+      dateInput.min = formattedDate; // prevent selecting past dates
 
-    // set default start time to current time (rounded to nearest 15 minutes)
-    const minutes = today.getMinutes();
-    const roundedMinutes = Math.ceil(minutes / 15) * 15;
-    today.setMinutes(roundedMinutes);
-    today.setSeconds(0);
-    today.setMilliseconds(0);
+      // set default start time to current time (rounded to nearest 15 minutes)
+      const minutes = today.getMinutes();
+      const roundedMinutes = Math.ceil(minutes / 15) * 15;
+      today.setMinutes(roundedMinutes);
+      today.setSeconds(0);
+      today.setMilliseconds(0);
+      
+      // format time as HH:MM
+      const hours = String(today.getHours()).padStart(2, '0');
+      const mins = String(today.getMinutes()).padStart(2, '0');
+      startTimeInput.value = `${hours}:${mins}`;
+    } else {
+      // For edit page, still set the minimum date to today
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.min = formattedDate; // prevent selecting past dates
+    }
     
-    // format time as HH:MM
-    const hours = String(today.getHours()).padStart(2, '0');
-    const mins = String(today.getMinutes()).padStart(2, '0');
-    startTimeInput.value = `${hours}:${mins}`;
-  } else {
-    // For edit page, still set the minimum date to today
-    const formattedDate = today.toISOString().split('T')[0];
-    dateInput.min = formattedDate; // prevent selecting past dates
-  }
-  
-  // Function to validate start time for today's date
-  function validateStartTime() {
-    // Check if date is today
-    if (dateInput.value === today.toISOString().split('T')[0]) {
-      // Get current time
-      const now = new Date();
-      const currentHours = now.getHours();
-      const currentMinutes = now.getMinutes();
-      
-      // Get selected time
-      const [selectedHours, selectedMinutes] = startTimeInput.value.split(':').map(Number);
-      
-      // Compare times
-      if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
-        startTimeInput.setCustomValidity('For today, start time must be later than current time');
+    // Function to validate start time for today's date
+    function validateStartTime() {
+      // Check if date is today
+      if (dateInput.value === today.toISOString().split('T')[0]) {
+        // Get current time
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        
+        // Get selected time
+        const [selectedHours, selectedMinutes] = startTimeInput.value.split(':').map(Number);
+        
+        // Compare times
+        if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
+          startTimeInput.setCustomValidity('For today, start time must be later than current time');
+        } else {
+          startTimeInput.setCustomValidity('');
+        }
       } else {
+        // If date is not today, no time restriction
         startTimeInput.setCustomValidity('');
       }
-    } else {
-      // If date is not today, no time restriction
-      startTimeInput.setCustomValidity('');
     }
-  }
-  
-  // Add event listeners for both date and time fields to trigger validation
-  startTimeInput.addEventListener('input', validateStartTime);
-  dateInput.addEventListener('input', validateStartTime);
-  
-  // Run validation at page load
-  validateStartTime();
-  
-  // custom validation for end time
-  endTimeInput.addEventListener('input', function() {
-      if (startTimeInput.value && this.value <= startTimeInput.value) {
-          this.setCustomValidity('End time must be later than start time');
-      } else {
-          this.setCustomValidity('');
-      }
-      
-      // Also re-validate start time to make sure both validations work together
-      validateStartTime();
-  });
+    
+    // Add event listeners for both date and time fields to trigger validation
+    startTimeInput.addEventListener('input', validateStartTime);
+    dateInput.addEventListener('input', validateStartTime);
+    
+    // Run validation at page load
+    validateStartTime();
+    
+    // custom validation for end time
+    endTimeInput.addEventListener('input', function() {
+        if (startTimeInput.value && this.value <= startTimeInput.value) {
+            this.setCustomValidity('End time must be later than start time');
+        } else {
+            this.setCustomValidity('');
+        }
+        
+        // Also re-validate start time to make sure both validations work together
+        validateStartTime();
+    });
 
-  // also check when start time changes
-  startTimeInput.addEventListener('input', function() {
-      if (endTimeInput.value && endTimeInput.value <= this.value) {
-          endTimeInput.setCustomValidity('End time must be later than start time');
-      } else {
-          endTimeInput.setCustomValidity('');
-      }
-      
-      // The validateStartTime function will be called from the general input event listener above
-  });
+    // also check when start time changes
+    startTimeInput.addEventListener('input', function() {
+        if (endTimeInput.value && endTimeInput.value <= this.value) {
+            endTimeInput.setCustomValidity('End time must be later than start time');
+        } else {
+            endTimeInput.setCustomValidity('');
+        }
+        
+        // The validateStartTime function will be called from the general input event listener above
+    });
 
-  const form = document.querySelector('form');
-  const diningHallSelect = document.getElementById('dining_hall');
-  const paymentMethodsSelect = document.getElementById('payment_methods');
+    const form = document.querySelector('form');
+    const diningHallSelect = document.getElementById('dining_hall');
+    const paymentMethodsSelect = document.getElementById('payment_methods');
 
-  // Add validation for multiple select fields
+    // Add validation for multiple select fields
   if (diningHallSelect) {
     diningHallSelect.addEventListener('change', function() {
         if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   if (paymentMethodsSelect) {
-      paymentMethodsSelect.addEventListener('change', function() {
+    paymentMethodsSelect.addEventListener('change', function() {
         if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
             this.setCustomValidity('Please select at least one payment method');
         } else {
@@ -193,10 +193,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Trigger initial validation
-  diningHallSelect.dispatchEvent(new Event('change'));
-  paymentMethodsSelect.dispatchEvent(new Event('change'));
-});
+    // Trigger initial validation
+    diningHallSelect.dispatchEvent(new Event('change'));
+    paymentMethodsSelect.dispatchEvent(new Event('change'));
+  });
 
 // Add a global debug function that can be called from console
 window.debugLoginState = function() {
@@ -229,55 +229,55 @@ function storeUserEmail(email) {
     console.log(`Stored user email consistently as: ${email}`);
   }
 }
-
-//gets user's google credential and stores it in localStorage.
-function handleCredentialResponse(response) {
-  // Decode the credential response
-  const responsePayload = jwt_decode(response.credential);
-
-  //enforce columbia/barnard email
-  if (!responsePayload.email.endsWith('@columbia.edu') && !responsePayload.email.endsWith('@barnard.edu')) {
-    alert('Please use your Columbia or Barnard email to sign in.');
-    return;
-  }
+  
+  //gets user's google credential and stores it in localStorage.
+  function handleCredentialResponse(response) {
+    // Decode the credential response
+    const responsePayload = jwt_decode(response.credential);
+  
+    //enforce columbia/barnard email
+    if (!responsePayload.email.endsWith('@columbia.edu') && !responsePayload.email.endsWith('@barnard.edu')) {
+      alert('Please use your Columbia or Barnard email to sign in.');
+      return;
+    }
   
   // Store email consistently
   storeUserEmail(responsePayload.email);
-  
-  // Extract UNI from email
-  const emailParts = responsePayload.email.split('@');
-  const uni = emailParts[0].toLowerCase();
-  
-  // Check if UNI is banned before proceeding
-  fetch('/api/check_banned_uni', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ uni: uni }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.banned) {
-      alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
-      return;
-    }
     
-    // Continue with the normal sign-in process
-    // Extract just the first name
-    const fullName = responsePayload.name;
-    const firstName = fullName.split(' ')[0];
+    // Extract UNI from email
+    const emailParts = responsePayload.email.split('@');
+    const uni = emailParts[0].toLowerCase();
     
-    // Store the credential in localStorage
-    localStorage.setItem('googleCredential', response.credential);
-    localStorage.setItem('userName', firstName);
-    localStorage.setItem('userImage', responsePayload.picture);
-  
-    //hide sign in button
-    document.getElementById('g_id_signin').style.display = 'none';
-  
-    //display profile icon
-    const profileIcon = document.getElementById('profile-icon');
+    // Check if UNI is banned before proceeding
+    fetch('/api/check_banned_uni', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uni: uni }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.banned) {
+        alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
+        return;
+      }
+      
+      // Continue with the normal sign-in process
+      // Extract just the first name
+      const fullName = responsePayload.name;
+      const firstName = fullName.split(' ')[0];
+      
+      // Store the credential in localStorage
+      localStorage.setItem('googleCredential', response.credential);
+      localStorage.setItem('userName', firstName);
+      localStorage.setItem('userImage', responsePayload.picture);
+    
+      //hide sign in button
+      document.getElementById('g_id_signin').style.display = 'none';
+    
+      //display profile icon
+      const profileIcon = document.getElementById('profile-icon');
     if (profileIcon) {
       profileIcon.src = responsePayload.picture;
       profileIcon.style.display = 'block';
@@ -287,8 +287,8 @@ function handleCredentialResponse(response) {
     if (profileMenu) {
       profileMenu.style.display = 'inline-block';
     }
-  
-    //toggle dropdown
+    
+      //toggle dropdown
     if (profileIcon) {
       profileIcon.addEventListener('click', function(event) {
         event.stopPropagation(); // Prevent the click from bubbling up
@@ -306,28 +306,28 @@ function handleCredentialResponse(response) {
       if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
         profileMenu.classList.remove('active');
       }
-    });
+      });
 
-    // Check if user exists in our database
-    checkUserExistence(responsePayload.email);
-  
-    // Try to populate form fields if they exist
-    const posterNameField = document.getElementById('poster_name');
-    const posterEmailField = document.getElementById('poster_email');
+      // Check if user exists in our database
+      checkUserExistence(responsePayload.email);
     
-    if (posterNameField) {
-      posterNameField.value = firstName;
-    }
-    if (posterEmailField) {
-      posterEmailField.value = responsePayload.email;
-    }
-  
-    // Update UI based on user's email
-    const userEmail = responsePayload.email;
+      // Try to populate form fields if they exist
+      const posterNameField = document.getElementById('poster_name');
+      const posterEmailField = document.getElementById('poster_email');
+      
+      if (posterNameField) {
+        posterNameField.value = firstName;
+      }
+      if (posterEmailField) {
+        posterEmailField.value = responsePayload.email;
+      }
+    
+      // Update UI based on user's email
+      const userEmail = responsePayload.email;
     console.log('User email from Google sign-in:', userEmail);
-    
-    // Show edit/delete buttons for listings owned by this user
-    document.querySelectorAll('.listing-actions').forEach(actions => {
+      
+      // Show edit/delete buttons for listings owned by this user
+      document.querySelectorAll('.listing-actions').forEach(actions => {
       const ownerEmail = actions.dataset.ownerEmail;
       console.log('Checking ownership after login:', { 
         ownerEmail: ownerEmail, 
@@ -353,250 +353,250 @@ function handleCredentialResponse(response) {
         if (actions.previousElementSibling) {
           actions.previousElementSibling.style.display = 'inline-block';
         }
-      }
-    });
-    
-    // Fetch contacted listings from the server and update the UI
-    fetchContactedListings();
-    
-    // Check for blocks and update UI accordingly
-    //checkBlockedListings();
-  
-    console.log('User logged in:', responsePayload.email);
-  })
-  .catch(error => {
-    console.error('Error checking banned UNI:', error);
-    // If there's an error checking the ban status, deny login to be safe
-    alert('An error occurred during sign in. Please try again later.');
-  });
-}
-// Function to check if user exists in our database
-function checkUserExistence(email) {
-  fetch('/api/check_user', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email: email }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.exists) {
-      console.log('User found in database');
-      
-      // Store the user info in local storage
-      if (data.name) {
-        localStorage.setItem('userName', data.name);
-      }
-      // Always update phone in localStorage, even if it's an empty string
-      localStorage.setItem('userPhone', data.phone || '');
-    } else {
-      console.log('New user, prompting for phone number');
-      showPhoneNumberModal();
-    }
-  })
-  .catch(error => {
-    console.error('Error checking user:', error);
-  });
-}
-
-// Function to show the phone number modal for first-time users
-function showPhoneNumberModal() {
-  // Create modal if it doesn't exist
-  if (!document.getElementById('phone-modal')) {
-    const modal = document.createElement('div');
-    modal.id = 'phone-modal';
-    modal.className = 'modal';
-    
-    modal.innerHTML = `
-      <div class="modal-content">
-        <h2>Complete Your Profile</h2>
-        <p>Please provide your phone number to complete your profile.</p>
-        <input type="tel" id="new-phone" placeholder="Your phone number" required>
-        <div class="modal-buttons">
-          <button id="save-phone-btn">Save</button>
-          <button id="skip-phone-btn">Skip for now</button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Add styles for the modal
-    const style = document.createElement('style');
-    style.textContent = `
-      .modal {
-        display: block;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-      }
-      
-      .modal-content {
-        background-color: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 500px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      }
-      
-      .modal-content h2 {
-        margin-top: 0;
-      }
-      
-      .modal-content input {
-        width: 100%;
-        padding: 10px;
-        margin: 15px 0;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-      }
-      
-      .modal-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-      }
-      
-      .modal-buttons button {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      
-      #save-phone-btn {
-        background-color: #4285f4;
-        color: white;
-      }
-      
-      #skip-phone-btn {
-        background-color: #f1f1f1;
-        color: #333;
-      }
-    `;
-    
-    document.head.appendChild(style);
-    
-    // Add event listeners
-    document.getElementById('save-phone-btn').addEventListener('click', function() {
-      const phone = document.getElementById('new-phone').value.trim();
-      
-      // Validate phone number format
-      if (phone) {
-        const phoneRegex = /^[0-9()+\-\s]*$/;
-        if (!phoneRegex.test(phone)) {
-          alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
-          return;
         }
-        saveNewUser(phone);
-        modal.style.display = 'none';
-      } else {
-        alert('Please enter a valid phone number');
-      }
-    });
+      });
+      
+      // Fetch contacted listings from the server and update the UI
+      fetchContactedListings();
+      
+      // Check for blocks and update UI accordingly
+    //checkBlockedListings();
     
-    document.getElementById('skip-phone-btn').addEventListener('click', function() {
-      saveNewUser('');
-      modal.style.display = 'none';
+      console.log('User logged in:', responsePayload.email);
+    })
+    .catch(error => {
+      console.error('Error checking banned UNI:', error);
+      // If there's an error checking the ban status, deny login to be safe
+      alert('An error occurred during sign in. Please try again later.');
     });
-  } else {
-    document.getElementById('phone-modal').style.display = 'block';
   }
-}
+  // Function to check if user exists in our database
+  function checkUserExistence(email) {
+    fetch('/api/check_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        console.log('User found in database');
+        
+        // Store the user info in local storage
+        if (data.name) {
+          localStorage.setItem('userName', data.name);
+        }
+        // Always update phone in localStorage, even if it's an empty string
+        localStorage.setItem('userPhone', data.phone || '');
+      } else {
+        console.log('New user, prompting for phone number');
+        showPhoneNumberModal();
+      }
+    })
+    .catch(error => {
+      console.error('Error checking user:', error);
+    });
+  }
 
-// Function to save a new user
-function saveNewUser(phone) {
-  const name = localStorage.getItem('userName');
-  const email = localStorage.getItem('userEmail');
-  
-  if (!name || !email) {
-    console.error('Missing user information');
-    return;
-  }
-  
-  fetch('/api/save_user', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: name,
-      email: email,
-      phone: phone
-    }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      console.log('User saved successfully');
-      // Always update the phone in localStorage, even if it's an empty string
-      localStorage.setItem('userPhone', phone);
-      // Make sure the name is updated in localStorage too
-      localStorage.setItem('userName', data.name);
+  // Function to show the phone number modal for first-time users
+  function showPhoneNumberModal() {
+    // Create modal if it doesn't exist
+    if (!document.getElementById('phone-modal')) {
+      const modal = document.createElement('div');
+      modal.id = 'phone-modal';
+      modal.className = 'modal';
+      
+      modal.innerHTML = `
+        <div class="modal-content">
+          <h2>Complete Your Profile</h2>
+          <p>Please provide your phone number to complete your profile.</p>
+          <input type="tel" id="new-phone" placeholder="Your phone number" required>
+          <div class="modal-buttons">
+            <button id="save-phone-btn">Save</button>
+            <button id="skip-phone-btn">Skip for now</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Add styles for the modal
+      const style = document.createElement('style');
+      style.textContent = `
+        .modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+          background-color: #fff;
+          margin: 15% auto;
+          padding: 20px;
+          border-radius: 8px;
+          width: 80%;
+          max-width: 500px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .modal-content h2 {
+          margin-top: 0;
+        }
+        
+        .modal-content input {
+          width: 100%;
+          padding: 10px;
+          margin: 15px 0;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+        }
+        
+        .modal-buttons {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+        
+        .modal-buttons button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        #save-phone-btn {
+          background-color: #4285f4;
+          color: white;
+        }
+        
+        #skip-phone-btn {
+          background-color: #f1f1f1;
+          color: #333;
+        }
+      `;
+      
+      document.head.appendChild(style);
+      
+      // Add event listeners
+      document.getElementById('save-phone-btn').addEventListener('click', function() {
+        const phone = document.getElementById('new-phone').value.trim();
+        
+        // Validate phone number format
+        if (phone) {
+          const phoneRegex = /^[0-9()+\-\s]*$/;
+          if (!phoneRegex.test(phone)) {
+            alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
+            return;
+          }
+          saveNewUser(phone);
+          modal.style.display = 'none';
+        } else {
+          alert('Please enter a valid phone number');
+        }
+      });
+      
+      document.getElementById('skip-phone-btn').addEventListener('click', function() {
+        saveNewUser('');
+        modal.style.display = 'none';
+      });
     } else {
-      console.error('Error saving user:', data.error);
+      document.getElementById('phone-modal').style.display = 'block';
     }
-  })
-  .catch(error => {
-    console.error('Error saving user:', error);
-  });
-}
+  }
 
-//removes user's google credential from localStorage when they sign out.
-//also removes other information from localStorage.
-function handleSignOut() {
-  // Clear user data
-  localStorage.removeItem('googleCredential');
-  localStorage.removeItem('userName');
-  localStorage.removeItem('userImage');
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('userPhone');
-
-  //hide profile icon and show sign in button
+  // Function to save a new user
+  function saveNewUser(phone) {
+    const name = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail');
+    
+    if (!name || !email) {
+      console.error('Missing user information');
+      return;
+    }
+    
+    fetch('/api/save_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('User saved successfully');
+        // Always update the phone in localStorage, even if it's an empty string
+        localStorage.setItem('userPhone', phone);
+        // Make sure the name is updated in localStorage too
+        localStorage.setItem('userName', data.name);
+      } else {
+        console.error('Error saving user:', data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error saving user:', error);
+    });
+  }
   
-  // Reset UI: hide profile icon and show sign in button
-  document.getElementById('profile-menu').style.display = 'none';
-  document.getElementById('g_id_signin').style.display = 'block';
-
-  console.log('User logged out');
-
+  //removes user's google credential from localStorage when they sign out.
+  //also removes other information from localStorage.
+  function handleSignOut() {
+    // Clear user data
+    localStorage.removeItem('googleCredential');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userImage');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userPhone');
+  
+    //hide profile icon and show sign in button
+    
+    // Reset UI: hide profile icon and show sign in button
+    document.getElementById('profile-menu').style.display = 'none';
+    document.getElementById('g_id_signin').style.display = 'block';
+  
+    console.log('User logged out');
+  
   // Revoke token and redirect to home page
-  google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
-    console.log('Token revoked');
+    google.accounts.id.revoke(localStorage.getItem('googleCredential'), done => {
+      console.log('Token revoked');
     // Redirect to home page
     window.location.href = '/';
-  });
-}
-// --- UTILITY FUNCTIONS ---
-
-//updates the time on the page.
-function updateTime() {
-  var now = new Date();
-  var options = { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: true,
-      timeZone: 'America/New_York'
-  };
-  const currentTimeString = now.toLocaleString('en-US', options);
-  document.getElementById('current-time').textContent = currentTimeString;
-}
-//updates the time on the page immediately, then every second.
-updateTime();
-setInterval(updateTime, 1000);
+    });
+  }
+  // --- UTILITY FUNCTIONS ---
+  
+  //updates the time on the page.
+  function updateTime() {
+    var now = new Date();
+    var options = { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true,
+        timeZone: 'America/New_York'
+    };
+    const currentTimeString = now.toLocaleString('en-US', options);
+    document.getElementById('current-time').textContent = currentTimeString;
+  }
+  //updates the time on the page immediately, then every second.
+  updateTime();
+  setInterval(updateTime, 1000);
 
 // Function to format date by omitting the year
 function formatDateWithoutYear(dateStr) {
@@ -615,29 +615,29 @@ function formatDateWithoutYear(dateStr) {
     return dateStr; // Return original string if there's an error
   }
 }
-
-// Function to format time from 24-hour to 12-hour format with AM/PM
-function formatTimeDisplay() {
-  // Get all table cells that contain time information
-  const timeCells = document.querySelectorAll('table tbody tr td:nth-child(3)');
   
-  timeCells.forEach(cell => {
-    const timeText = cell.textContent.trim();
+  // Function to format time from 24-hour to 12-hour format with AM/PM
+  function formatTimeDisplay() {
+    // Get all table cells that contain time information
+    const timeCells = document.querySelectorAll('table tbody tr td:nth-child(3)');
     
-    // Skip empty cells or cells that don't contain time ranges
-    if (!timeText || !timeText.includes(' - ')) return;
-    
-    const [startTime, endTime] = timeText.split(' - ');
-    
-    // Convert start time to 12-hour format
-    const formattedStartTime = formatTo12Hour(startTime);
-    
-    // Convert end time to 12-hour format
-    const formattedEndTime = formatTo12Hour(endTime);
-    
-    // Update the cell with the new formatted time
-    cell.textContent = `${formattedStartTime} - ${formattedEndTime}`;
-  });
+    timeCells.forEach(cell => {
+      const timeText = cell.textContent.trim();
+      
+      // Skip empty cells or cells that don't contain time ranges
+      if (!timeText || !timeText.includes(' - ')) return;
+      
+      const [startTime, endTime] = timeText.split(' - ');
+      
+      // Convert start time to 12-hour format
+      const formattedStartTime = formatTo12Hour(startTime);
+      
+      // Convert end time to 12-hour format
+      const formattedEndTime = formatTo12Hour(endTime);
+      
+      // Update the cell with the new formatted time
+      cell.textContent = `${formattedStartTime} - ${formattedEndTime}`;
+    });
   
   // Format dates (which are in the second column of each table)
   const dateCells = document.querySelectorAll('table tbody tr td:nth-child(2)');
@@ -649,112 +649,112 @@ function formatTimeDisplay() {
     // Update the cell content
     cell.textContent = formattedDate;
   });
-}
-
-// Helper function to convert a time string from 24-hour to 12-hour format
-function formatTo12Hour(timeStr) {
-  // Return early if the timeStr is empty or invalid
-  if (!timeStr || !timeStr.includes(':')) return timeStr;
+  }
   
-  const [hours, minutes] = timeStr.split(':').map(part => parseInt(part, 10));
+  // Helper function to convert a time string from 24-hour to 12-hour format
+  function formatTo12Hour(timeStr) {
+    // Return early if the timeStr is empty or invalid
+    if (!timeStr || !timeStr.includes(':')) return timeStr;
+    
+    const [hours, minutes] = timeStr.split(':').map(part => parseInt(part, 10));
+    
+    if (isNaN(hours) || isNaN(minutes)) return timeStr;
+    
+    const period = hours >= 12 ? 'pm' : 'am';
+    const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+    
+    return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
+  }
   
-  if (isNaN(hours) || isNaN(minutes)) return timeStr;
+  //closes the form when the user clicks outside of it.
+  function closeForm() {
+    const form = document.getElementById("myForm");
+    form.style.display = "none";
+    // Clear the stored button reference
+    form.removeAttribute('data-button-id');
+  }
   
-  const period = hours >= 12 ? 'pm' : 'am';
-  const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
-  
-  return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
-}
-
-//closes the form when the user clicks outside of it.
-function closeForm() {
-  const form = document.getElementById("myForm");
-  form.style.display = "none";
-  // Clear the stored button reference
-  form.removeAttribute('data-button-id');
-}
-
-//opens popup form when button is clicked,
-//and populates the form with the listing id.
-function openForm(button) {
-  // Don't open form if button is disabled (already contacted)
-  if (button.disabled || button.classList.contains('contacted')) {
-    // Check if this is a blocked user
-    if (button.getAttribute('data-blocked')) {
-      showBlockMessage(button.getAttribute('title') || 'This user is blocked');
+  //opens popup form when button is clicked,
+  //and populates the form with the listing id.
+  function openForm(button) {
+    // Don't open form if button is disabled (already contacted)
+    if (button.disabled || button.classList.contains('contacted')) {
+      // Check if this is a blocked user
+      if (button.getAttribute('data-blocked')) {
+        showBlockMessage(button.getAttribute('title') || 'This user is blocked');
+      }
+      return false;
     }
-    return false;
-  }
-  
+    
   if (!requireSignIn()) {
-    return false;
-  }
+        return false;
+    }
 
-  const listingId = button.getAttribute('data-listing-id');
-  const listingType = button.getAttribute('data-listing-type');
-  
-  const form = document.getElementById("myForm");
-  const listingIdInput = form.querySelector('input[name="listing_id"]');
-  const listingTypeInput = form.querySelector('input[name="listing_type"]');
-  
-  listingIdInput.value = listingId;
-  listingTypeInput.value = listingType;
-  
-  // Set sender info
-  const senderNameInput = form.querySelector('input[name="sender_name"]');
-  const senderEmailInput = form.querySelector('input[name="sender_email"]');
-  
-  if (senderNameInput && senderEmailInput) {
-    senderNameInput.value = localStorage.getItem('userName');
+    const listingId = button.getAttribute('data-listing-id');
+    const listingType = button.getAttribute('data-listing-type');
+    
+    const form = document.getElementById("myForm");
+    const listingIdInput = form.querySelector('input[name="listing_id"]');
+    const listingTypeInput = form.querySelector('input[name="listing_type"]');
+    
+    listingIdInput.value = listingId;
+    listingTypeInput.value = listingType;
+    
+    // Set sender info
+    const senderNameInput = form.querySelector('input[name="sender_name"]');
+    const senderEmailInput = form.querySelector('input[name="sender_email"]');
+    
+    if (senderNameInput && senderEmailInput) {
+      senderNameInput.value = localStorage.getItem('userName');
     const email = localStorage.getItem('userEmail');
     // Ensure we're using lowercase email consistently
     senderEmailInput.value = email ? email.toLowerCase() : email;
+    }
+    
+    form.style.display = "block";
+    form.setAttribute('data-button-id', listingId);
   }
   
-  form.style.display = "block";
-  form.setAttribute('data-button-id', listingId);
-}
-
-// checks for valid credential
-function requireSignIn(event) {
+  // checks for valid credential
+  function requireSignIn(event) {
   if (!isUserLoggedIn()) {
-    event.preventDefault(); // Stop the default navigation
+      event.preventDefault(); // Stop the default navigation
     alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
-    document.getElementById('g_id_signin').style.display = 'block';
-    return false;
-  }
-  return true;
-}
-
-
-// --- INITIALIZATION AND EVENT LISTENERS ---
-
-//checks if user is logged in when page loads.
-//initialize time and set up event listeners.
-window.onload = function() {
-  //initialize Google Identity Services
-  if (window.google && google.accounts && google.accounts.id) {
-    google.accounts.id.initialize({
-      client_id: '362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com', // Replace with your Client ID
-      callback: handleCredentialResponse,
-      auto_select: false
-    });
+      document.getElementById('g_id_signin').style.display = 'block';
+      return false;
+    }
+    return true;
   }
 
-  const credential = localStorage.getItem('googleCredential');
-  if (credential) {
+  
+  // --- INITIALIZATION AND EVENT LISTENERS ---
+  
+  //checks if user is logged in when page loads.
+  //initialize time and set up event listeners.
+  window.onload = function() {
+    //initialize Google Identity Services
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.initialize({
+        client_id: '362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com', // Replace with your Client ID
+        callback: handleCredentialResponse,
+        auto_select: false
+      });
+    }
+  
+    const credential = localStorage.getItem('googleCredential');
+    if (credential) {
     try {
       const payload = jwt_decode(credential);
       // Check if token is expired
       const expirationTime = payload.exp * 1000;
       if (Date.now() < expirationTime) {
         document.getElementById('g_id_signin').style.display = 'none';
-
+  
         //display profile icon
         const profileIcon = document.getElementById('profile-icon');
         profileIcon.src = payload.picture;
         document.getElementById('profile-menu').style.display = 'inline-block';
-
+  
         //toggle dropdown
         profileIcon.addEventListener('click', function(event) {
           event.stopPropagation(); // Prevent the click from bubbling up
@@ -834,7 +834,7 @@ window.onload = function() {
           `;
           document.head.appendChild(style);
         }
-
+  
         console.log('User is logged in:', payload.email);  // Debug log
 
         // Extract first name in case token was stored before this feature was added
@@ -862,9 +862,9 @@ window.onload = function() {
       // Invalid token, handle as expired
       console.error('Error decoding token:', error);
       handleTokenExpiration();
-    }
-  } else {
-    // If user isn't logged in, make sure UI is correct
+      }
+    } else {
+      // If user isn't logged in, make sure UI is correct
     resetUIForLoggedOutUser();
   }
 
@@ -874,10 +874,10 @@ window.onload = function() {
       if(!requireSignIn(event)) return;
     });
   }
-  
-  // Format time displays on page load
-  formatTimeDisplay();
-  
+    
+    // Format time displays on page load
+    formatTimeDisplay();
+    
   // Fetch contacted listings from the database only if user is logged in
   if (isUserLoggedIn()) {
     fetchContactedListings();
@@ -885,14 +885,14 @@ window.onload = function() {
   
   // Set up periodic token validity checking
   setupTokenExpirationCheck();
-};
-
-// attach click listeners to all contact buttons
-document.querySelectorAll('.contact-button').forEach(function(button) {
-  button.addEventListener('click', function(event) {
+  };
+  
+  // attach click listeners to all contact buttons
+  document.querySelectorAll('.contact-button').forEach(function(button) {
+    button.addEventListener('click', function(event) {
     if (!requireSignIn(event)) return;
-    
-    // Pull name/user from local storage set during signin
+      
+      // Pull name/user from local storage set during signin
     var userName = localStorage.getItem('userName');
     var userEmail = localStorage.getItem('userEmail');
     
@@ -901,42 +901,42 @@ document.querySelectorAll('.contact-button').forEach(function(button) {
       userEmail = userEmail.toLowerCase();
     }
   
-    // Populate hidden fields in contact form
+      // Populate hidden fields in contact form
     document.getElementById('sender_name').value = userName;
     document.getElementById('sender_email').value = userEmail;
   
-    // Pull listing id and type from contact button
+      // Pull listing id and type from contact button
     var listingId = this.getAttribute('data-listing-id');
-    var listingType = this.getAttribute('data-listing-type');
-    
+      var listingType = this.getAttribute('data-listing-type');
+      
     if (listingId) {
       document.getElementById('listing_id').value = listingId;
-      document.getElementById('listing_type').value = listingType;
+        document.getElementById('listing_type').value = listingType;
     }
   
-    document.getElementById('myForm').style.display = 'block';
+      document.getElementById('myForm').style.display = 'block';
+    });
   });
-});
-
-// Close the form when clicking outside of it
-window.onclick = function(event) {
-  const form = document.getElementById("myForm");
-  const popup = document.getElementById("popup");
   
-  if (event.target == form) {
-      closeForm();
+  // Close the form when clicking outside of it
+  window.onclick = function(event) {
+    const form = document.getElementById("myForm");
+    const popup = document.getElementById("popup");
+    
+    if (event.target == form) {
+        closeForm();
+    }
+    if (event.target == popup) {
+        popup.style.display = 'none';
+    }
   }
-  if (event.target == popup) {
-      popup.style.display = 'none';
-  }
-}
-
-//shows edit/delete buttons to poster only.
-//hides contact button from poster.
-document.addEventListener('DOMContentLoaded', function() {
-  // Show/hide edit/delete buttons based on user email
-  const userEmail = localStorage.getItem('userEmail');
-  document.querySelectorAll('.listing-actions').forEach(actions => {
+  
+  //shows edit/delete buttons to poster only.
+  //hides contact button from poster.
+  document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide edit/delete buttons based on user email
+    const userEmail = localStorage.getItem('userEmail');
+    document.querySelectorAll('.listing-actions').forEach(actions => {
       if (userEmail && actions.dataset.ownerEmail) {
         const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
         const contactButton = actions.previousElementSibling;
@@ -954,27 +954,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (actions.previousElementSibling) {
           actions.previousElementSibling.style.display = 'inline-block';
         }
-      }
+        }
+    });
   });
-});
 
-//deletes listing.
+  //deletes listing.
 function deleteListing(listingId, listingType) {
   if (!requireSignIn()) {
-    return;
-  }
+        return;
+    }
   
   const userEmail = localStorage.getItem('userEmail');
   console.log(`Attempting to delete listing ${listingId} of type ${listingType} as ${userEmail}`);
   
-  if (confirm('Are you sure you want to delete this listing?')) {
-    const formData = new FormData();
-    formData.append('user_email', userEmail);
+    if (confirm('Are you sure you want to delete this listing?')) {
+        const formData = new FormData();
+        formData.append('user_email', userEmail);
     formData.append('listing_type', listingType);
-    
-    fetch(`/delete_listing/${listingId}`, {
-      method: 'POST',
-      body: formData
+        
+        fetch(`/delete_listing/${listingId}`, {
+            method: 'POST',
+            body: formData
     })
     .then(response => {
       if (response.ok) {
@@ -993,83 +993,83 @@ function deleteListing(listingId, listingType) {
     });
   }
 }
-//shows edit form.
+  //shows edit form.
 function editListing(listingId, listingType) {
   if (!requireSignIn()) {
     return;
   }
   
-  const userEmail = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
   console.log(`Attempting to edit listing ${listingId} of type ${listingType} as ${userEmail}`);
   
   window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}&listing_type=${encodeURIComponent(listingType)}`; 
-}
-
-// Function to fetch contacted listings from the database
-function fetchContactedListings() {
-  const userEmail = localStorage.getItem('userEmail');
-  if (!userEmail) {
-    return;
   }
-  
-  fetch('/api/get_contacted_listings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email: userEmail }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Store the contacted listings in a data attribute on the body for quick access
-      const contactedIds = data.contacted_listings.map(item => item.id.toString());
-      document.body.setAttribute('data-contacted-listings', JSON.stringify(contactedIds));
-      
-      // Disable contact buttons for previously contacted listings
-      disableContactedListings();
+
+  // Function to fetch contacted listings from the database
+  function fetchContactedListings() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      return;
     }
-  })
-  .catch(error => {
-    console.error('Error fetching contacted listings:', error);
-  });
-}
+    
+    fetch('/api/get_contacted_listings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userEmail }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Store the contacted listings in a data attribute on the body for quick access
+        const contactedIds = data.contacted_listings.map(item => item.id.toString());
+        document.body.setAttribute('data-contacted-listings', JSON.stringify(contactedIds));
+        
+        // Disable contact buttons for previously contacted listings
+        disableContactedListings();
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching contacted listings:', error);
+    });
+  }
 
-// Updated function to disable contacted buttons using server data
-function disableContactedListings() {
-  // Get the current user's email
-  const userEmail = localStorage.getItem('userEmail');
-  
-  // If no user is logged in, don't disable any buttons
-  if (!userEmail) {
-    return;
-  }
-  
-  // Get contacted listings from data attribute
-  const contactedListingsJSON = document.body.getAttribute('data-contacted-listings');
-  if (!contactedListingsJSON) {
-    return;
-  }
-  
-  const contactedListings = JSON.parse(contactedListingsJSON);
-  
-  document.querySelectorAll('.contact-button').forEach(button => {
-    const listingId = button.getAttribute('data-listing-id');
-    if (contactedListings.includes(listingId)) {
-      button.disabled = true;
-      button.classList.add('contacted');
+  // Updated function to disable contacted buttons using server data
+  function disableContactedListings() {
+    // Get the current user's email
+    const userEmail = localStorage.getItem('userEmail');
+    
+    // If no user is logged in, don't disable any buttons
+    if (!userEmail) {
+      return;
     }
-  });
-  
-  // We no longer need to check for blocked listings
-}
+    
+    // Get contacted listings from data attribute
+    const contactedListingsJSON = document.body.getAttribute('data-contacted-listings');
+    if (!contactedListingsJSON) {
+      return;
+    }
+    
+    const contactedListings = JSON.parse(contactedListingsJSON);
+    
+    document.querySelectorAll('.contact-button').forEach(button => {
+      const listingId = button.getAttribute('data-listing-id');
+      if (contactedListings.includes(listingId)) {
+        button.disabled = true;
+        button.classList.add('contacted');
+      }
+    });
+    
+    // We no longer need to check for blocked listings
+  }
 
-// When the contact form is submitted, we'll let the server handle recording the contact
-document.addEventListener('DOMContentLoaded', function() {
-  // Fetch contacted listings on page load
-  fetchContactedListings();
-  
-  const contactForm = document.getElementById('myForm');
+  // When the contact form is submitted, we'll let the server handle recording the contact
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fetch contacted listings on page load
+    fetchContactedListings();
+    
+    const contactForm = document.getElementById('myForm');
   
   handlePopup();
 });
@@ -1132,35 +1132,35 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-});
+  });
 
-// add this function to handle the popup
-function handlePopup() {
+  // add this function to handle the popup
+  function handlePopup() {
   // Check if URL has show_popup=true
-  const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
   const showPopup = urlParams.get('show_popup');
   const contactedId = urlParams.get('contacted_id');
   const error = urlParams.get('error');
   //alert('before showPopup')
   if (showPopup === 'true') {
-      const popup = document.getElementById('popup');
-      const popupMessage = document.getElementById('popup-message');
-      
-      // Regular success message
-      popupMessage.textContent = 'Connection email sent! Check your inbox';
-      popupMessage.style.color = '#000'; // Reset to default color
-      
-      // Check which listing was contacted
-      if (contactedId) {
-          const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
-          allButtons.forEach(button => {
-              button.disabled = true;
-              button.classList.add('contacted');
-          });
-      }
-      
-      popup.style.display = 'block';
-      
+        const popup = document.getElementById('popup');
+        const popupMessage = document.getElementById('popup-message');
+        
+        // Regular success message
+        popupMessage.textContent = 'Connection email sent! Check your inbox';
+        popupMessage.style.color = '#000'; // Reset to default color
+        
+        // Check which listing was contacted
+        if (contactedId) {
+            const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
+            allButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('contacted');
+            });
+        }
+        
+        popup.style.display = 'block';
+        
       // Automatically hide the popup after 3 seconds
       setTimeout(function() {
           popup.style.display = 'none';
@@ -1180,33 +1180,33 @@ function handlePopup() {
       const url = new URL(window.location);
       url.searchParams.delete('error');
       window.history.replaceState({}, '', url);
+    }
   }
-}
-
-// Add styles for contacted buttons if they don't exist
-if (!document.getElementById('contacted-button-styles')) {
-  const style = document.createElement('style');
-  style.id = 'contacted-button-styles';
-  style.textContent = `
-    .contact-button.contacted {
-      background-color: #cccccc;
-      color: #777777;
-      cursor: not-allowed;
-      opacity: 0.7;
-      border: 1px solid #aaaaaa;
-    }
-    
-    .contact-button.contacted:hover {
-      background-color: #cccccc;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// Function to ensure user's email is sent to the server for blocking logic
-function sendUserEmailToServer() {
-  const userEmail = localStorage.getItem('userEmail');
-  if (userEmail) {
+  
+  // Add styles for contacted buttons if they don't exist
+  if (!document.getElementById('contacted-button-styles')) {
+    const style = document.createElement('style');
+    style.id = 'contacted-button-styles';
+    style.textContent = `
+      .contact-button.contacted {
+        background-color: #cccccc;
+        color: #777777;
+        cursor: not-allowed;
+        opacity: 0.7;
+        border: 1px solid #aaaaaa;
+      }
+      
+      .contact-button.contacted:hover {
+        background-color: #cccccc;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  // Function to ensure user's email is sent to the server for blocking logic
+  function sendUserEmailToServer() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
     // Send email to server via POST request
     fetch('/api/set_user_email', {
       method: 'POST',
