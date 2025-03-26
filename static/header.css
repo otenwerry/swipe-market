@@ -73,22 +73,13 @@
     position: relative;
   }
   
-  .g_id_signin-container {
-    position: relative;
-    width: 120px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  
   .g_id_signin {
-    transform: scale(0.8);
-    transform-origin: right center;
-    position: absolute;
+    transform: scale(1);
+    /*transform-origin: right center;
+    position: relative;
     right: 0;
     top: 50%;
-    transform: translateY(-50%) scale(0.8);
+    transform: translateY(-50%) scale(0.8);*/
   }
   
   .profile-menu {
