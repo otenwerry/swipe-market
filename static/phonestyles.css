@@ -76,7 +76,6 @@
 
       .g_id_signin {
         transform: scale(0.6);
-        transform-origin: right center;
         position: relative;
         right: 0;
         top: 0;
