@@ -540,4 +540,12 @@
     margin-top: 20px;
   }
 
+  .subheading {
+    font-style: italic;
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #666;
+  }
+
 
