@@ -30,12 +30,12 @@
       }
   
       .top {
-        padding: 8px 12px;
-        flex-wrap: wrap;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: start;
+        padding: 8px 12px;
+        /*flex-wrap: wrap;*/
         position: static;
         z-index: 1000;
       }
@@ -50,28 +50,12 @@
       }
   
       .top-right {
+        display: flex;
+        flex-direction: row;
         font-size: 10px;
-        display: flex;
         align-items: center;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        width: auto;
-        height: 40px;
         position: relative;
-        margin-top: 0;
         gap: 6px;
-      }
-  
-      .g_id_signin-container {
-        width: 120px;
-        height: 40px;
-        overflow: visible;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        margin-top: 0;
-        z-index: 1;
       }
 
       .g_id_signin {
