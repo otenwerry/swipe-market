@@ -114,6 +114,16 @@
     font-size: 1rem;
     line-height: 1.6;
   }
+
+  .how-it-works-content ul {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .how-it-works-content li {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
   
   .seller-form{
     display: flex;
