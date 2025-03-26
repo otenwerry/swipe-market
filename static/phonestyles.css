@@ -27,119 +27,125 @@
         font-size: 32px;
         letter-spacing: 1px;
         padding: 0 10px;
-      }
+    }
   
-      .top {
+    .top {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: start;
+        align-items: center;
         padding: 8px 12px;
-        /*flex-wrap: wrap;*/
         position: static;
         z-index: 1000;
-      }
+        width: 100%;
+        box-sizing: border-box;
+    }
 
-      .top-left {
+    .top-left {
         font-size: 10px;
-      }
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-      /* Add specific style for current-time div */
-      #current-time {
+    /* Add specific style for current-time div */
+    #current-time {
         font-size: 10px !important;
-      }
+    }
   
-      .top-right {
+    .top-right {
         display: flex;
         flex-direction: row;
         font-size: 10px;
         align-items: center;
         position: relative;
-        /*gap: 6px;*/
-      }
+        gap: 6px;
+        margin-left: auto; /* Push to the right */
+    }
 
-      .g_id_signin {
+    .g_id_signin {
         transform: scale(0.6);
         transform-origin: right center;
         position: relative;
         right: 0;
         top: 0;
         margin-top: 0;
-      }
+    }
 
-      .feedback {
+    .feedback {
         padding: 4px 8px;
         font-size: 10px;        
         height: 24px;
         box-sizing: border-box;
-      }
+        white-space: nowrap; /* Prevent text wrapping */
+    }
   
-      .meals-container {
+    .meals-container {
         margin: 10px 15px;
         font-size: 16px;
         gap: 10px;
-      }
+    }
   
-      .contest {
+    .contest {
         font-size: 14px;
-      }
+    }
   
-      .pa-menu {
+    .pa-menu {
         font-size: 14px;
-      }
+    }
   
-      /* Adjust body text size */
-      body {
+    /* Adjust body text size */
+    body {
         font-size: 14px;
-      }
+    }
   
-      /* Adjust button sizes */
-      .sell-button, .buy-button, .how-it-works-button {
+    /* Adjust button sizes */
+    .sell-button, .buy-button, .how-it-works-button {
         font-size: 12px; /* Reduced from 14px */
         padding: 6px 12px; /* Reduced padding */
         margin-top: 12px; /* Reduced margin */
         min-width: 120px; /* Smaller min-width for mobile */
-      }
+    }
   
-      .button-group {
+    .button-group {
         flex-direction: column;
         align-items: center;
         gap: 10px;
-      }
+    }
   
-      /* Adjust table text sizes */
-      table {
+    /* Adjust table text sizes */
+    table {
         font-size: 10px; /* Reduced from 12px */
-      }
+    }
   
-      th, td {
+    th, td {
         padding: 6px; /* Reduced padding */
-      }
+    }
   
-      /* Adjust form elements */
-      input[type="text"],
-      input[type="email"],
-      input[type="tel"],
-      input[type="date"],
-      input[type="time"],
-      input[type="number"] {
+    /* Adjust form elements */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"] {
         font-size: 14px;
         padding: 8px;
-      }
+    }
   
-      /* Adjust labels */
-      label {
+    /* Adjust labels */
+    label {
         font-size: 14px;
-      }
+    }
   
-      /* Adjust contact button */
-      .contact-button {
+    /* Adjust contact button */
+    .contact-button {
         font-size: 11px; /* Reduced from 12px */
         padding: 4px 8px; /* Reduced padding */
-      }
+    }
 
-      /* Adjust delete and edit buttons to match contact button size */
-      .delete-button, .edit-button {
+    /* Adjust delete and edit buttons to match contact button size */
+    .delete-button, .edit-button {
         font-size: 11px;
         padding: 4px 8px;
         min-width: 30px;
@@ -149,43 +155,43 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto; /* Center the buttons horizontally */
-      }
+    }
 
-      .listing-actions {
+    .listing-actions {
         display: inline-flex;
         gap: 4px;
         align-items: center;
         justify-content: center;
         width: 100%;
-      }
+    }
 
-      /* Add specific styling for table cells containing action buttons */
-      td:has(.listing-actions) {
+    /* Add specific styling for table cells containing action buttons */
+    td:has(.listing-actions) {
         text-align: center;
-      }
+    }
 
-      .profile-menu {
+    .profile-menu {
         position: relative;
         display: inline-flex;
         align-items: center;
         margin-left: 0;
         margin-right: 6px;
         height: 40px;
-      }
+    }
 
-      .profile-menu img {
+    .profile-menu img {
         width: 24px;
         height: 24px;
         border-radius: 50%;
         cursor: pointer;
         transition: opacity 0.3s;
         margin-top: 0;
-      }
+    }
 
-      .profile-dropdown {
+    .profile-dropdown {
         right: 0;
         top: 100%;
         margin-top: 4px;
         min-width: 120px;
-      }
-  }
+    }
+}
