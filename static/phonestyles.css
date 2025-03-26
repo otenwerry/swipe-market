@@ -32,7 +32,13 @@
       .top {
         padding: 8px 12px; /* Reduced padding */
         flex-wrap: wrap;
-        gap: 6px; /* Reduced gap */
+        /*gap: 6px;  Reduced gap */
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        position: static;
+        z-index: 1000;
       }
 
       .top-left {
