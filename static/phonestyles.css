@@ -39,14 +39,10 @@
         position: static;
         z-index: 1000;
       }
-      /*
+
       .top-left {
         font-size: 10px;
-        display: flex;
-        align-items: start;
-        align-items: center;
-        gap: 6px;
-      }*/
+      }
 
       /* Add specific style for current-time div */
       #current-time {
@@ -56,6 +52,7 @@
       .top-right {
         font-size: 10px;
         display: flex;
+        flex-direction: row-reverse;
         align-items: center;
         flex-wrap: nowrap;
         justify-content: flex-end;
