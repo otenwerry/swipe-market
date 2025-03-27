@@ -1,14 +1,10 @@
-export {handlePopup};
-export {disableContactedListings};
-export {checkAutoDelete};
-export {handleSignOut};
-export {storeUserEmail};
-export {handleCredentialResponse};
-
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 
-document.addEventListener('DOMContentLoaded', function() {
+// Import form-related functions
+import { closeForm, openForm, handlePopup, validateFormFields } from './forms.js';
+
+  document.addEventListener('DOMContentLoaded', function() {
   disableContactedListings();
   handlePopup();
 // Check for auto delete parameter
@@ -650,56 +646,7 @@ dateCells.forEach(cell => {
     return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
   }
   
-  //closes the form when the user clicks outside of it.
-  function closeForm() {
-    const form = document.getElementById("myForm");
-    form.style.display = "none";
-    // Clear the stored button reference
-    form.removeAttribute('data-button-id');
-  }
-  
-  //opens popup form when button is clicked,
-  //and populates the form with the listing id.
-  function openForm(button) {
-    // Don't open form if button is disabled (already contacted)
-    if (button.disabled || button.classList.contains('contacted')) {
-      // Check if this is a blocked user
-      if (button.getAttribute('data-blocked')) {
-        showBlockMessage(button.getAttribute('title') || 'This user is blocked');
-      }
-      return false;
-    }
-    
-if (!requireSignIn()) {
-        return false;
-    }
-
-    const listingId = button.getAttribute('data-listing-id');
-    const listingType = button.getAttribute('data-listing-type');
-    
-    const form = document.getElementById("myForm");
-    const listingIdInput = form.querySelector('input[name="listing_id"]');
-    const listingTypeInput = form.querySelector('input[name="listing_type"]');
-    
-    listingIdInput.value = listingId;
-    listingTypeInput.value = listingType;
-    
-    // Set sender info
-    const senderNameInput = form.querySelector('input[name="sender_name"]');
-    const senderEmailInput = form.querySelector('input[name="sender_email"]');
-    
-    if (senderNameInput && senderEmailInput) {
-      senderNameInput.value = localStorage.getItem('userName');
-  const email = localStorage.getItem('userEmail');
-  // Ensure we're using lowercase email consistently
-  senderEmailInput.value = email ? email.toLowerCase() : email;
-    }
-    
-    form.style.display = "block";
-    form.setAttribute('data-button-id', listingId);
-  }
-  
-  // checks for valid credential
+//checks for valid credential
   function requireSignIn(event) {
 if (!isUserLoggedIn()) {
       event.preventDefault(); // Stop the default navigation
@@ -1054,9 +1001,9 @@ window.location.href = `/edit_listing/${listingId}?user_email=${encodeURICompone
     fetchContactedListings();
     
     const contactForm = document.getElementById('myForm');
-
-handlePopup();
-});
+    
+    handlePopup();
+  });
 
 document.addEventListener("DOMContentLoaded", function () {
 // Only apply validation to the listing creation/edit form, not the contact form
@@ -1118,56 +1065,7 @@ if (listingForm) {
     });
   });
 }
-  });
-
-  // add this function to handle the popup
-  function handlePopup() {
-// Check if URL has show_popup=true
-    const urlParams = new URLSearchParams(window.location.search);
-const showPopup = urlParams.get('show_popup');
-const contactedId = urlParams.get('contacted_id');
-const error = urlParams.get('error');
-//alert('before showPopup')
-if (showPopup === 'true') {
-        const popup = document.getElementById('popup');
-        const popupMessage = document.getElementById('popup-message');
-        
-        // Regular success message
-        popupMessage.textContent = 'Connection email sent! Check your inbox';
-        popupMessage.style.color = '#000'; // Reset to default color
-        
-        // Check which listing was contacted
-        if (contactedId) {
-            const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
-            allButtons.forEach(button => {
-                button.disabled = true;
-                button.classList.add('contacted');
-            });
-        }
-        
-        popup.style.display = 'block';
-        
-    // Automatically hide the popup after 3 seconds
-    setTimeout(function() {
-        popup.style.display = 'none';
-    }, 3000);
-    
-    // Clean up the URL by removing the query parameter
-    const url = new URL(window.location);
-    url.searchParams.delete('show_popup');
-    url.searchParams.delete('contacted_id');
-    window.history.replaceState({}, '', url);
-}
-
-if (error === 'true') {
-    alert('There was an error sending the connection email. Please try again later.');
-    
-    // Clean up the URL
-    const url = new URL(window.location);
-    url.searchParams.delete('error');
-    window.history.replaceState({}, '', url);
-    }
-  }
+});
   
   // Add styles for contacted buttons if they don't exist
   if (!document.getElementById('contacted-button-styles')) {
@@ -1383,4 +1281,311 @@ document.querySelectorAll('.contact-button').forEach(button => {
   button.disabled = false;
   button.classList.remove('contacted');
 });
+}
+
+function getESTDate() {
+  const now = new Date();
+  const estDateString = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+  return new Date(estDateString);
+};
+//sets default date and time for seller listings.
+//formats date and time as YYYY-MM-DD HH:MM.
+document.addEventListener('DOMContentLoaded', function() {
+  disableContactedListings();
+  handlePopup();
+  // Check for auto delete parameter
+  checkAutoDelete();
+
+  // Add how-it-works popup functionality
+  const howItWorksButton = document.getElementById('howItWorksButton');
+  const howItWorksPopup = document.getElementById('howItWorksPopup');
+
+  if (howItWorksButton && howItWorksPopup) {
+    howItWorksButton.addEventListener('click', function() {
+      howItWorksPopup.style.display = 'block';
+    });
+
+    // Close popup when clicking outside
+    howItWorksPopup.addEventListener('click', function(event) {
+      if (event.target === howItWorksPopup) {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+
+    // Close popup when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && howItWorksPopup.style.display === 'block') {
+        howItWorksPopup.style.display = 'none';
+      }
+    });
+  }
+
+    // set default date to today
+    const today = getESTDate();
+    const dateInput = document.getElementById('date');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    const priceInput = document.getElementById('price');
+    const isEditPage = window.location.pathname.includes('/edit_listing/');
+
+  // Add validation for price input
+  if (priceInput) {
+    priceInput.addEventListener('input', function() {
+      const price = parseFloat(this.value);
+      if (isNaN(price) || price < 0) {
+        this.setCustomValidity('Price must be at least 0.');
+      } else {
+        this.setCustomValidity('');
+      }
+    });
+  }
+
+    if (!isEditPage) {
+      // format today's date as YYYY-MM-DD
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.value = formattedDate;
+      dateInput.min = formattedDate; // prevent selecting past dates
+
+      // set default start time to current time (rounded to nearest 15 minutes)
+      const minutes = today.getMinutes();
+      const roundedMinutes = Math.ceil(minutes / 15) * 15;
+      today.setMinutes(roundedMinutes);
+      today.setSeconds(0);
+      today.setMilliseconds(0);
+      
+      // format time as HH:MM
+      const hours = String(today.getHours()).padStart(2, '0');
+      const mins = String(today.getMinutes()).padStart(2, '0');
+      startTimeInput.value = `${hours}:${mins}`;
+    } else {
+      // For edit page, still set the minimum date to today
+      const formattedDate = today.toISOString().split('T')[0];
+      dateInput.min = formattedDate; // prevent selecting past dates
+    }
+    
+    // Function to validate start time for today's date
+    function validateStartTime() {
+      // Check if date is today
+      if (dateInput.value === today.toISOString().split('T')[0]) {
+        // Get current time
+        const now = new getESTDate();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        
+        // Get selected time
+        const [selectedHours, selectedMinutes] = startTimeInput.value.split(':').map(Number);
+        
+        // Compare times
+        if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
+          startTimeInput.setCustomValidity('For today, start time must be later than current time');
+        } else {
+          startTimeInput.setCustomValidity('');
+        }
+      } else {
+        // If date is not today, no time restriction
+        startTimeInput.setCustomValidity('');
+      }
+    }
+    
+    // Add event listeners for both date and time fields to trigger validation
+    startTimeInput.addEventListener('input', validateStartTime);
+    dateInput.addEventListener('input', validateStartTime);
+    
+    // Run validation at page load
+    validateStartTime();
+    
+    // custom validation for end time
+    endTimeInput.addEventListener('input', function() {
+        if (startTimeInput.value && this.value <= startTimeInput.value) {
+            this.setCustomValidity('End time must be later than start time');
+        } else {
+            this.setCustomValidity('');
+        }
+        
+        // Also re-validate start time to make sure both validations work together
+        validateStartTime();
+    });
+
+    // also check when start time changes
+    startTimeInput.addEventListener('input', function() {
+        if (endTimeInput.value && endTimeInput.value <= this.value) {
+            endTimeInput.setCustomValidity('End time must be later than start time');
+        } else {
+            endTimeInput.setCustomValidity('');
+        }
+        
+        // The validateStartTime function will be called from the general input event listener above
+    });
+
+    const form = document.querySelector('form');
+    const diningHallSelect = document.getElementById('dining_hall');
+    const paymentMethodsSelect = document.getElementById('payment_methods');
+
+    // Add validation for multiple select fields
+  if (diningHallSelect) {
+    diningHallSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one dining hall');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+  }
+
+  if (paymentMethodsSelect) {
+    paymentMethodsSelect.addEventListener('change', function() {
+        if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
+            this.setCustomValidity('Please select at least one payment method');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+  }
+
+    // Trigger initial validation
+    diningHallSelect.dispatchEvent(new Event('change'));
+    paymentMethodsSelect.dispatchEvent(new Event('change'));
+});
+
+// Form-related functions for Swipe Market
+
+// Function to close the form when user clicks outside
+function closeForm() {
+  const form = document.getElementById("myForm");
+  form.style.display = "none";
+  form.removeAttribute('data-button-id');
+}
+
+// Function to open popup form and populate with listing details
+function openForm(button) {
+  if (button.disabled || button.classList.contains('contacted')) {
+    if (button.getAttribute('data-blocked')) {
+      showBlockMessage(button.getAttribute('title') || 'This user is blocked');
+    }
+    return false;
+  }
+  
+  if (!requireSignIn()) {
+    return false;
+  }
+
+  const listingId = button.getAttribute('data-listing-id');
+  const listingType = button.getAttribute('data-listing-type');
+  
+  const form = document.getElementById("myForm");
+  const listingIdInput = form.querySelector('input[name="listing_id"]');
+  const listingTypeInput = form.querySelector('input[name="listing_type"]');
+  
+  listingIdInput.value = listingId;
+  listingTypeInput.value = listingType;
+  
+  const senderNameInput = form.querySelector('input[name="sender_name"]');
+  const senderEmailInput = form.querySelector('input[name="sender_email"]');
+  
+  if (senderNameInput && senderEmailInput) {
+    senderNameInput.value = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail');
+    senderEmailInput.value = email ? email.toLowerCase() : email;
+  }
+  
+  form.style.display = "block";
+  form.setAttribute('data-button-id', listingId);
+}
+
+// Function to handle form popup display
+function handlePopup() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const showPopup = urlParams.get('show_popup');
+  const contactedId = urlParams.get('contacted_id');
+  const error = urlParams.get('error');
+
+  if (showPopup === 'true') {
+    const popup = document.getElementById('popup');
+    const popupMessage = document.getElementById('popup-message');
+    
+    popupMessage.textContent = 'Connection email sent! Check your inbox';
+    popupMessage.style.color = '#000';
+    
+    if (contactedId) {
+      const allButtons = document.querySelectorAll(`.contact-button[data-listing-id="${contactedId}"]`);
+      allButtons.forEach(button => {
+        button.disabled = true;
+        button.classList.add('contacted');
+      });
+    }
+    
+    popup.style.display = 'block';
+    
+    setTimeout(function() {
+      popup.style.display = 'none';
+    }, 3000);
+    
+    const url = new URL(window.location);
+    url.searchParams.delete('show_popup');
+    url.searchParams.delete('contacted_id');
+    window.history.replaceState({}, '', url);
+  }
+
+  if (error === 'true') {
+    alert('There was an error sending the connection email. Please try again later.');
+    
+    const url = new URL(window.location);
+    url.searchParams.delete('error');
+    window.history.replaceState({}, '', url);
+  }
+}
+
+// Function to validate form fields
+function validateFormFields() {
+  const listingForm = document.getElementById('listingForm');
+  if (listingForm) {
+    const diningHallCheckboxes = listingForm.querySelectorAll("input[name='dining_hall[]']");
+    const paymentMethodCheckboxes = listingForm.querySelectorAll("input[name='payment_methods[]']");
+
+    function isAnyCheckboxChecked(checkboxList) {
+      return Array.from(checkboxList).some(checkbox => checkbox.checked);
+    }
+
+    function showError(message) {
+      alert(message);
+    }
+
+    listingForm.addEventListener("submit", function (event) {
+      let hasError = false;
+      
+      if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
+        showError("Please select at least one dining hall.");
+        hasError = true;
+        event.preventDefault();
+        return;
+      }
+
+      if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+        showError("Please select at least one payment method.");
+        hasError = true;
+        event.preventDefault();
+        return;
+      }
+    });
+
+    diningHallCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
+          this.setCustomValidity('Please select at least one dining hall.');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+    });
+    
+    paymentMethodCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+          this.setCustomValidity('Please select at least one payment method.');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+    });
+  }
 }
