@@ -77,6 +77,7 @@
 
       .signin-container {
         background-color: blue;
+        transform: scale(0.6);
       }
 
       .feedback {
