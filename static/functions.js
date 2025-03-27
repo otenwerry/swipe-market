@@ -229,7 +229,17 @@ function storeUserEmail(email) {
     console.log(`Stored user email consistently as: ${email}`);
   }
 }
-  
+// Initialize Google Sign-In when page loads
+window.onload = function () {
+  google.accounts.id.initialize({
+    client_id: "YOUR_GOOGLE_CLIENT_ID",
+    callback: handleCredentialResponse
+  });
+
+  document.getElementById("g_id_signin").addEventListener("click", function () {
+    google.accounts.id.prompt(); // Triggers the Google Sign-In popup
+  });
+};
   //gets user's google credential and stores it in localStorage.
   function handleCredentialResponse(response) {
     // Decode the credential response
