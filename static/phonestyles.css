@@ -54,8 +54,8 @@
         flex-direction: row;
         align-items: center;
         justify-content: flex-end; /* Aligns elements to the right */
-        gap: 8px; /* Ensures spacing between g_id_signin and feedback */
         width: 100%;
+        background-color: red;
         /*
         display: flex;
         flex-direction: row;
