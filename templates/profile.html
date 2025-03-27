@@ -178,7 +178,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script src="../static/functions.js" type="text/javascript"></script>
     <script src="../static/signin.js" type="text/javascript"></script>
-    <script>
+    <script src="../static/forms.js" type="text/javascript"></script>
+
       document.addEventListener('DOMContentLoaded', function() {
         // Get banned words list from server
         const bannedWords = JSON.parse('{{ banned_words|tojson|safe }}');
