@@ -73,11 +73,14 @@
         padding: 0 !important;
       }
 
-      .signin-container .g_id_signin {
-        /*font-size: 0.6rem;
-        padding: 4px 8px;*/
+      .signin-container {
         transform: scale(0.6);
         width: 120px;
+      }
+
+      .signin-container .g_id_signin {
+        font-size: 0.6rem;
+        padding: 4px 8px;
       }
 
       .feedback {
