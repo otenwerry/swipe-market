@@ -1,41 +1,6 @@
-// --- GOOGLE SIGN IN ---
-
-//triggered when user signs in.
-//gets user's basic profile info.
-//hides sign in button.
-function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    document.getElementById('g_id_signin').style.display = 'none';
-  
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const userName = localStorage.getItem('userName');
-    const userEmail = localStorage.getItem('userEmail');
-    
-    if (userName && userEmail) {
-    // Make sure the email is stored in lowercase for consistency
-    storeUserEmail(userEmail);
-    
-      const posterNameField = document.getElementById('poster_name');
-      const posterEmailField = document.getElementById('poster_email');
-      
-      if (posterNameField) {
-        posterNameField.value = userName;
-      }
-      if (posterEmailField) {
-      posterEmailField.value = userEmail.toLowerCase();
-      }
-    }
-  });
-
-  //sets default date and time for seller listings.
-  //formats date and time as YYYY-MM-DD HH:MM.
-  document.addEventListener('DOMContentLoaded', function() {
+//sets default date and time for seller listings.
+//formats date and time as YYYY-MM-DD HH:MM.
+document.addEventListener('DOMContentLoaded', function() {
     disableContactedListings();
     handlePopup();
   // Check for auto delete parameter
@@ -229,18 +194,8 @@ function storeUserEmail(email) {
     console.log(`Stored user email consistently as: ${email}`);
   }
 }
-// Initialize Google Sign-In when page loads
-window.onload = function () {
-  google.accounts.id.initialize({
-    client_id: "YOUR_GOOGLE_CLIENT_ID",
-    callback: handleCredentialResponse
-  });
-  document.getElementById("g_id_signin").addEventListener("click", function () {
-    alert("clicked custom sign in")
-    google.accounts.id.prompt(); // Triggers the Google Sign-In popup
-  });
-};
-  //gets user's google credential and stores it in localStorage.
+
+//gets user's google credential and stores it in localStorage.
 function handleCredentialResponse(response) {
     // Decode the credential response
     const responsePayload = jwt_decode(response.credential);
