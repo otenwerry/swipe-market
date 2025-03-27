@@ -67,7 +67,6 @@
 
       .g_id_signin {
         /*transform: scale(0.6);*/
-        transform-origin: right center;
         position: relative;
         top: 0;
         margin-top: 0;
@@ -76,7 +75,6 @@
       }
 
       .signin-container {
-        background-color: blue;
         transform: scale(0.6);
       }
 
