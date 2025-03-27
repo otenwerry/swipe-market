@@ -73,8 +73,12 @@
         padding: 0 !important;
       }
 
-      .signin-container {
-        transform: scale(0.6);
+      .signin-container .g_id_signin {
+        transform: scale(0.4);
+        transform-origin: top right;
+        width: 80px;
+        font-size: 0.6rem;
+        padding: 4px 8px;
       }
 
       .feedback {
