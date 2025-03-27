@@ -75,7 +75,7 @@
 
       .signin-container .g_id_signin {
         transform: scale(0.6);
-        transform-origin: 30% 50%;
+        transform-origin: 0% 50%;
         width: 120px;
         font-size: 0.6rem;
         padding: 4px 8px;
