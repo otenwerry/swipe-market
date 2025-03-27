@@ -119,7 +119,7 @@ function onSignIn(googleUser) {
       // Check if date is today
       if (dateInput.value === today.toISOString().split('T')[0]) {
         // Get current time
-        const now = new Date();
+        const now = new getESTDate();
         const currentHours = now.getHours();
         const currentMinutes = now.getMinutes();
         
@@ -580,7 +580,7 @@ function storeUserEmail(email) {
   
   //updates the time on the page.
   function updateTime() {
-    var now = new Date();
+    var now = new getESTDate();
     var options = { 
         weekday: 'short', 
         year: 'numeric', 
@@ -605,7 +605,7 @@ function formatDateWithoutYear(dateStr) {
   
   try {
     // Parse the date string (expected format: YYYY-MM-DD)
-    const date = new Date(dateStr);
+    const date = new getESTDate(dateStr);
     
     // Format to "Month Day" (e.g., "January 15")
     const options = { month: 'long', day: 'numeric' };
