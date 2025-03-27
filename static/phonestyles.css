@@ -54,14 +54,6 @@
         flex-direction: row;
         align-items: center;
         justify-content: flex-end;
-        background-color: red;
-        /*
-        display: flex;
-        flex-direction: row;
-        font-size: 10px;
-        align-items: center;
-        position: relative;
-        gap: 6px;*/
       }
 
       .g_id_signin {
