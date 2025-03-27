@@ -52,17 +52,24 @@
       .top-right {
         display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: flex-end; /* Aligns elements to the right */
+        gap: 8px; /* Ensures spacing between g_id_signin and feedback */
+        width: 100%;
+        /*
+        display: flex;
+        flex-direction: row;
         font-size: 10px;
         align-items: center;
         position: relative;
-        /*gap: 6px;*/
+        gap: 6px;*/
       }
 
       .g_id_signin {
         transform: scale(0.6);
         transform-origin: right center;
         position: relative;
-        right: 0;
+        margin-left:auto;
         top: 0;
         margin-top: 0;
       }
