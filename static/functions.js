@@ -235,13 +235,13 @@ window.onload = function () {
     client_id: "YOUR_GOOGLE_CLIENT_ID",
     callback: handleCredentialResponse
   });
-
   document.getElementById("g_id_signin").addEventListener("click", function () {
+    alert("clicked custom sign in")
     google.accounts.id.prompt(); // Triggers the Google Sign-In popup
   });
 };
   //gets user's google credential and stores it in localStorage.
-  function handleCredentialResponse(response) {
+function handleCredentialResponse(response) {
     // Decode the credential response
     const responsePayload = jwt_decode(response.credential);
   
@@ -615,7 +615,7 @@ function formatDateWithoutYear(dateStr) {
   
   try {
     // Parse the date string (expected format: YYYY-MM-DD)
-    const date = new getESTDate(dateStr);
+    const date = new Date(dateStr);
     
     // Format to "Month Day" (e.g., "January 15")
     const options = { month: 'long', day: 'numeric' };

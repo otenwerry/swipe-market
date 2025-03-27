@@ -74,12 +74,7 @@
   }
   
   .g_id_signin {
-    transform: scale(1);
-    /*transform-origin: right center;
-    position: relative;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%) scale(0.8);*/
+    display: none;
   }
   
   .profile-menu {
@@ -143,5 +138,29 @@
   }
   
   .pa-menu{
+    font-size: 18px;
+  }
+
+  .custom-signin-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: 10px;
+  }
+
+  .custom-signin-btn:hover {
+    background-color: #357abd;
+  }
+
+  .custom-signin-btn i {
     font-size: 18px;
   }
