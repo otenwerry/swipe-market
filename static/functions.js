@@ -1097,6 +1097,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Check dining halls
       if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
         showError("Please select at least one dining hall.");
+        //diningHallCheckboxes.setCustomValidity('Please select at least one dining hall.');
         hasError = true;
         event.preventDefault();
         return;
@@ -1104,6 +1105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Check payment methods
       if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
+        //paymentMethodCheckboxes.setCustomValidity('Please select at least one payment method.');
         showError("Please select at least one payment method.");
         hasError = true;
         event.preventDefault();
@@ -1121,7 +1123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     });
-
+    
     paymentMethodCheckboxes.forEach(checkbox => {
       checkbox.addEventListener('change', function() {
         if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {

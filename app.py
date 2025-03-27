@@ -648,8 +648,8 @@ def send_connection_email():
     subject = "[Swipe Market] Potential Sale"
     price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
     body = (
-      f"Hello {buyer_name},\n\n"
-      f"{seller_name} is interested in selling a swipe to you. "
+      f"<p>Hi {buyer_name},</p>"
+      f"<p>{seller_name} is interested in selling a swipe to you. "
       f"You can reach them at {seller_email}"
     )
     
@@ -657,21 +657,20 @@ def send_connection_email():
     if seller_phone and seller_phone.strip() != "":
       body += f" or via phone at {seller_phone}"
     
-    body += ".\n\n"
+    body += ".</p>"
     
     if buyer_phone and buyer_phone.strip() != "":
-      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.\n\n"
+      body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.</p>"
     else:
-      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}.\n\n"
+      body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email}.</p>"
     
     body += (
-      f"As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
+      f"<p>As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
-      f"They can pay via {buyer_listing.payment_methods}.\n\n"
-      f"{buyer_name}, remember to delete your listing "
-      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.\n\n"
-      "Best regards,\n"
-      "Swipe Market Team"
+      f"They can pay via {buyer_listing.payment_methods}.</p>"
+      f"<p>{buyer_name}, remember to delete your listing "
+      f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.</p>"
+      f"<p>Best regards,<br>Swipe Market Team</p>"
     )
     
   # If receiver is seller
@@ -700,8 +699,8 @@ def send_connection_email():
     subject = "[Swipe Market] Potential Sale"
     price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
     body = (
-      f"Hello {seller_name},\n\n"
-      f"{buyer_name} is interested in buying a swipe from you. "
+      f"<p>Hi {seller_name},</p>"
+      f"<p>{buyer_name} is interested in buying a swipe from you. "
       f"You can reach them at {buyer_email}"
     )
     
@@ -709,23 +708,22 @@ def send_connection_email():
     if buyer_phone and buyer_phone.strip() != "":
       body += f" or via phone at {buyer_phone}"
     
-    body += ".\n\n"
+    body += ".</p>"
     
     if seller_phone and seller_phone.strip() != "":
-      body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.\n\n"
+      body += f"<p>{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.</p>"
     else:
-      body += f"{buyer_name}, you can reach {seller_name} at {seller_email}.\n\n"
+      body += f"<p>{buyer_name}, you can reach {seller_name} at {seller_email}.</p>"
     
     body += (
-      f"As a reminder, the listing is for {seller_listing.dining_hall} on "
+      f"<p>As a reminder, the listing is for {seller_listing.dining_hall} on "
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
-      f"{seller_name} accepts {seller_listing.payment_methods}.\n\n"
-      f"{seller_name}, if this is the only swipe you want to sell from this listing, "
+      f"{seller_name} accepts {seller_listing.payment_methods}.</p>"
+      f"<p>{seller_name}, if this is the only swipe you want to sell from this listing, "
       f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=seller'>here</a> "
-      f"once you've agreed to the sale.\n\n"
-      "Best regards,\n"
-      "Swipe Market Team"
+      f"once you've agreed to the sale.</p>"
+      f"<p>Best regards,<br>Swipe Market Team</p>"
     )
 
   # Send email
