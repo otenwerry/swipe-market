@@ -161,3 +161,10 @@ document.addEventListener('DOMContentLoaded', function() {
     diningHallSelect.dispatchEvent(new Event('change'));
     paymentMethodsSelect.dispatchEvent(new Event('change'));
 });
+
+import {disableContactedListings} from "./functions.js";
+import {handlePopup} from "./functions.js";
+import {checkAutoDelete} from "./functions.js";
+import {handleSignOut} from "./functions.js";
+import {storeUserEmail} from "./functions.js";
+import {handleCredentialResponse} from "./functions.js";
