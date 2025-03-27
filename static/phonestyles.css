@@ -54,6 +54,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: flex-end;
+        gap: 4px;
       }
 
       .g_id_signin {
@@ -66,7 +67,7 @@
       }
 
       .signin-container .g_id_signin {
-        transform: scale(0.6);
+        transform: scale(0.6) translateX(-4px);;
         transform-origin: 0% 50%;
         width: 120px;
         font-size: 0.6rem;
