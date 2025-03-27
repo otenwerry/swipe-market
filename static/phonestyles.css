@@ -74,8 +74,8 @@
       }
 
       .signin-container {
-        transform: scale(0.6);
-        width: 120px;
+        transform: scale(0.4);
+        width: 80px;
       }
 
       .signin-container .g_id_signin {
