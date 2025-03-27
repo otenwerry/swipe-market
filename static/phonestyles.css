@@ -188,4 +188,8 @@
         margin-top: 4px;
         min-width: 120px;
       }
+      
+      .subheading {
+        font-size: 12px;
+      }
   }
