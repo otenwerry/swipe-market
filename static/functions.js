@@ -580,7 +580,7 @@ function storeUserEmail(email) {
   
   //updates the time on the page.
   function updateTime() {
-    var now = new getESTDate();
+    var now = new Date();
     var options = { 
         weekday: 'short', 
         year: 'numeric', 
