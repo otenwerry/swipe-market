@@ -1,41 +1,3 @@
-// --- GOOGLE SIGN IN ---
-
-//triggered when user signs in.
-//gets user's basic profile info.
-//hides sign in button.
-
-/*
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  document.getElementById('g_id_signin').style.display = 'none';
-
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const userName = localStorage.getItem('userName');
-  const userEmail = localStorage.getItem('userEmail');
-  
-  if (userName && userEmail) {
-  // Make sure the email is stored in lowercase for consistency
-  storeUserEmail(userEmail);
-  
-    const posterNameField = document.getElementById('poster_name');
-    const posterEmailField = document.getElementById('poster_email');
-    
-    if (posterNameField) {
-      posterNameField.value = userName;
-    }
-    if (posterEmailField) {
-    posterEmailField.value = userEmail.toLowerCase();
-    }
-  }
-});
-*/
-
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 document.addEventListener('DOMContentLoaded', function() {
@@ -304,7 +266,7 @@ storeUserEmail(responsePayload.email);
     //toggle dropdown
   if (profileIcon) {
     profileIcon.addEventListener('click', function(event) {
-      event.stopPropagation(); // Prevent the click from bubbling up
+      event.stopPropagation();
       const profileMenu = this.parentElement;
       profileMenu.classList.toggle('active');
     });
@@ -729,6 +691,7 @@ if (!requireSignIn()) {
 }
 
 // checks for valid credential
+
 function requireSignIn(event) {
 if (!isUserLoggedIn()) {
     event.preventDefault(); // Stop the default navigation
@@ -748,7 +711,7 @@ window.onload = function() {
   //initialize Google Identity Services
   if (window.google && google.accounts && google.accounts.id) {
     google.accounts.id.initialize({
-      client_id: '362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com', // Replace with your Client ID
+      client_id: '362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com',
       callback: handleCredentialResponse,
       auto_select: false
     });
@@ -770,7 +733,7 @@ window.onload = function() {
 
       //toggle dropdown
       profileIcon.addEventListener('click', function(event) {
-        event.stopPropagation(); // Prevent the click from bubbling up
+        event.stopPropagation();
         this.parentElement.classList.toggle('active');
       });
 
@@ -789,6 +752,7 @@ window.onload = function() {
       if (!document.getElementById('dropdown-styles')) {
         const style = document.createElement('style');
         style.id = 'dropdown-styles';
+        
         style.textContent = `
           .profile-menu {
             position: relative;
