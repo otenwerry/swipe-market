@@ -54,14 +54,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: flex-end;
-        background-color: red;
-        /*
-        display: flex;
-        flex-direction: row;
-        font-size: 10px;
-        align-items: center;
-        position: relative;
-        gap: 6px;*/
+        gap: 4px;
       }
 
       .g_id_signin {
@@ -74,9 +67,9 @@
       }
 
       .signin-container .g_id_signin {
-        transform: scale(0.4);
-        transform-origin: top right;
-        width: 80px;
+        transform: scale(0.6) translateX(-4px);;
+        transform-origin: left top;
+        width: 120px;
         font-size: 0.6rem;
         padding: 4px 8px;
       }
@@ -86,6 +79,7 @@
         font-size: 10px;        
         height: 24px;
         box-sizing: border-box;
+        align-self: flex-start;
       }
   
       .meals-container {
