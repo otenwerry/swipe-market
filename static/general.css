@@ -135,3 +135,24 @@ div{
     margin-bottom: 8px;
     font-style: italic !important;
   }
+
+.checkbox-group.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 600px;
+}
+
+.time-group {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.time-input {
+  flex: 1;
+  max-width: 200px;
+}
+
+/* Remove the date input year hiding styles */
