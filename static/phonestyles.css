@@ -160,10 +160,10 @@
       }
 
       .listing-actions {
-        display: inline-flex;
+        display: flex;
         gap: 4px;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         width: 100%;
       }
 
