@@ -661,10 +661,8 @@ function openForm(button) {
     return false;
   }
   
-  if (!isUserLoggedIn()) {
-    alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
-    document.getElementById('g_id_signin').style.display = 'block';
-    return false;
+if (!requireSignIn()) {
+      return false;
   }
 
   const listingId = button.getAttribute('data-listing-id');
@@ -691,6 +689,19 @@ function openForm(button) {
   form.style.display = "block";
   form.setAttribute('data-button-id', listingId);
 }
+
+// checks for valid credential
+
+function requireSignIn(event) {
+    if (!isUserLoggedIn()) {
+        event.preventDefault(); // Stop the default form submission
+        alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
+        document.getElementById('g_id_signin').style.display = 'block';
+        return false;
+    }
+    return true;
+}
+
 
 // --- INITIALIZATION AND EVENT LISTENERS ---
 
@@ -835,11 +846,10 @@ window.onload = function() {
   resetUIForLoggedOutUser();
 }
 
-// Add click listener to post listings button
 const postListingsButton = document.getElementById('postListingsButton');
 if (postListingsButton) {
   postListingsButton.addEventListener('click', function(event) {
-    // No need for requireSignIn check here since we're handling it in form submission
+    if(!requireSignIn(event)) return;
   });
 }
   
@@ -858,27 +868,29 @@ setupTokenExpirationCheck();
 // attach click listeners to all contact buttons
 document.querySelectorAll('.contact-button').forEach(function(button) {
   button.addEventListener('click', function(event) {
-    // Pull name/user from local storage set during signin
-    var userName = localStorage.getItem('userName');
-    var userEmail = localStorage.getItem('userEmail');
+  if (!requireSignIn(event)) return;
     
-    // Ensure consistent lowercase email
-    if (userEmail) {
-      userEmail = userEmail.toLowerCase();
-    }
+    // Pull name/user from local storage set during signin
+  var userName = localStorage.getItem('userName');
+  var userEmail = localStorage.getItem('userEmail');
+  
+  // Ensure consistent lowercase email
+  if (userEmail) {
+    userEmail = userEmail.toLowerCase();
+  }
 
     // Populate hidden fields in contact form
-    document.getElementById('sender_name').value = userName;
-    document.getElementById('sender_email').value = userEmail;
+  document.getElementById('sender_name').value = userName;
+  document.getElementById('sender_email').value = userEmail;
 
     // Pull listing id and type from contact button
-    var listingId = this.getAttribute('data-listing-id');
+  var listingId = this.getAttribute('data-listing-id');
     var listingType = this.getAttribute('data-listing-type');
     
-    if (listingId) {
-      document.getElementById('listing_id').value = listingId;
+  if (listingId) {
+    document.getElementById('listing_id').value = listingId;
       document.getElementById('listing_type').value = listingType;
-    }
+  }
 
     document.getElementById('myForm').style.display = 'block';
   });
@@ -926,10 +938,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //deletes listing.
 function deleteListing(listingId, listingType) {
-  if (!isUserLoggedIn()) {
-    alert('Please sign in with your Columbia/Barnard email to delete a listing.');
-    document.getElementById('g_id_signin').style.display = 'block';
-    return;
+if (!requireSignIn()) {
+      return;
   }
 
 const userEmail = localStorage.getItem('userEmail');
@@ -963,11 +973,9 @@ console.log(`Attempting to delete listing ${listingId} of type ${listingType} as
 }
 //shows edit form.
 function editListing(listingId, listingType) {
-  if (!isUserLoggedIn()) {
-    alert('Please sign in with your Columbia/Barnard email to edit a listing.');
-    document.getElementById('g_id_signin').style.display = 'block';
-    return;
-  }
+if (!requireSignIn()) {
+  return;
+}
 
   const userEmail = localStorage.getItem('userEmail');
 console.log(`Attempting to edit listing ${listingId} of type ${listingType} as ${userEmail}`);
@@ -1377,10 +1385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const buyForm = document.getElementById('listingForm');
     if (buyForm) {
         buyForm.addEventListener('submit', function(event) {
-            if (!isUserLoggedIn()) {
-                event.preventDefault(); // Stop the default form submission
-                alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
-                document.getElementById('g_id_signin').style.display = 'block';
+            if (!requireSignIn(event)) {
                 return;
             }
         });
@@ -1390,10 +1395,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sellForm = document.getElementById('listingForm');
     if (sellForm) {
         sellForm.addEventListener('submit', function(event) {
-            if (!isUserLoggedIn()) {
-                event.preventDefault(); // Stop the default form submission
-                alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
-                document.getElementById('g_id_signin').style.display = 'block';
+            if (!requireSignIn(event)) {
                 return;
             }
         });
