@@ -749,10 +749,11 @@ window.onload = function() {
       });
 
       // Add the dropdown styles if they don't exist
+      
       if (!document.getElementById('dropdown-styles')) {
         const style = document.createElement('style');
         style.id = 'dropdown-styles';
-        
+        /*
         style.textContent = `
           .profile-menu {
             position: relative;
@@ -808,7 +809,7 @@ window.onload = function() {
             text-decoration: none;
             color: inherit;
           }
-        `;
+        `;*/
         document.head.appendChild(style);
       }
 
