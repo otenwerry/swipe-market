@@ -237,4 +237,8 @@
       .time-input label {
         margin-bottom: 2px;
       }
+
+      .how-it-works-popup {
+        font-size: 12px;
+      }
   }
