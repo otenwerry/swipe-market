@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Get banned words list from server
-  const bannedWordsElement = document.getElementById('banned-words');
-  if (!bannedWordsElement) {
-    console.error('Banned words element not found');
+  // Get banned words list from script tag data attribute
+  const banScript = document.querySelector('script[data-banned-words]');
+  if (!banScript) {
+    console.error('Banned words script tag not found');
     return;
   }
   
   let bannedWords = [];
   try {
-    bannedWords = JSON.parse(bannedWordsElement.textContent);
+    bannedWords = JSON.parse(banScript.getAttribute('data-banned-words'));
   } catch (error) {
     console.error('Error parsing banned words:', error);
     return;
