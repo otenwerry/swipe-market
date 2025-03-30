@@ -66,6 +66,7 @@
   
   .top-right {
     display: flex;
+    align-items: center;
     flex-direction: row;
     font-size: 16px;
     gap: 10px;
@@ -91,7 +92,8 @@
     border-radius: 50%;
     cursor: pointer;
     transition: opacity 0.3s;
-    margin-top: 0; /* Ensure no top margin */
+    margin-top: 0; 
+    display: block;
   }
   
   .profile-dropdown {
