@@ -510,7 +510,7 @@
   }
 
   /* Make sell and buy buttons consistent */
-  .sell-button, .buy-button {
+  .sell-button, .buy-button, .offer-button, .request-button {
     font-size: 1.1rem;
     padding: 14px 30px;
     background-color: #1a73e8;
