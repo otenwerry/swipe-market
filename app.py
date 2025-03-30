@@ -11,6 +11,7 @@ import pytz
 from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
+from flask_migrate import Migrate
 
 app = Flask(__name__) #sets up a flask application
 app.secret_key = os.environ.get('SECRET_KEY','fallback-secret-key') 
@@ -24,10 +25,16 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_DEFAULT_SENDER'] = 'liondinecu@gmail.com'
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
+migrate = Migrate(app, db)
 
 ny_tz = pytz.timezone('America/New_York')
 
 #DB MODEL CLASSES
+"""
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    """
 
 #class for seller listings
 class SellerListing(db.Model):
