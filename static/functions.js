@@ -693,13 +693,13 @@ if (!requireSignIn()) {
 // checks for valid credential
 
 function requireSignIn(event) {
-    if (!isUserLoggedIn()) {
-        event.preventDefault(); // Stop the default form submission
-        alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
-        document.getElementById('g_id_signin').style.display = 'block';
-        return false;
-    }
-    return true;
+if (!isUserLoggedIn()) {
+    event.preventDefault(); // Stop the default navigation
+    alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
+    document.getElementById('g_id_signin').style.display = 'block';
+    return false;
+  }
+  return true;
 }
 
 
@@ -1378,26 +1378,3 @@ document.querySelectorAll('.contact-button').forEach(button => {
   button.classList.remove('contacted');
 });
 }
-
-// Add form submission handlers
-document.addEventListener('DOMContentLoaded', function() {
-    // Add form submission handler for buy listings form
-    const buyForm = document.getElementById('listingForm');
-    if (buyForm) {
-        buyForm.addEventListener('submit', function(event) {
-            if (!requireSignIn(event)) {
-                return;
-            }
-        });
-    }
-
-    // Add form submission handler for sell listings form
-    const sellForm = document.getElementById('listingForm');
-    if (sellForm) {
-        sellForm.addEventListener('submit', function(event) {
-            if (!requireSignIn(event)) {
-                return;
-            }
-        });
-    }
-});
