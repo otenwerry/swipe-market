@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Get banned words list from server
-  const bannedWords = JSON.parse(document.getElementById('banned-words').textContent);
+  const bannedWordsElement = document.getElementById('banned-words');
+  if (!bannedWordsElement) {
+    console.error('Banned words element not found');
+    return;
+  }
+  
+  let bannedWords = [];
+  try {
+    bannedWords = JSON.parse(bannedWordsElement.textContent);
+  } catch (error) {
+    console.error('Error parsing banned words:', error);
+    return;
+  }
   
   // Populate form with user data from localStorage
   const userName = localStorage.getItem('userName');
@@ -20,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Function to check for banned words
   function containsBannedWord(text) {
-    if (!text || !bannedWords.length) return false;
+    if (!text || !bannedWords || !bannedWords.length) return false;
     
     const lowerText = text.toLowerCase();
     for (const word of bannedWords) {
