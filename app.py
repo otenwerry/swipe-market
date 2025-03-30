@@ -279,10 +279,10 @@ def index():
     
     return response
 
-#regular route for the listings page
-@app.route('/listings/<int:listing_id>', methods=['GET'])
-@app.route('/listings', methods=['GET'])
-def listings(listing_id=None):
+#regular route for the sell listings page
+@app.route('/sell_listings/<int:listing_id>', methods=['GET'])
+@app.route('/sell_listings', methods=['GET'])
+def sell_listings(listing_id=None):
     if listing_id:
         # Try to find the listing in both seller and buyer tables
         listing = SellerListing.query.get(listing_id)
@@ -292,8 +292,23 @@ def listings(listing_id=None):
             is_seller = False
             if not listing:
                 return redirect(url_for('index'))
-        return render_template('listings.html', listing=listing, is_seller=is_seller)
-    return render_template('listings.html', listing=None)
+        return render_template('sell_listings.html', listing=listing, is_seller=is_seller)
+    return render_template('sell_listings.html', listing=None)
+
+@app.route('/buy_listings/<int:listing_id>', methods=['GET'])
+@app.route('/buy_listings', methods=['GET'])
+def buy_listings(listing_id=None):
+    if listing_id:
+        # Try to find the listing in both seller and buyer tables
+        listing = BuyerListing.query.get(listing_id)
+        is_seller = False
+        if not listing:
+            listing = SellerListing.query.get(listing_id)
+            is_seller = True
+            if not listing:
+                return redirect(url_for('index'))
+        return render_template('buy_listings.html', listing=listing, is_seller=is_seller)
+    return render_template('buy_listings.html', listing=None)
 
 """
 @app.route('/clear_database')
@@ -413,7 +428,7 @@ def submit_buyer():
   dining_halls = request.form.getlist('dining_hall[]')
   if not dining_halls:
     flash("Error: Please select at least one dining hall.", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('buy_listings'))
     
   dining_halls_str = ", ".join(dining_halls)
   date = request.form.get('date')
@@ -424,7 +439,7 @@ def submit_buyer():
   
   if not payment_methods_list:
     flash("Error: Please select at least one payment method.", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('buy_listings'))
     
   payment_methods = ', '.join(payment_methods_list)
   
@@ -461,10 +476,10 @@ def submit_buyer():
     price_value = float(price)
     if price_value < 0:
         flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('listings'))
+        return redirect(url_for('buy_listings'))
   except (ValueError, TypeError):
     flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('buy_listings'))
 
   #create new BuyerListing instance
   new_listing = BuyerListing(
@@ -495,7 +510,7 @@ def submit_seller():
   dining_halls = request.form.getlist('dining_hall[]')
   if not dining_halls:
     flash("Error: Please select at least one dining hall.", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('sell_listings'))
     
   dining_halls_str = ", ".join(dining_halls)
   date = request.form.get('date')
@@ -506,7 +521,7 @@ def submit_seller():
   
   if not payment_methods_list:
     flash("Error: Please select at least one payment method.", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('sell_listings'))
     
   payment_methods = ', '.join(payment_methods_list)
   
@@ -541,10 +556,10 @@ def submit_seller():
     price_value = float(price)
     if price_value < 0:
         flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('listings'))
+        return redirect(url_for('sell_listings'))
   except (ValueError, TypeError):
     flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('listings'))
+    return redirect(url_for('sell_listings'))
 
   #create new SellerListing instance
   new_listing = SellerListing(
