@@ -116,7 +116,7 @@
       .button-group {
         flex-direction: column;
         align-items: center;
-        font-size: 16px;
+        gap: 10px;
       }
   
       /* Adjust table text sizes */
@@ -215,37 +215,11 @@
         font-size: 14px;
       }
 
-      .time-input label {
-        margin-bottom: 2px;
-      }
-
-      /* Form group styling for mobile */
-      .form-group {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .form-group label {
-        min-width: 45px;
-        margin-bottom: 0;
-      }
-
-      .form-group input[type="date"],
-      .form-group input[type="time"] {
-        flex: 1;
-        min-width: 0;
-      }
-
-      /* Time group styling for mobile */
       .time-group {
         display: flex;
         flex-direction: row;
-        gap: 8px;
+        gap: 20px;
         align-items: flex-start;
-        flex: 1;
       }
 
       .time-input {
@@ -253,7 +227,6 @@
         flex-direction: column;
         align-items: flex-start;
         flex: 1;
-        min-width: 0;
       }
 
       .time-input input {
@@ -263,12 +236,5 @@
 
       .time-input label {
         margin-bottom: 2px;
-        font-size: 12px;
-      }
-
-      /* Reduce section padding on mobile */
-      section {
-        margin: 10px auto;
-        padding: 10px;
       }
   }
