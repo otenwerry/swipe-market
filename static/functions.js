@@ -695,7 +695,7 @@ if (!requireSignIn()) {
 function requireSignIn(event) {
 if (!isUserLoggedIn()) {
     event.preventDefault(); // Stop the default navigation
-  alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
+    alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
     document.getElementById('g_id_signin').style.display = 'block';
     return false;
   }
