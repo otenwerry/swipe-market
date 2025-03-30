@@ -582,8 +582,8 @@ try {
   // Parse the date string (expected format: YYYY-MM-DD)
   const date = new Date(dateStr);
   
-  // Format to "Month Day" (e.g., "January 15")
-  const options = { month: 'long', day: 'numeric' };
+  // Format to "Day of Week, Month Day" (e.g., "Monday, January 15")
+  const options = { weekday: 'long', month: 'long', day: 'numeric' };
   return date.toLocaleDateString('en-US', options);
 } catch (error) {
   console.error('Error formatting date:', error);
