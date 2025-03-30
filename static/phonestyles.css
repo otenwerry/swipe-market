@@ -102,8 +102,8 @@
       }
   
       /* Adjust button sizes */
-      .sell-button, .buy-button, .how-it-works-button {
-        font-size: 16px; /* Reduced from 14px */
+      .sell-button, .buy-button, .how-it-works-button, .offer-button, .request-button {
+        font-size: 12px; /* Reduced from 14px */
         padding: 4px 10px; /* Reduced padding */
         margin-top: 12px; /* Reduced margin */
         min-width: 120px; /* Smaller min-width for mobile */
@@ -111,6 +111,10 @@
 
       .sell-button-container{
         gap: 4px;
+      }
+
+      .offer-button, .request-button {
+        font-size: 18px;
       }
   
       .button-group {
