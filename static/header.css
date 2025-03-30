@@ -82,6 +82,7 @@
     position: relative;
     display: inline-flex;
     align-items: center;
+    height: 40px; /* Match feedback button height */
   }
   
   .profile-menu img {
@@ -90,6 +91,7 @@
     border-radius: 50%;
     cursor: pointer;
     transition: opacity 0.3s;
+    margin-top: 0; /* Ensure no top margin */
   }
   
   .profile-dropdown {
