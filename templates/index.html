@@ -73,7 +73,7 @@
         <a href="/sell_listings">
           <button type="button" class="sell-button" id="postListingsButton">Sell a Swipe</button>
         </a>
-        <button type="button" class="buy-button" id="buyListingsButton" onclick="window.location.href='/buy_listings'">Buy a Swipe</button>
+        <button type="button" class="buy-button" id="buyListingsButton" onclick="if(requireSignIn(event)) window.location.href='/buy_listings'">Buy a Swipe</button>
         <button type="button" class="how-it-works-button" id="howItWorksButton">How it Works</button>
       </div>
       <div class="how-it-works-popup" id="howItWorksPopup">
