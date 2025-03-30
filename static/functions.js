@@ -1377,7 +1377,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const buyForm = document.getElementById('listingForm');
     if (buyForm) {
         buyForm.addEventListener('submit', function(event) {
-            // Form validation is now handled server-side
+            if (!isUserLoggedIn()) {
+                event.preventDefault(); // Stop the default form submission
+                alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
+                document.getElementById('g_id_signin').style.display = 'block';
+                return;
+            }
         });
     }
 
@@ -1385,7 +1390,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const sellForm = document.getElementById('listingForm');
     if (sellForm) {
         sellForm.addEventListener('submit', function(event) {
-            // Form validation is now handled server-side
+            if (!isUserLoggedIn()) {
+                event.preventDefault(); // Stop the default form submission
+                alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
+                document.getElementById('g_id_signin').style.display = 'block';
+                return;
+            }
         });
     }
 });
