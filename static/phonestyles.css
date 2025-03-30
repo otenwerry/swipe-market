@@ -104,9 +104,13 @@
       /* Adjust button sizes */
       .sell-button, .buy-button, .how-it-works-button {
         font-size: 12px; /* Reduced from 14px */
-        padding: 6px 12px; /* Reduced padding */
+        padding: 4px 10px; /* Reduced padding */
         margin-top: 12px; /* Reduced margin */
         min-width: 120px; /* Smaller min-width for mobile */
+      }
+
+      .sell-button-container{
+        gap: 4px;
       }
   
       .button-group {
