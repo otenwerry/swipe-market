@@ -691,14 +691,22 @@ if (!requireSignIn()) {
 }
 
 // checks for valid credential
-
 function requireSignIn(event) {
-if (!isUserLoggedIn()) {
+  if (!isUserLoggedIn()) {
     event.preventDefault(); // Stop the default navigation
     alert('Please sign in with your Columbia/Barnard email to buy or sell a swipe.');
     document.getElementById('g_id_signin').style.display = 'block';
     return false;
   }
+  
+  // If user is logged in, navigate to the appropriate page
+  const button = event.target;
+  if (button.id === 'sellListingsButton') {
+    window.location.href = '/sell_listings';
+  } else if (button.id === 'buyListingsButton') {
+    window.location.href = '/buy_listings';
+  }
+  
   return true;
 }
 
@@ -753,63 +761,6 @@ window.onload = function() {
       if (!document.getElementById('dropdown-styles')) {
         const style = document.createElement('style');
         style.id = 'dropdown-styles';
-        /*
-        style.textContent = `
-          .profile-menu {
-            position: relative;
-            display: inline-block;
-          }
-          
-          .profile-menu img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: opacity 0.3s;
-          }
-          
-          .profile-menu img:hover {
-            opacity: 0.8;
-          }
-          
-          .profile-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            min-width: 150px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 4px;
-            padding: 5px 0;
-          }
-          
-          .profile-menu.active .profile-dropdown {
-            display: block;
-          }
-          
-          .profile-dropdown button, .profile-dropdown a button {
-            width: 100%;
-            padding: 10px 15px;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #333;
-            transition: background-color 0.3s;
-          }
-          
-          .profile-dropdown button:hover, .profile-dropdown a button:hover {
-            background-color: #f1f1f1;
-          }
-          
-          .profile-dropdown a {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-          }
-        `;*/
         document.head.appendChild(style);
       }
 
@@ -845,13 +796,17 @@ window.onload = function() {
     // If user isn't logged in, make sure UI is correct
   resetUIForLoggedOutUser();
 }
-
+/*
 const postListingsButton = document.getElementById('postListingsButton');
 if (postListingsButton) {
   postListingsButton.addEventListener('click', function(event) {
-    if(!requireSignIn(event)) return;
+    if(!requireSignIn(event)){
+      alert('sign in omg')
+      return;
+    }
   });
 }
+*/
   
   // Format time displays on page load
   formatTimeDisplay();
