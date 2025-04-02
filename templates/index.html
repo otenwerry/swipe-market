@@ -70,10 +70,11 @@
       </header>
       <div class="subheading">Marketplace for Columbia meal swipe exchanges</div>
       <div class="sell-button-container">
-        <a href="/sell_listings">
-          <button type="button" class="sell-button" id="postListingsButton">Sell a Swipe</button>
+        <a href="/sell_listings"><button type="button" class="sell-button" id="sellListingsButton">Sell a Swipe</button>
         </a>
-        <button type="button" class="buy-button" id="buyListingsButton" onclick="if(requireSignIn(event)) window.location.href='/buy_listings'">Buy a Swipe</button>
+        <a href="/buy_listings">
+          <button type="button" class="buy-button" id="buyListingsButton">Buy a Swipe</button>
+        </a>
         <button type="button" class="how-it-works-button" id="howItWorksButton">How it Works</button>
       </div>
       <div class="how-it-works-popup" id="howItWorksPopup">
