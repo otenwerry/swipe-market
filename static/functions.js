@@ -865,7 +865,9 @@ window.onload = function() {
 const postListingsButton = document.getElementById('postListingsButton');
 if (postListingsButton) {
   postListingsButton.addEventListener('click', function(event) {
-    if(!requireSignIn(event)) return;
+    if (requireSignIn(event)) {
+      window.location.href = '/post_listings';
+    }
   });
 }
   
