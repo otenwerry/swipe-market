@@ -40,9 +40,24 @@ function loadProfileData() {
     });
 }
 
+// Function to validate phone number format
+function isValidPhoneNumber(phone) {
+  // Regex to allow only digits 0-9 and characters + - ( )
+  const phoneRegex = /^[0-9()+\-\s]*$/;
+  return phoneRegex.test(phone);
+}
+
 function saveProfileChanges() {
     const name = document.getElementById('name').value;
     const phone = document.getElementById('phone').value;
+    
+    // Validate phone number format
+    if (phone && !isValidPhoneNumber(phone)) {
+        alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
+        // Reset phone field to original value
+        document.getElementById('phone').value = localStorage.getItem('userPhone') || '';
+        return;
+    }
     
     fetch('/api/update_profile', {
         method: 'POST',
@@ -59,6 +74,7 @@ function saveProfileChanges() {
     .then(data => {
         if (data.success) {
             localStorage.setItem('userName', name);
+            localStorage.setItem('userPhone', phone);
             showMessage('success-message', 'Profile updated successfully!');
         } else {
             showMessage('error-message', 'Error updating profile: ' + data.error);
