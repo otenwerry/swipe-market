@@ -1151,6 +1151,12 @@ def post_listings():
 
 @app.route('/submit_listing', methods=['POST'])
 def submit_listing():
+    # Check if user is logged in
+    user_email = request.form.get('poster_email')
+    if not user_email:
+        flash("Please sign in to submit a listing.", "error")
+        return redirect(url_for('post_listings'))
+        
     # Get values from the form
     dining_halls = request.form.getlist('dining_hall[]')
     if not dining_halls:

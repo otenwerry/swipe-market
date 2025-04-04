@@ -93,7 +93,7 @@
       </header>
       <section style="max-width: 1000px; margin: 20px auto; padding: 20px;">
         <div class="seller-form">
-          <form id="listingForm" action="/submit_listing" method="POST">
+          <form id="listingForm" action="/submit_listing" method="POST" onsubmit="return requireSignIn(event)">
             <div class="form-group">
               <label>Dining hall:</label>
               <div class="checkbox-group two-columns">
