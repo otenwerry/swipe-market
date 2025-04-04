@@ -73,6 +73,22 @@ if (priceInput) {
     const hours = String(today.getHours()).padStart(2, '0');
     const mins = String(today.getMinutes()).padStart(2, '0');
     startTimeInput.value = `${hours}:${mins}`;
+
+    // Set end time based on start time
+    let endHours = parseInt(hours);
+    let endMins = parseInt(mins);
+    
+    if (endHours >= 23) {
+      // If start time is 11 PM or later, set end time to 11:59 PM
+      endHours = 23;
+      endMins = 59;
+    } else {
+      // Otherwise, set end time to 1 hour after start time
+      endHours += 1;
+    }
+    
+    // Format end time
+    endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
   } else {
     // For edit page, still set the minimum date to today
     const formattedDate = today.toISOString().split('T')[0];
