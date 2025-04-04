@@ -1418,3 +1418,7 @@ document.querySelectorAll('.contact-button').forEach(button => {
 function setListingType(type) {
     document.getElementById('listing_type').value = type;
 }
+
+function closeHowItWorksPopup() {
+  document.getElementById('howItWorksPopup').style.display = 'none';
+}
