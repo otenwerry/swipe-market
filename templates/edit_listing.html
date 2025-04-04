@@ -23,6 +23,31 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <div id="g_id_onload" data-client_id="362313378422-s5g6ki5lkph6vaeoad93lfirrtugvnfl.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false">
     </div>
+    <style>
+      .price-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .dollar-sign {
+        position: absolute;
+        left: 10px;
+        color: #666;
+      }
+      .price-input-wrapper input {
+        padding-left: 25px;
+        line-height: 1.5;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .button-group {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-V549ZYC27J"></script>
@@ -60,7 +85,7 @@
       <header class="header" id="index-header">
         Edit Listing
       </header>
-        <section style="max-width: 800px; margin: 20px auto; padding: 20px;">
+        <section style="max-width: 1000px; margin: 20px auto; padding: 20px;">
             <div class="seller-form">
                 <form id="listingForm" action="/edit_listing/{{ listing.id }}" method="POST">
                     <input type="hidden" name="poster_name" id="poster_name">
@@ -68,12 +93,8 @@
                     <input type="hidden" name="listing_type" value="{{ listing_type }}">
                     <div class="form-group">
                         <label>Dining hall:</label>
-                        <div class="checkbox-group">
+                        <div class="checkbox-group two-columns">
                             {% set selected_halls = listing.dining_hall.split(', ') %}
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="any" name="dining_hall[]" value="Any"  {% if "John Jay" in selected_halls %}checked{% endif %}>
-                                <label for="any">Any</label>
-                              </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="john_jay" name="dining_hall[]" value="John Jay" {% if "John Jay" in selected_halls %}checked{% endif %}>
                                 <label for="john_jay">John Jay</label>
@@ -118,27 +139,36 @@
                                 <input type="checkbox" id="diana" name="dining_hall[]" value="Diana" {% if "Diana" in selected_halls %}checked{% endif %}>
                                 <label for="diana">Diana</label>
                             </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="any" name="dining_hall[]" value="Any" {% if "Any" in selected_halls %}checked{% endif %}>
+                                <label for="any">Any Hall</label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="date" value="{{ listing.date }}" required>
                     </div>
-                    <div class="form-group">
-                        <label for="start_time">Start:</label>
-                        <input type="time" id="start_time" name="start_time" value="{{ listing.start_time }}" required>
+                    <div class="form-group time-group">
+                        <div class="time-input">
+                            <label for="start_time">Start:</label>
+                            <input type="time" id="start_time" name="start_time" value="{{ listing.start_time }}" required>
+                        </div>
+                        <div class="time-input">
+                            <label for="end_time">End:</label>
+                            <input type="time" id="end_time" name="end_time" value="{{ listing.end_time }}" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="end_time">End:</label>
-                        <input type="time" id="end_time" name="end_time" value="{{ listing.end_time }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price in dollars:</label>
-                        <input type="number" id="price" name="price" min="0" step="0.01" value="{{ listing.price }}" required>
+                        <label for="price">Price:</label>
+                        <div class="price-input-wrapper">
+                            <span class="dollar-sign">$</span>
+                            <input type="number" id="price" name="price" min="0" step="0.50" value="{{ listing.price }}" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Payment Methods:</label>
-                        <div class="checkbox-group">
+                        <div class="checkbox-group two-columns">
                             {% set selected_methods = listing.payment_methods.split(', ') %}
                             <div class="checkbox-item">
                                 <input type="checkbox" id="venmo" name="payment_methods[]" value="Venmo" {% if "Venmo" in selected_methods %}checked{% endif %}>
