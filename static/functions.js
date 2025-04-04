@@ -859,28 +859,19 @@ window.onload = function() {
     }
   } else {
     // If user isn't logged in, make sure UI is correct
-  resetUIForLoggedOutUser();
-}
-
-const postListingsButton = document.getElementById('postListingsButton');
-if (postListingsButton) {
-  postListingsButton.addEventListener('click', function(event) {
-    if (requireSignIn(event)) {
-      window.location.href = '/post_listings';
-    }
-  });
-}
+    resetUIForLoggedOutUser();
+  }
   
   // Format time displays on page load
   formatTimeDisplay();
   
-// Fetch contacted listings from the database only if user is logged in
-if (isUserLoggedIn()) {
-  fetchContactedListings();
-}
+  // Fetch contacted listings from the database only if user is logged in
+  if (isUserLoggedIn()) {
+    fetchContactedListings();
+  }
 
-// Set up periodic token validity checking
-setupTokenExpirationCheck();
+  // Set up periodic token validity checking
+  setupTokenExpirationCheck();
 };
 
 // attach click listeners to all contact buttons
