@@ -402,11 +402,18 @@ function showPhoneNumberModal() {
     modal.innerHTML = `
       <div class="modal-content">
         <h2>Complete Your Profile</h2>
-        <p>Please provide your phone number to complete your profile.</p>
-        <input type="tel" id="new-phone" placeholder="Your phone number" required>
+        <p>Please provide your information to complete your profile.</p>
+        <div class="form-group">
+          <label for="new-name">Name (Required)</label>
+          <input type="text" id="new-name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="new-phone">Phone Number (Optional)</label>
+          <input type="tel" id="new-phone" placeholder="Your phone number">
+        </div>
         <div class="modal-buttons">
-          <button id="save-phone-btn">Save</button>
-          <button id="skip-phone-btn">Skip for now</button>
+          <button id="save-phone-btn" class="btn">Save</button>
+          <button id="skip-phone-btn" class="btn cancel">Skip for now</button>
         </div>
       </div>
     `;
@@ -424,54 +431,100 @@ function showPhoneNumberModal() {
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
       }
       
       .modal-content {
-        background-color: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
+        background-color: #FFFFFF;
         max-width: 500px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 30px;
+        border-radius: 10px;
+        position: relative;
+        margin: 15% auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
       }
       
       .modal-content h2 {
-        margin-top: 0;
+        color: #000000;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      
+      .modal-content p {
+        color: #666666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      
+      .modal-content .form-group {
+        margin-bottom: 20px;
+      }
+      
+      .modal-content label {
+        display: block;
+        margin-bottom: 8px;
+        color: #000000;
+        font-weight: 500;
       }
       
       .modal-content input {
         width: 100%;
-        padding: 10px;
-        margin: 15px 0;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
         font-size: 16px;
+        background-color: #FFFFFF;
+        color: #000000;
+        box-sizing: border-box;
+      }
+      
+      .modal-content input:focus {
+        outline: none;
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
       }
       
       .modal-buttons {
         display: flex;
-        justify-content: flex-end;
         gap: 10px;
+        margin-top: 20px;
       }
       
-      .modal-buttons button {
-        padding: 10px 15px;
+      .modal-buttons .btn {
+        flex: 1;
+        padding: 12px;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
         cursor: pointer;
+        transition: all 0.2s ease;
       }
       
-      #save-phone-btn {
-        background-color: #4285f4;
+      .modal-buttons .btn:not(.cancel) {
+        background-color: #1a73e8;
         color: white;
       }
       
-      #skip-phone-btn {
-        background-color: #f1f1f1;
-        color: #333;
+      .modal-buttons .btn.cancel {
+        background-color: #f5f5f5;
+        color: #666666;
+      }
+      
+      .modal-buttons .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      .modal-buttons .btn:not(.cancel):hover {
+        background-color: #2b7de9;
+      }
+      
+      .modal-buttons .btn.cancel:hover {
+        background-color: #e0e0e0;
       }
     `;
     
@@ -479,41 +532,37 @@ function showPhoneNumberModal() {
     
     // Add event listeners
     document.getElementById('save-phone-btn').addEventListener('click', function() {
+      const name = document.getElementById('new-name').value.trim();
       const phone = document.getElementById('new-phone').value.trim();
       
-      // Validate phone number format
-      if (phone) {
-        const phoneRegex = /^[0-9()+\-\s]*$/;
-        if (!phoneRegex.test(phone)) {
-          alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
-          return;
-        }
-        saveNewUser(phone);
-        modal.style.display = 'none';
-      } else {
-        alert('Please enter a valid phone number');
+      if (!name) {
+        alert('Please enter your name');
+        return;
       }
+      
+      saveNewUser(phone, name);
+      document.body.removeChild(modal);
     });
     
     document.getElementById('skip-phone-btn').addEventListener('click', function() {
-      saveNewUser('');
-      modal.style.display = 'none';
+      const name = document.getElementById('new-name').value.trim();
+      
+      if (!name) {
+        alert('Please enter your name');
+        return;
+      }
+      
+      saveNewUser('', name);
+      document.body.removeChild(modal);
     });
-  } else {
-    document.getElementById('phone-modal').style.display = 'block';
   }
 }
 
 // Function to save a new user
-function saveNewUser(phone) {
-  const name = localStorage.getItem('userName');
+function saveNewUser(phone, name) {
   const email = localStorage.getItem('userEmail');
   
-  if (!name || !email) {
-    console.error('Missing user information');
-    return;
-  }
-  
+  // Make API call to save user
   fetch('/api/save_user', {
     method: 'POST',
     headers: {
@@ -523,22 +572,20 @@ function saveNewUser(phone) {
       name: name,
       email: email,
       phone: phone
-    }),
+    })
   })
   .then(response => response.json())
   .then(data => {
     if (data.success) {
       console.log('User saved successfully');
-      // Always update the phone in localStorage, even if it's an empty string
-      localStorage.setItem('userPhone', phone);
-      // Make sure the name is updated in localStorage too
-      localStorage.setItem('userName', data.name);
+      // Update UI to show user is logged in
+      updateUIForLoggedInUser(data.name, data.email);
     } else {
       console.error('Error saving user:', data.error);
     }
   })
   .catch(error => {
-    console.error('Error saving user:', error);
+    console.error('Error:', error);
   });
 }
 
