@@ -383,7 +383,7 @@ function checkUserExistence(email) {
       localStorage.setItem('userPhone', data.phone || '');
     } else {
       console.log('New user, prompting for phone number');
-      showPhoneNumberModal();
+      showWelcomeModal();
     }
   })
   .catch(error => {
@@ -392,7 +392,7 @@ function checkUserExistence(email) {
 }
 
 // Function to show the phone number modal for first-time users
-function showPhoneNumberModal() {
+function showWelcomeModal() {
   // Create modal if it doesn't exist
   if (!document.getElementById('phone-modal')) {
     const modal = document.createElement('div');
@@ -521,6 +521,15 @@ function showPhoneNumberModal() {
       if (!name) {
         alert('Please enter your name');
         return;
+      }
+      
+      // Validate phone number format if provided
+      if (phone) {
+        const phoneRegex = /^[0-9()+\-\s]*$/;
+        if (!phoneRegex.test(phone)) {
+          alert('Phone number can only contain digits 0-9 and the characters +, -, (, and )');
+          return;
+        }
       }
       
       saveNewUser(phone, name);
