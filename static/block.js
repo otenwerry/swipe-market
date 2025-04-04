@@ -1,19 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Get banned words list from script tag data attribute
-  const banScript = document.querySelector('script[data-banned-words]');
-  if (!banScript) {
-    console.error('Banned words script tag not found');
-    return;
-  }
-  
-  let bannedWords = [];
-  try {
-    bannedWords = JSON.parse(banScript.getAttribute('data-banned-words'));
-  } catch (error) {
-    console.error('Error parsing banned words:', error);
-    return;
-  }
-  
   // Populate form with user data from localStorage
   const userName = localStorage.getItem('userName');
   const userEmail = localStorage.getItem('userEmail');
@@ -30,19 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return phoneRegex.test(phone);
   }
   
-  // Function to check for banned words
-  function containsBannedWord(text) {
-    if (!text || !bannedWords || !bannedWords.length) return false;
-    
-    const lowerText = text.toLowerCase();
-    for (const word of bannedWords) {
-      if (word && lowerText.includes(word.toLowerCase())) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
   // Handle save button click
   document.getElementById('save-profile').addEventListener('click', function() {
     const name = document.getElementById('name').value;
@@ -52,12 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate inputs
     if (!name || !email) {
       showError('Name and email are required');
-      return;
-    }
-    
-    // Check for banned words in name
-    if (containsBannedWord(name)) {
-      showError('Invalid name');
       return;
     }
     
@@ -251,45 +217,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Handle block button click
-  blockButton.addEventListener('click', function() {
-    const uni = blockUniInput.value.trim().toLowerCase();
-    
-    if (!uni) {
-      showError('Please enter a UNI to block');
-      return;
-    }
-    
-    // Basic UNI validation (simple pattern check)
-    const uniPattern = /^[a-z0-9]{2,8}$/;
-    if (!uniPattern.test(uni)) {
-      showError('Please enter a valid UNI (letters and numbers only, 2-8 characters)');
-      return;
-    }
-    
-    blockUser(uni);
-  });
-  
-  // Load blocked UNIs on page load
-  loadBlockedUsers();
-  
+  // Function to show success message
   function showSuccess(message) {
-    const successMsg = document.getElementById('success-message');
-    successMsg.textContent = message;
-    successMsg.style.display = 'block';
-    
+    const successMessage = document.getElementById('success-message');
+    successMessage.textContent = message;
+    successMessage.style.display = 'block';
     setTimeout(() => {
-      successMsg.style.display = 'none';
+      successMessage.style.display = 'none';
     }, 3000);
   }
   
+  // Function to show error message
   function showError(message) {
-    const errorMsg = document.getElementById('error-message');
-    errorMsg.textContent = message;
-    errorMsg.style.display = 'block';
-    
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
     setTimeout(() => {
-      errorMsg.style.display = 'none';
+      errorMessage.style.display = 'none';
     }, 3000);
   }
+  
+  // Load blocked users on page load
+  loadBlockedUsers();
 });
