@@ -1378,3 +1378,7 @@ document.querySelectorAll('.contact-button').forEach(button => {
   button.classList.remove('contacted');
 });
 }
+
+function setListingType(type) {
+    document.getElementById('listing_type').value = type;
+}
