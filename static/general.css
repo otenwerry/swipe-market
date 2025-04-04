@@ -156,28 +156,3 @@ div{
 }
 
 /* Remove the date input year hiding styles */
-
-.how-it-works-content {
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: #ccc;
-  color: #333;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.close-button:hover {
-  background-color: #bbb;
-}
