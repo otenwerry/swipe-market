@@ -904,7 +904,7 @@ def block_user():
     try:
         # Decode the JWT token
         token = auth_header.split(' ')[1]
-        decoded = jwt_decode(token)
+        decoded = jwt.decode(token, options={"verify_signature": False})
         blocker_email = decoded.get('email')
         
         if not blocker_email:
@@ -961,7 +961,7 @@ def unblock_user():
     try:
         # Decode the JWT token
         token = auth_header.split(' ')[1]
-        decoded = jwt_decode(token)
+        decoded = jwt.decode(token, options={"verify_signature": False})
         blocker_email = decoded.get('email')
         
         if not blocker_email:
@@ -1008,7 +1008,7 @@ def get_blocked_users():
     try:
         # Decode the JWT token
         token = auth_header.split(' ')[1]
-        decoded = jwt_decode(token)
+        decoded = jwt.decode(token, options={"verify_signature": False})
         user_email = decoded.get('email')
         
         if not user_email:
@@ -1077,7 +1077,7 @@ def get_profile():
     try:
         # Decode the JWT token
         token = auth_header.split(' ')[1]
-        decoded = jwt_decode(token)
+        decoded = jwt.decode(token, options={"verify_signature": False})
         user_email = decoded.get('email')
         
         if not user_email:
@@ -1107,7 +1107,7 @@ def update_profile():
     try:
         # Decode the JWT token
         token = auth_header.split(' ')[1]
-        decoded = jwt_decode(token)
+        decoded = jwt.decode(token, options={"verify_signature": False})
         user_email = decoded.get('email')
         
         if not user_email:
