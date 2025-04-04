@@ -12,6 +12,7 @@ from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
+import jwt
 
 app = Flask(__name__) #sets up a flask application
 app.secret_key = os.environ.get('SECRET_KEY','fallback-secret-key') 
@@ -895,102 +896,141 @@ def extract_uni(email):
 # Routes for blocked users
 @app.route('/api/block_user', methods=['POST'])
 def block_user():
-    data = request.get_json()
-    blocker_email = data.get('blocker_email')
-    blocked_uni = data.get('blocked_uni', '').strip().lower()
-    
-    if not blocker_email:
-        return jsonify({"success": False, "error": "Your email is required"}), 400
-    
-    if not blocked_uni:
-        return jsonify({"success": False, "error": "UNI to block is required"}), 400
-    
-    # Extract blocker's UNI
-    blocker_uni = extract_uni(blocker_email)
-    if not blocker_uni:
-        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
-    
-    # Don't allow self-blocking
-    if blocker_uni == blocked_uni:
-        return jsonify({"success": False, "error": "You cannot block yourself"}), 400
-    
-    # Check if block already exists
-    existing_block = BlockedUser.query.filter_by(
-        blocker_uni=blocker_uni,
-        blocked_uni=blocked_uni
-    ).first()
-    
-    if existing_block:
-        return jsonify({"success": True, "message": "User was already blocked"})
-    
-    # Create new block
-    new_block = BlockedUser(
-        blocker_uni=blocker_uni,
-        blocked_uni=blocked_uni
-    )
+    # Get the user's email from the Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "error": "Invalid authorization header"}), 401
     
     try:
-        db.session.add(new_block)
-        db.session.commit()
-        return jsonify({"success": True, "message": "User blocked successfully"})
+        # Decode the JWT token
+        token = auth_header.split(' ')[1]
+        decoded = jwt_decode(token)
+        blocker_email = decoded.get('email')
+        
+        if not blocker_email:
+            return jsonify({"success": False, "error": "Invalid token"}), 401
+        
+        # Get data from request
+        data = request.get_json()
+        blocked_uni = data.get('blocked_uni', '').strip().lower()
+        
+        if not blocked_uni:
+            return jsonify({"success": False, "error": "UNI to block is required"}), 400
+        
+        # Extract blocker's UNI
+        blocker_uni = extract_uni(blocker_email)
+        if not blocker_uni:
+            return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+        
+        # Don't allow self-blocking
+        if blocker_uni == blocked_uni:
+            return jsonify({"success": False, "error": "You cannot block yourself"}), 400
+        
+        # Check if block already exists
+        existing_block = BlockedUser.query.filter_by(
+            blocker_uni=blocker_uni,
+            blocked_uni=blocked_uni
+        ).first()
+        
+        if existing_block:
+            return jsonify({"success": True, "message": "User was already blocked"})
+        
+        # Create new block
+        new_block = BlockedUser(
+            blocker_uni=blocker_uni,
+            blocked_uni=blocked_uni
+        )
+        
+        try:
+            db.session.add(new_block)
+            db.session.commit()
+            return jsonify({"success": True, "message": "User blocked successfully"})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"success": False, "error": str(e)}), 500
     except Exception as e:
-        db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/unblock_user', methods=['POST'])
 def unblock_user():
-    data = request.get_json()
-    blocker_email = data.get('blocker_email')
-    blocked_uni = data.get('blocked_uni', '').strip().lower()
-    
-    if not blocker_email or not blocked_uni:
-        return jsonify({"success": False, "error": "Both emails are required"}), 400
-    
-    # Extract blocker's UNI
-    blocker_uni = extract_uni(blocker_email)
-    if not blocker_uni:
-        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
-    
-    # Find and remove the block
-    block = BlockedUser.query.filter_by(
-        blocker_uni=blocker_uni,
-        blocked_uni=blocked_uni
-    ).first()
-    
-    if not block:
-        return jsonify({"success": True, "message": "User was not blocked"})
+    # Get the user's email from the Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "error": "Invalid authorization header"}), 401
     
     try:
-        db.session.delete(block)
-        db.session.commit()
-        return jsonify({"success": True, "message": "User unblocked successfully"})
+        # Decode the JWT token
+        token = auth_header.split(' ')[1]
+        decoded = jwt_decode(token)
+        blocker_email = decoded.get('email')
+        
+        if not blocker_email:
+            return jsonify({"success": False, "error": "Invalid token"}), 401
+        
+        # Get data from request
+        data = request.get_json()
+        blocked_uni = data.get('blocked_uni', '').strip().lower()
+        
+        if not blocked_uni:
+            return jsonify({"success": False, "error": "UNI to unblock is required"}), 400
+        
+        # Extract blocker's UNI
+        blocker_uni = extract_uni(blocker_email)
+        if not blocker_uni:
+            return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+        
+        # Find and remove the block
+        block = BlockedUser.query.filter_by(
+            blocker_uni=blocker_uni,
+            blocked_uni=blocked_uni
+        ).first()
+        
+        if not block:
+            return jsonify({"success": True, "message": "User was not blocked"})
+        
+        try:
+            db.session.delete(block)
+            db.session.commit()
+            return jsonify({"success": True, "message": "User unblocked successfully"})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"success": False, "error": str(e)}), 500
     except Exception as e:
-        db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route('/api/get_blocked_users', methods=['POST'])
+@app.route('/api/get_blocked_users', methods=['GET'])
 def get_blocked_users():
-    data = request.get_json()
-    email = data.get('email')
+    # Get the user's email from the Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "error": "Invalid authorization header"}), 401
     
-    if not email:
-        return jsonify({"success": False, "error": "Email is required"}), 400
-    
-    # Extract user's UNI
-    user_uni = extract_uni(email)
-    if not user_uni:
-        return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
-    
-    # Get all blocked users
-    blocked_users = BlockedUser.query.filter_by(blocker_uni=user_uni).all()
-    
-    # Format the result
-    blocked_unis = [block.blocked_uni for block in blocked_users]
-    
-    return jsonify({
-        "success": True,
-        "blocked_unis": blocked_unis
-    })
+    try:
+        # Decode the JWT token
+        token = auth_header.split(' ')[1]
+        decoded = jwt_decode(token)
+        user_email = decoded.get('email')
+        
+        if not user_email:
+            return jsonify({"success": False, "error": "Invalid token"}), 401
+        
+        # Extract user's UNI
+        user_uni = extract_uni(user_email)
+        if not user_uni:
+            return jsonify({"success": False, "error": "Could not extract your UNI"}), 400
+        
+        # Get all blocked users
+        blocked_users = BlockedUser.query.filter_by(blocker_uni=user_uni).all()
+        
+        # Format the result
+        blocked_unis = [block.blocked_uni for block in blocked_users]
+        
+        return jsonify({
+            "success": True,
+            "blocked_users": blocked_unis
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/check_banned_uni', methods=['POST'])
 def check_banned_uni():
@@ -1024,6 +1064,84 @@ def set_user_email():
             session['user_email'] = email
             return jsonify({"success": True})
         return jsonify({"success": False, "error": "No email provided"}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/get_profile', methods=['GET'])
+def get_profile():
+    # Get the user's email from the Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "error": "Invalid authorization header"}), 401
+    
+    try:
+        # Decode the JWT token
+        token = auth_header.split(' ')[1]
+        decoded = jwt_decode(token)
+        user_email = decoded.get('email')
+        
+        if not user_email:
+            return jsonify({"success": False, "error": "Invalid token"}), 401
+        
+        # Get user from database
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+        
+        return jsonify({
+            "success": True,
+            "name": user.name,
+            "email": user.email,
+            "phone": user.phone
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/update_profile', methods=['POST'])
+def update_profile():
+    # Get the user's email from the Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "error": "Invalid authorization header"}), 401
+    
+    try:
+        # Decode the JWT token
+        token = auth_header.split(' ')[1]
+        decoded = jwt_decode(token)
+        user_email = decoded.get('email')
+        
+        if not user_email:
+            return jsonify({"success": False, "error": "Invalid token"}), 401
+        
+        # Get data from request
+        data = request.get_json()
+        name = data.get('name')
+        phone = data.get('phone')
+        
+        if not name:
+            return jsonify({"success": False, "error": "Name is required"}), 400
+        
+        # Get or create user
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            user = User(email=user_email)
+            db.session.add(user)
+        
+        # Update user data
+        user.name = name
+        user.phone = phone
+        
+        try:
+            db.session.commit()
+            return jsonify({
+                "success": True,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone
+            })
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"success": False, "error": str(e)}), 500
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
