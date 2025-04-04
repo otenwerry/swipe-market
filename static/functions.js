@@ -413,7 +413,6 @@ function showPhoneNumberModal() {
         </div>
         <div class="modal-buttons">
           <button id="save-phone-btn" class="btn">Save</button>
-          <button id="skip-phone-btn" class="btn cancel">Skip for now</button>
         </div>
       </div>
     `;
@@ -489,48 +488,32 @@ function showPhoneNumberModal() {
       
       .modal-buttons {
         display: flex;
-        gap: 10px;
+        justify-content: center;
         margin-top: 20px;
       }
       
       .modal-buttons .btn {
-        flex: 1;
-        padding: 12px;
+        padding: 12px 30px;
         border: none;
         border-radius: 6px;
         font-size: 16px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
-      }
-      
-      .modal-buttons .btn:not(.cancel) {
         background-color: #1a73e8;
         color: white;
       }
       
-      .modal-buttons .btn.cancel {
-        background-color: #f5f5f5;
-        color: #666666;
-      }
-      
       .modal-buttons .btn:hover {
+        background-color: #2b7de9;
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      }
-      
-      .modal-buttons .btn:not(.cancel):hover {
-        background-color: #2b7de9;
-      }
-      
-      .modal-buttons .btn.cancel:hover {
-        background-color: #e0e0e0;
       }
     `;
     
     document.head.appendChild(style);
     
-    // Add event listeners
+    // Add event listener
     document.getElementById('save-phone-btn').addEventListener('click', function() {
       const name = document.getElementById('new-name').value.trim();
       const phone = document.getElementById('new-phone').value.trim();
@@ -541,18 +524,6 @@ function showPhoneNumberModal() {
       }
       
       saveNewUser(phone, name);
-      document.body.removeChild(modal);
-    });
-    
-    document.getElementById('skip-phone-btn').addEventListener('click', function() {
-      const name = document.getElementById('new-name').value.trim();
-      
-      if (!name) {
-        alert('Please enter your name');
-        return;
-      }
-      
-      saveNewUser('', name);
       document.body.removeChild(modal);
     });
   }
