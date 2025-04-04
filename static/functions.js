@@ -402,9 +402,9 @@ function showPhoneNumberModal() {
     modal.innerHTML = `
       <div class="modal-content">
         <h2>Complete Your Profile</h2>
-        <p>Please provide your information to complete your profile.</p>
+        <p>Welcome to Swipe Market! Please complete your profile.</p>
         <div class="form-group">
-          <label for="new-name">Name (Required)</label>
+          <label for="new-name">Display Name</label>
           <input type="text" id="new-name" placeholder="Your name" required>
         </div>
         <div class="form-group">
