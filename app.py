@@ -1145,6 +1145,100 @@ def update_profile():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route('/post_listings')
+def post_listings():
+    return render_template('post-listings.html')
+
+@app.route('/submit_listing', methods=['POST'])
+def submit_listing():
+    # Get values from the form
+    dining_halls = request.form.getlist('dining_hall[]')
+    if not dining_halls:
+        flash("Error: Please select at least one dining hall.", "error")
+        return redirect(url_for('post_listings'))
+        
+    dining_halls_str = ", ".join(dining_halls)
+    date = request.form.get('date')
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+    price = request.form.get('price')
+    payment_methods_list = request.form.getlist('payment_methods[]')
+    
+    if not payment_methods_list:
+        flash("Error: Please select at least one payment method.", "error")
+        return redirect(url_for('post_listings'))
+        
+    payment_methods = ', '.join(payment_methods_list)
+    
+    poster_name = request.form.get('poster_name')
+    poster_email = request.form.get('poster_email')
+    listing_type = request.form.get('listing_type')
+    
+    # Always retrieve phone number from User model
+    phone = ""
+    user = User.query.filter_by(email=poster_email).first()
+    if user and user.phone and user.phone.strip() != "":
+        phone = user.phone
+
+    # Validate that if date is today, start time is in the future
+    now = datetime.now(ny_tz)
+    today_date = now.strftime("%Y-%m-%d")
+    
+    if date == today_date:
+        try:
+            start_hour, start_minute = map(int, start_time.split(':'))
+            start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+            
+            if start_datetime < now:
+                flash("Error: For today's listings, start time must be in the future.", "error")
+                return redirect(url_for('post_listings'))
+        except Exception as e:
+            print(f"Time validation error: {e}")
+            flash("Error: Invalid time format.", "error")
+            return redirect(url_for('post_listings'))
+
+    try:
+        price_value = float(price)
+        if price_value < 0:
+            flash("Error: Price cannot be negative.", "error")
+            return redirect(url_for('post_listings'))
+    except (ValueError, TypeError):
+        flash("Error: Please enter a valid price (number).", "error")
+        return redirect(url_for('post_listings'))
+
+    # Create new listing based on type
+    if listing_type == 'seller':
+        new_listing = SellerListing(
+            dining_hall=dining_halls_str,
+            date=date,
+            start_time=start_time,
+            end_time=end_time,
+            price=price_value,
+            payment_methods=payment_methods,
+            seller_name=poster_name,
+            seller_email=poster_email,
+            seller_phone=phone
+        )
+    else:  # listing_type == 'buyer'
+        new_listing = BuyerListing(
+            dining_hall=dining_halls_str,
+            date=date,
+            start_time=start_time,
+            end_time=end_time,
+            price=price_value,
+            payment_methods=payment_methods,
+            buyer_name=poster_name,
+            buyer_email=poster_email,
+            buyer_phone=phone
+        )
+
+    # Add new listing to database
+    db.session.add(new_listing)
+    db.session.commit()
+
+    # Redirect to Swipe Market page
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
    with app.app_context():
      db.create_all()
