@@ -79,8 +79,8 @@ if (priceInput) {
     dateInput.min = formattedDate; // prevent selecting past dates
   }
   
-  // Function to validate start time for today's date
-  function validateStartTime() {
+  // Function to validate end time for today's date
+  function validateEndTime() {
     // Check if date is today
     if (dateInput.value === today.toISOString().split('T')[0]) {
       // Get current time
@@ -89,48 +89,48 @@ if (priceInput) {
       const currentMinutes = now.getMinutes();
       
       // Get selected time
-      const [selectedHours, selectedMinutes] = startTimeInput.value.split(':').map(Number);
+      const [selectedHours, selectedMinutes] = endTimeInput.value.split(':').map(Number);
       
       // Compare times
       if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
-        startTimeInput.setCustomValidity('For today, start time must be later than current time');
+        endTimeInput.setCustomValidity('For today, end time must be later than current time');
       } else {
-        startTimeInput.setCustomValidity('');
+        endTimeInput.setCustomValidity('');
       }
     } else {
       // If date is not today, no time restriction
-      startTimeInput.setCustomValidity('');
+      endTimeInput.setCustomValidity('');
     }
   }
   
   // Add event listeners for both date and time fields to trigger validation
-  startTimeInput.addEventListener('input', validateStartTime);
-  dateInput.addEventListener('input', validateStartTime);
+  endTimeInput.addEventListener('input', validateEndTime);
+  dateInput.addEventListener('input', validateEndTime);
   
   // Run validation at page load
-  validateStartTime();
+  validateEndTime();
   
-  // custom validation for end time
-  endTimeInput.addEventListener('input', function() {
-      if (startTimeInput.value && this.value <= startTimeInput.value) {
-          this.setCustomValidity('End time must be later than start time');
+  // custom validation for start time
+  startTimeInput.addEventListener('input', function() {
+      if (endTimeInput.value && this.value >= endTimeInput.value) {
+          this.setCustomValidity('Start time must be earlier than end time');
       } else {
           this.setCustomValidity('');
       }
       
-      // Also re-validate start time to make sure both validations work together
-      validateStartTime();
+      // Also re-validate end time to make sure both validations work together
+      validateEndTime();
   });
 
-  // also check when start time changes
-  startTimeInput.addEventListener('input', function() {
-      if (endTimeInput.value && endTimeInput.value <= this.value) {
-          endTimeInput.setCustomValidity('End time must be later than start time');
+  // also check when end time changes
+  endTimeInput.addEventListener('input', function() {
+      if (startTimeInput.value && startTimeInput.value >= this.value) {
+          startTimeInput.setCustomValidity('Start time must be earlier than end time');
       } else {
-          endTimeInput.setCustomValidity('');
+          startTimeInput.setCustomValidity('');
       }
       
-      // The validateStartTime function will be called from the general input event listener above
+      // The validateEndTime function will be called from the general input event listener above
   });
 
   const form = document.querySelector('form');

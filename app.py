@@ -462,18 +462,18 @@ def submit_buyer():
   if user and user.phone and user.phone.strip() != "":
     buyer_phone = user.phone
 
-  # Validate that if date is today, start time is in the future
+  # Validate that if date is today, end time is in the future
   now = datetime.now(ny_tz)
   today_date = now.strftime("%Y-%m-%d")
   
   if date == today_date:
-      # Convert form start_time to datetime object for comparison
+      # Convert form end_time to datetime object for comparison
       try:
-          start_hour, start_minute = map(int, start_time.split(':'))
-          start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+          end_hour, end_minute = map(int, end_time.split(':'))
+          end_datetime = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
           
-          if start_datetime < now:
-              flash("Error: For today's listings, start time must be in the future.", "error")
+          if end_datetime < now:
+              flash("Error: For today's listings, end time must be in the future.", "error")
               return redirect(url_for('index'))
       except Exception as e:
           print(f"Time validation error: {e}")
@@ -542,18 +542,18 @@ def submit_seller():
   if user and user.phone and user.phone.strip() != "":
     seller_phone = user.phone
 
-  # Validate that if date is today, start time is in the future
+  # Validate that if date is today, end time is in the future
   now = datetime.now(ny_tz)
   today_date = now.strftime("%Y-%m-%d")
   
   if date == today_date:
-      # Convert form start_time to datetime object for comparison
+      # Convert form end_time to datetime object for comparison
       try:
-          start_hour, start_minute = map(int, start_time.split(':'))
-          start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+          end_hour, end_minute = map(int, end_time.split(':'))
+          end_datetime = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
           
-          if start_datetime < now:
-              flash("Error: For today's listings, start time must be in the future.", "error")
+          if end_datetime < now:
+              flash("Error: For today's listings, end time must be in the future.", "error")
               return redirect(url_for('index'))
       except Exception as e:
           print(f"Time validation error: {e}")
@@ -1180,17 +1180,17 @@ def submit_listing():
     if user and user.phone and user.phone.strip() != "":
         phone = user.phone
 
-    # Validate that if date is today, start time is in the future
+    # Validate that if date is today, end time is in the future
     now = datetime.now(ny_tz)
     today_date = now.strftime("%Y-%m-%d")
     
     if date == today_date:
         try:
-            start_hour, start_minute = map(int, start_time.split(':'))
-            start_datetime = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+            end_hour, end_minute = map(int, end_time.split(':'))
+            end_datetime = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
             
-            if start_datetime < now:
-                flash("Error: For today's listings, start time must be in the future.", "error")
+            if end_datetime < now:
+                flash("Error: For today's listings, end time must be in the future.", "error")
                 return redirect(url_for('post_listings'))
         except Exception as e:
             print(f"Time validation error: {e}")
