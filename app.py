@@ -666,6 +666,9 @@ def send_connection_email():
     end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
     # Format date without year
     date_formatted = format_date_without_year(buyer_listing.date)
+    # Format dining halls and payment methods
+    dining_halls_formatted = format_dining_halls(buyer_listing.dining_hall)
+    payment_methods_formatted = format_payment_methods(buyer_listing.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
@@ -688,9 +691,9 @@ def send_connection_email():
       body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email}.</p>"
     
     body += (
-      f"<p>As a reminder, {buyer_name} wants to be swiped into {buyer_listing.dining_hall} "
+      f"<p>As a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
-      f"They can pay via {buyer_listing.payment_methods}.</p>"
+      f"They can pay via {payment_methods_formatted}.</p>"
       f"<p>{buyer_name}, remember to delete your listing "
       f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.</p>"
       f"<p>Best regards,<br>Swipe Market Team</p>"
@@ -717,6 +720,9 @@ def send_connection_email():
     end_time_formatted = format_time_to_12hour(seller_listing.end_time)
     # Format date without year
     date_formatted = format_date_without_year(seller_listing.date)
+    # Format dining halls and payment methods
+    dining_halls_formatted = format_dining_halls(seller_listing.dining_hall)
+    payment_methods_formatted = format_payment_methods(seller_listing.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
@@ -739,10 +745,10 @@ def send_connection_email():
       body += f"<p>{buyer_name}, you can reach {seller_name} at {seller_email}.</p>"
     
     body += (
-      f"<p>As a reminder, the listing is for {seller_listing.dining_hall} on "
+      f"<p>As a reminder, the listing is for {dining_halls_formatted} on "
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
-      f"{seller_name} accepts {seller_listing.payment_methods}.</p>"
+      f"{seller_name} accepts {payment_methods_formatted}.</p>"
       f"<p>{seller_name}, if this is the only swipe you want to sell from this listing, "
       f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=seller'>here</a> "
       f"once you've agreed to the sale.</p>"
@@ -1239,6 +1245,40 @@ def submit_listing():
 
     # Redirect to Swipe Market page
     return redirect(url_for('index'))
+
+def format_dining_halls(dining_halls_str):
+    if not dining_halls_str:
+        return "any dining hall"
+    
+    dining_halls = [dh.strip() for dh in dining_halls_str.split(',')]
+    
+    if "Any" in dining_halls:
+        return "any dining hall"
+    
+    if len(dining_halls) == 1:
+        return dining_halls[0]
+    
+    if len(dining_halls) == 2:
+        return f"{dining_halls[0]} or {dining_halls[1]}"
+    
+    return f"{', '.join(dining_halls[:-1])}, or {dining_halls[-1]}"
+
+def format_payment_methods(payment_methods_str):
+    if not payment_methods_str:
+        return "any payment method"
+    
+    payment_methods = [pm.strip() for pm in payment_methods_str.split(',')]
+    
+    if "Any" in payment_methods:
+        return "any payment method"
+    
+    if len(payment_methods) == 1:
+        return payment_methods[0]
+    
+    if len(payment_methods) == 2:
+        return f"{payment_methods[0]} or {payment_methods[1]}"
+    
+    return f"{', '.join(payment_methods[:-1])}, or {payment_methods[-1]}"
 
 if __name__ == '__main__':
    with app.app_context():
