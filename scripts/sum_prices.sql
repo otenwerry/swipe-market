@@ -1,4 +1,4 @@
--- use \i sum_prices.sql in the psql shell to run.
+-- use \i swipe-market/scripts/sum_prices.sql in the psql shell to run.
 -- this script sums the prices of all listings in contact_record,
 -- giving an upper bound on how much money has moved through 
 -- Swipe Market.
