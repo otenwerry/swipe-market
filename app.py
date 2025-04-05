@@ -31,11 +31,6 @@ migrate = Migrate(app, db)
 ny_tz = pytz.timezone('America/New_York')
 
 #DB MODEL CLASSES
-"""
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
-    """
 
 #class for seller listings
 class SellerListing(db.Model):
@@ -81,6 +76,8 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     phone = db.Column(db.String(50))
+    #migration test
+    bio = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
     
     def __repr__(self):
