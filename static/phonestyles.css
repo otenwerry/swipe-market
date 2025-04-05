@@ -27,6 +27,7 @@
         font-size: 32px;
         letter-spacing: 1px;
         padding: 0 5px;
+        margin-bottom: 8px; /* Reduced from default to bring subtitle closer */
       }
   
       .top {
