@@ -186,7 +186,7 @@
 
       .listing-actions {
         display: flex;
-        gap: 8px; /* Increased from 4px to 8px */
+        gap: 8px !important; /* Increased from 4px to 8px and made important */
         align-items: center;
         justify-content: space-between;
         width: 100%;
