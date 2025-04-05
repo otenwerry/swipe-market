@@ -224,6 +224,7 @@
       
       .subheading {
         font-size: 12px;
+        margin-top: -5px; /* Negative margin to bring it closer to header */
       }
 
       .custom-signin-btn {
