@@ -268,7 +268,7 @@
         width: 70%;
         max-width: 500px;
         max-height: 70vh;
-        overflow-y: auto;
+        overflow-y: scroll;
         position: relative;
         scrollbar-width: thin;
         scrollbar-color: #333333 #f0f0f0;
