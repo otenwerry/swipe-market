@@ -554,9 +554,10 @@
   .subheading {
     font-style: italic;
     text-align: center;
-    margin: 5px 0;
+    margin: 10px 0;
     font-size: 1.1em;
     color: #666;
+    margin-top: -5px;
   }
 
   .post-button {
