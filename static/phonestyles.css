@@ -249,10 +249,13 @@
       }
 
       .how-it-works-content {
-        margin: 20% auto;
+        margin: 10% auto 20% auto;
         padding: 20px;
         width: 70%;
         max-width: 500px;
+        max-height: 70vh;
+        overflow-y: auto;
+        position: relative;
       }
 
       .how-it-works-content p {
