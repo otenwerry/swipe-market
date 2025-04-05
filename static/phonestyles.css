@@ -111,6 +111,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box; /* Add this to ensure padding is included in height */
+        line-height: 1; /* Add this to prevent line height from affecting height */
+      }
+
+      .post-button {
+        text-decoration: none; /* Remove underline */
+        color: white; /* Ensure text color is white */
       }
 
       .sell-button-container{
