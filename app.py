@@ -77,7 +77,7 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False, unique=True)
     phone = db.Column(db.String(50))
     #migration test
-    bio = db.Column(db.String(200))
+    #bio = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
     
     def __repr__(self):
