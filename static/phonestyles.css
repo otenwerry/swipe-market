@@ -263,8 +263,8 @@
       }
 
       .how-it-works-content {
-        margin: 20% auto 20% auto;
-        padding: 20px;
+        margin: 10% auto;
+        padding: 10px 20px 20px 20px;
         width: 70%;
         max-width: 500px;
         max-height: 70vh;
@@ -280,19 +280,16 @@
       /* Webkit scrollbar styling */
       .how-it-works-content::-webkit-scrollbar {
         width: 8px;
-        display: block; /* Ensure scrollbar is always visible */
       }
 
       .how-it-works-content::-webkit-scrollbar-track {
         background: #f0f0f0;
         border-radius: 4px;
-        display: block; /* Ensure track is always visible */
       }
 
       .how-it-works-content::-webkit-scrollbar-thumb {
         background-color: #333333;
         border-radius: 4px;
-        display: block; /* Ensure thumb is always visible */
       }
 
       .how-it-works-content p {
