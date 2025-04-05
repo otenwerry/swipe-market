@@ -249,13 +249,30 @@
       }
 
       .how-it-works-content {
-        margin: 10% auto 20% auto;
+        margin: 20% auto 20% auto;
         padding: 20px;
         width: 70%;
         max-width: 500px;
         max-height: 70vh;
         overflow-y: auto;
         position: relative;
+        scrollbar-width: thin;
+        scrollbar-color: #1a73e8 #f0f0f0;
+      }
+
+      /* Webkit scrollbar styling */
+      .how-it-works-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .how-it-works-content::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 4px;
+      }
+
+      .how-it-works-content::-webkit-scrollbar-thumb {
+        background-color: #1a73e8;
+        border-radius: 4px;
       }
 
       .how-it-works-content p {
