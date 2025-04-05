@@ -272,21 +272,27 @@
         position: relative;
         scrollbar-width: thin;
         scrollbar-color: #333333 #f0f0f0;
+        display: block; /* Ensure content is displayed */
+        background-color: white; /* Ensure background is visible */
+        border-radius: 10px; /* Add border radius for better appearance */
       }
 
       /* Webkit scrollbar styling */
       .how-it-works-content::-webkit-scrollbar {
         width: 8px;
+        display: block; /* Ensure scrollbar is always visible */
       }
 
       .how-it-works-content::-webkit-scrollbar-track {
         background: #f0f0f0;
         border-radius: 4px;
+        display: block; /* Ensure track is always visible */
       }
 
       .how-it-works-content::-webkit-scrollbar-thumb {
         background-color: #333333;
         border-radius: 4px;
+        display: block; /* Ensure thumb is always visible */
       }
 
       .how-it-works-content p {
