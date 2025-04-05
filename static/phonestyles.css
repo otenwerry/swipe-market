@@ -181,12 +181,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 4px; /* Added horizontal margin */
+        margin: 0 auto; /* Center the buttons horizontally */
       }
 
       .listing-actions {
         display: flex;
-        gap: 4px;
+        gap: 4px; 
         align-items: center;
         justify-content: space-between;
         width: 100%;
