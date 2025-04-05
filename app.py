@@ -272,6 +272,17 @@ def index():
     seller_listings = sorted(seller_listings, key=get_sort_key)
     buyer_listings = sorted(buyer_listings, key=get_sort_key)
     
+    # Format dates and times for display
+    for listing in seller_listings:
+        listing.date = format_date_without_year(listing.date)
+        listing.start_time = format_time_to_12hour(listing.start_time)
+        listing.end_time = format_time_to_12hour(listing.end_time)
+    
+    for listing in buyer_listings:
+        listing.date = format_date_without_year(listing.date)
+        listing.start_time = format_time_to_12hour(listing.start_time)
+        listing.end_time = format_time_to_12hour(listing.end_time)
+    
     # Create a response
     response = make_response(render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings))
     
