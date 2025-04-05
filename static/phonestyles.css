@@ -264,7 +264,7 @@
         overflow-y: auto;
         position: relative;
         scrollbar-width: thin;
-        scrollbar-color: #1a73e8 #f0f0f0;
+        scrollbar-color: #333333 #f0f0f0;
       }
 
       /* Webkit scrollbar styling */
@@ -278,7 +278,7 @@
       }
 
       .how-it-works-content::-webkit-scrollbar-thumb {
-        background-color: #1a73e8;
+        background-color: #333333;
         border-radius: 4px;
       }
 
