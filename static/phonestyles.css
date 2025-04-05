@@ -247,5 +247,24 @@
       .how-it-works-popup {
         font-size: 12px;
       }
-      
+
+      .how-it-works-content {
+        margin: 10% auto;
+        padding: 20px;
+        width: 90%;
+        max-width: 500px;
+      }
+
+      .how-it-works-content p {
+        margin-bottom: 15px;
+      }
+
+      .how-it-works-content ul {
+        margin-bottom: 15px;
+        padding-left: 20px;
+      }
+
+      .how-it-works-content li {
+        margin-bottom: 10px;
+      }
   }
