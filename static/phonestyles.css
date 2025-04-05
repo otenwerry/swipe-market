@@ -103,16 +103,16 @@
   
       /* Adjust button sizes */
       .sell-button, .buy-button, .how-it-works-button, .offer-button, .request-button, .post-button {
-        font-size: 12px; /* Reduced from 14px */
-        padding: 4px 10px; /* Reduced padding */
-        margin-top: 12px; /* Reduced margin */
-        min-width: 120px; /* Smaller min-width for mobile */
-        height: 32px; /* Consistent height */
+        font-size: 14px; /* Increased from 12px */
+        padding: 6px 12px; /* Increased padding */
+        margin-top: 12px;
+        min-width: 140px; /* Increased from 120px */
+        height: 36px; /* Increased from 32px */
         display: flex;
         align-items: center;
         justify-content: center;
-        box-sizing: border-box; /* Add this to ensure padding is included in height */
-        line-height: 1; /* Add this to prevent line height from affecting height */
+        box-sizing: border-box;
+        line-height: 1;
       }
 
       .post-button {
