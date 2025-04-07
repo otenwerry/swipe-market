@@ -54,10 +54,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: center;
         gap: 4px;
+        position: relative;
       }
-
       .g_id_signin {
         /*transform: scale(0.6);*/
         position: relative;
@@ -104,11 +104,11 @@
   
       /* Adjust button sizes */
       .sell-button, .buy-button, .how-it-works-button, .offer-button, .request-button, .post-button {
-        font-size: 14px; /* Increased from 12px */
-        padding: 6px 12px; /* Increased padding */
+        font-size: 14px;
+        padding: 6px 12px;
         margin-top: 12px;
-        min-width: 140px; /* Increased from 120px */
-        height: 36px; /* Increased from 32px */
+        min-width: 140px; 
+        height: 36px; 
         display: flex;
         align-items: center;
         justify-content: center;
@@ -130,8 +130,7 @@
 
       .offer-button, .request-button {
         font-size: 18px;
-        padding: 6px 12px;
-        background-color: green;
+        padding: 4px 10px;
       }
   
       .button-group {
