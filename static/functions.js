@@ -153,27 +153,6 @@ if (priceInput) {
   const diningHallSelect = document.getElementById('dining_hall');
   const paymentMethodsSelect = document.getElementById('payment_methods');
 
-  // Add validation for multiple select fields
-if (diningHallSelect) {
-  diningHallSelect.addEventListener('change', function() {
-      if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
-          this.setCustomValidity('Please select at least one dining hall');
-      } else {
-          this.setCustomValidity('');
-      }
-  });
-}
-
-if (paymentMethodsSelect) {
-  paymentMethodsSelect.addEventListener('change', function() {
-      if (this.selectedOptions.length === 0 || (this.selectedOptions.length === 1 && this.selectedOptions[0].disabled)) {
-          this.setCustomValidity('Please select at least one payment method');
-      } else {
-          this.setCustomValidity('');
-      }
-  });
-}
-
   // Trigger initial validation
   diningHallSelect.dispatchEvent(new Event('change'));
   paymentMethodsSelect.dispatchEvent(new Event('change'));
@@ -1042,8 +1021,9 @@ if (listingForm) {
     
     // Check dining halls
     if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
-      showError("Please select at least one dining hall.");
+      showError("Please select at least one dining hall. hey");
       //diningHallCheckboxes.setCustomValidity('Please select at least one dining hall.');
+      //this.setCustomValidity('Please select at least one payment method');
       hasError = true;
       event.preventDefault();
       return;
@@ -1053,31 +1033,11 @@ if (listingForm) {
     if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
       //paymentMethodCheckboxes.setCustomValidity('Please select at least one payment method.');
       showError("Please select at least one payment method.");
+      //this.setCustomValidity('Please select at least one payment method');
       hasError = true;
       event.preventDefault();
       return;
     }
-  });
-
-  // Add real-time validation feedback
-  diningHallCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
-        this.setCustomValidity('Please select at least one dining hall.');
-      } else {
-        this.setCustomValidity('');
-      }
-    });
-  });
-  
-  paymentMethodCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
-        this.setCustomValidity('Please select at least one payment method.');
-      } else {
-        this.setCustomValidity('');
-      }
-    });
   });
 }
 });
