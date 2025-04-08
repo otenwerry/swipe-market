@@ -1017,9 +1017,8 @@ if (listingForm) {
   }
 
   listingForm.addEventListener("submit", function (event) {
-    // Only run validation if user is signed in
     if (!isUserLoggedIn()) {
-      return; // Allow form submission without validation if not logged in
+      return; 
     }
     
     let hasError = false;
