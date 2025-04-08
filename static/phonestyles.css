@@ -174,12 +174,13 @@
       .delete-button, .edit-button {
         font-size: 9px;
         padding: 4px 8px;
+        /*
         min-width: 30px;
         height: 24px;
         line-height: 1;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: center;*/
       }
 
       .listing-actions {
@@ -188,6 +189,10 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
+        /*
+        display: none;
+        margin-top: 10px;
+        gap: 5px;*/
       }
 
       /* Add specific styling for table cells containing action buttons */
