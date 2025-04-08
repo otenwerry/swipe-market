@@ -192,7 +192,6 @@
         width: 100%;
         flex-wrap: nowrap;
         background-color: green;
-        height: 30px; /* Add fixed height to ensure vertical centering */
         /*
         display: none;
         margin-top: 10px;
