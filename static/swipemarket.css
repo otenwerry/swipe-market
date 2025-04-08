@@ -367,7 +367,7 @@
   }
   
   .listing-actions {
-    display: none;
+    display: flex;
     gap: 5px;
   }
   
