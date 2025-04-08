@@ -172,7 +172,7 @@
 
       /* Adjust delete and edit buttons to match contact button size */
       .delete-button, .edit-button {
-        font-size: 9px;
+        font-size: 11px;
         padding: 4px 8px;
         /*
         min-width: 30px;
