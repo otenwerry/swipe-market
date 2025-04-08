@@ -198,6 +198,12 @@
         gap: 5px;*/
       }
 
+      table th:nth-child(6),
+      table td:nth-child(6) {
+        min-width: 110px;  /* Increase if still wrapping */
+        white-space: nowrap;
+      }
+
       /* Add specific styling for table cells containing action buttons */
       td:has(.listing-actions) {
         text-align: center;
