@@ -193,7 +193,6 @@
         justify-content: center;
         width: 100%;
         flex-wrap: nowrap;
-        background-color: green;
         /*
         display: none;
         margin-top: 10px;
@@ -208,11 +207,9 @@
 
       /* Add specific styling for table cells containing action buttons */
       td:has(.listing-actions) {
-        display: flex;
-        flex-direction: column;
+        text-align: center;
         align-items: center;
         justify-content: center;
-        gap: 5px;
       }
 
       .profile-menu {
