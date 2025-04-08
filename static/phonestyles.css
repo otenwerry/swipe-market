@@ -185,7 +185,7 @@
 
       .listing-actions {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 8px; 
         align-items: center;
         justify-content: space-between;
