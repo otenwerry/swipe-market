@@ -61,7 +61,7 @@
     color: white;
   }
   
-  .sell-button, .how-it-works-button {
+  .sell-button, .how-it-works-button, .post-button {
     font-size: 1.1rem;
     padding: 14px 30px;
     border: none;
@@ -210,7 +210,6 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
     width: auto;
     max-width: 120px;
     white-space: normal;
@@ -220,7 +219,6 @@
   .contact-button:hover {
     background-color: #2b7de9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(66, 133, 244, 0.4);
   }
   
   .contact-button.contacted {
@@ -510,7 +508,7 @@
   }
 
   /* Make sell and buy buttons consistent */
-  .sell-button, .buy-button, .offer-button, .request-button, .post-button {
+  .sell-button, .buy-button, .offer-button, .request-button {
     font-size: 1.1rem;
     padding: 14px 30px;
     background-color: #1a73e8;
@@ -529,14 +527,6 @@
     background-color: #2b7de9;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
-  }
-
-  .contact-button, .edit-button {
-    background-color: #1a73e8;
-  }
-
-  .contact-button:hover, .edit-button:hover {
-    background-color: #2b7de9;
   }
 
   /* Ensure delete button stays red on hover */
@@ -558,6 +548,11 @@
     font-size: 1.1em;
     color: #666;
     margin-top: -3px;
+  }
+  .post-button{
+    background-color: #2b7de9;
+    color: white;
+    box-shadow: none;
   }
   .post-button:hover {
     background-color: #2b7de9;
