@@ -166,16 +166,16 @@
   
       /* Adjust contact button */
       .contact-button {
-        font-size: 11px; /* Reduced from 12px */
-        padding: 8px 12px; /* Reduced padding */
+        font-size: 11px;
+        padding: 8px 12px; 
       }
 
       /* Adjust delete and edit buttons to match contact button size */
       .delete-button, .edit-button {
         font-size: 11px;
         padding: 4px 8px;
-        margin: 0 0 0 0;
-        top: 0;
+        align-items: center;
+        justify-content: center;
         /*
         min-width: 30px;
         height: 24px;
