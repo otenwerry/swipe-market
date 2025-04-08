@@ -1017,13 +1017,16 @@ if (listingForm) {
   }
 
   listingForm.addEventListener("submit", function (event) {
+    // Only run validation if user is signed in
+    if (!isUserLoggedIn()) {
+      return; // Allow form submission without validation if not logged in
+    }
+    
     let hasError = false;
     
     // Check dining halls
     if (!isAnyCheckboxChecked(diningHallCheckboxes)) {
-      showError("Please select at least one dining hall. hey");
-      //diningHallCheckboxes.setCustomValidity('Please select at least one dining hall.');
-      //this.setCustomValidity('Please select at least one payment method');
+      showError("Please select at least one dining hall.");
       hasError = true;
       event.preventDefault();
       return;
@@ -1031,9 +1034,7 @@ if (listingForm) {
 
     // Check payment methods
     if (!isAnyCheckboxChecked(paymentMethodCheckboxes)) {
-      //paymentMethodCheckboxes.setCustomValidity('Please select at least one payment method.');
       showError("Please select at least one payment method.");
-      //this.setCustomValidity('Please select at least one payment method');
       hasError = true;
       event.preventDefault();
       return;
