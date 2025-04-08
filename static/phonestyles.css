@@ -167,7 +167,7 @@
       /* Adjust contact button */
       .contact-button {
         font-size: 11px; /* Reduced from 12px */
-        padding: 4px 8px; /* Reduced padding */
+        padding: 8px 12px; /* Reduced padding */
       }
 
       /* Adjust delete and edit buttons to match contact button size */
