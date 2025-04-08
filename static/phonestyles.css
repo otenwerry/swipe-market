@@ -174,15 +174,13 @@
       .delete-button, .edit-button {
         font-size: 11px;
         padding: 4px 8px;
-        align-items: center;
-        justify-content: center;
-        /*
         min-width: 30px;
         height: 24px;
         line-height: 1;
         display: flex;
         align-items: center;
-        justify-content: center;*/
+        justify-content: center;
+        margin: 0;
       }
 
       .listing-actions {
@@ -194,6 +192,7 @@
         width: 100%;
         flex-wrap: nowrap;
         background-color: green;
+        height: 30px; /* Add fixed height to ensure vertical centering */
         /*
         display: none;
         margin-top: 10px;
