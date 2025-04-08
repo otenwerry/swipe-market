@@ -208,7 +208,11 @@
 
       /* Add specific styling for table cells containing action buttons */
       td:has(.listing-actions) {
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
       }
 
       .profile-menu {
