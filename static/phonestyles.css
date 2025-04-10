@@ -121,7 +121,7 @@
         padding: 25px 5px;
         background-color: red;
         text-wrap: wrap;
-        max-width: 50px;
+        max-width: 20px;
       }
       .form-group-button-group {
         display: flex;
