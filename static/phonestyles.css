@@ -103,7 +103,7 @@
       }
   
       /* Adjust button sizes */
-      .sell-button, .buy-button, .how-it-works-button, .offer-button, .request-button, .post-button {
+      .sell-button, .buy-button, .how-it-works-button, .post-button, .offer-button, .request-button {
         font-size: 14px;
         padding: 6px 12px;
         margin-top: 12px;
@@ -114,6 +114,11 @@
         justify-content: center;
         box-sizing: border-box;
         line-height: 1;
+      }
+
+      .offer-button, .request-button {
+        font-size: 16px;
+        padding: 10px 15px;
       }
 
       .post-button {
