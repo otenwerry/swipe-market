@@ -117,11 +117,15 @@
       }
 
       .offer-button, .request-button {
-        font-size: 5px;
-        padding: 5px 5px;
-        background-color: red;
-        text-wrap: wrap;
-        max-width: 20px;
+        font-size: 11px;
+        padding: 4px 8px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        min-width: 60px;
       }
       .form-group-button-group {
         display: flex;
@@ -216,8 +220,11 @@
       /* Add specific styling for table cells containing action buttons */
       td:has(.listing-actions) {
         text-align: center;
+        display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 5px;
       }
 
       .profile-menu {
