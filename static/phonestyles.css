@@ -120,7 +120,12 @@
         font-size: 24px;
         padding: 40px 10px;
         background-color: red;
-
+        text-wrap: wrap;
+      }
+      .form-group-button-group {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
       }
 
       .post-button {
