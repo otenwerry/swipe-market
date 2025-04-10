@@ -117,11 +117,11 @@
       }
 
       .offer-button, .request-button {
-        font-size: 24px;
+        font-size: 14px;
         padding: 40px 10px;
         background-color: red;
         text-wrap: wrap;
-        max-width: 50%;
+        max-width: 50px;
       }
       .form-group-button-group {
         display: flex;
