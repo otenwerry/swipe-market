@@ -117,9 +117,10 @@
       }
 
       .offer-button, .request-button {
-        font-size: 16px;
-        padding: 5px 40px;
+        font-size: 24px;
+        padding: 40px 10px;
         background-color: red;
+
       }
 
       .post-button {
