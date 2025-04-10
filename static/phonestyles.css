@@ -117,8 +117,8 @@
       }
 
       .offer-button, .request-button {
-        font-size: 14px;
-        padding: 25px 5px;
+        font-size: 5px;
+        padding: 5px 5px;
         background-color: red;
         text-wrap: wrap;
         max-width: 20px;
