@@ -101,6 +101,10 @@
       body {
         font-size: 14px;
       }
+
+      .seller-form{
+        margin-top: -10px;
+      }
   
       /* Adjust button sizes */
       .sell-button, .buy-button, .how-it-works-button, .post-button {
@@ -117,20 +121,13 @@
       }
 
       .offer-button, .request-button {
-        font-size: 11px;
-        padding: 4px 8px;
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        white-space: nowrap;
-        min-width: 60px;
+        font-size: 18px;
+        max-width: 20px;
       }
+
       .form-group-button-group {
         display: flex;
-        flex-direction: row;
-        gap: 10px;
+        flex-direction: row !important;
       }
 
       .post-button {
@@ -144,12 +141,13 @@
         flex-direction: row;
         align-items: center;
       }
-  
+
+      /*
       .button-group {
         flex-direction: column;
         align-items: center;
         gap: 10px;
-      }
+      }*/ 
   
       /* Adjust table text sizes */
       table {
@@ -220,11 +218,8 @@
       /* Add specific styling for table cells containing action buttons */
       td:has(.listing-actions) {
         text-align: center;
-        display: flex;
-        flex-direction: row;
         align-items: center;
         justify-content: center;
-        gap: 5px;
       }
 
       .profile-menu {
@@ -255,6 +250,10 @@
       .subheading {
         font-size: 12px;
         margin-top: -5px; /* Negative margin to bring it closer to header */
+        max-width: 80%;
+        margin: 0 auto;
+        text-align: center;
+        margin-bottom: -5px;
       }
 
       .custom-signin-btn {
