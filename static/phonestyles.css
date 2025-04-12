@@ -249,8 +249,7 @@
       }
       
       .subheading {
-        font-size: 12px;
-        margin-top: -5px; /* Negative margin to bring it closer to header */
+        font-size: 12px; /* Negative margin to bring it closer to header */
         max-width: 80%;
         margin: 0 auto;
         text-align: center;
