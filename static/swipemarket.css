@@ -380,6 +380,7 @@
   
   color: #4285f4;
 }
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -387,7 +388,6 @@
   
   .listing-actions {
     display: flex;
-    gap: 5px;
   }
   
   .delete-button, .edit-button, .block-button {
@@ -398,6 +398,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
+
 
   .delete-button {
     background-color: #d32f2f;
@@ -562,10 +563,12 @@
   .subheading {
     font-style: italic;
     text-align: center;
-    margin: 10px 0;
     font-size: 1.1em;
     color: #666;
+    max-width: 80%;
+    margin: 0 auto; 
   }
+  
   .post-button{
     background-color: #2b7de9;
     color: white;
