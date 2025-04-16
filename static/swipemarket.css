@@ -395,11 +395,11 @@
     width: 100%;
     flex-wrap: nowrap;
   }
-
+  /*
   table th:nth-child(6), table td:nth-child(6) {
-    min-width: 200px;  /* Increase if still wrapping */
+    min-width: 200px;  Increase if still wrapping 
     white-space: nowrap;
-  }
+  }*/
   
   .delete-button, .edit-button, .block-button {
     font-size: 0.9rem;

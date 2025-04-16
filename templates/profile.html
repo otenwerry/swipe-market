@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="../static/header.css">
     <link rel="stylesheet" href="../static/general.css">
     <link rel="stylesheet" href="../static/swipemarket.css">
-    <link rel="stylesheet" href="../static/phonestyles.css">
+    <link rel="stylesheet" href="../static/phonestyles.css">  
+    <link rel="stylesheet" href="../static/intermediate.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
@@ -160,17 +161,16 @@
         
         <!-- Block User Section -->
         <div class="profile-form" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
-          <p style="color: #666;">Enter the UNI of users you'd like to block. Blocked users won't be able to contact you or see your listings.</p>
           <div style="display: flex; flex-direction: column;">
             <label for="block-uni">UNI to Block</label>
+            <p style="color: #666; font-size: 14px; font-style: italic; margin-top: -7px;">Blocked users won't be able to see your listings and vice versa.</p>
             <div style="display: flex; gap: 10px;">
               <input type="text" id="block-uni" placeholder="abc1234" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
               <button id="block-button" class="block-button" style="background-color: #f44336;">Block</button>
             </div>
           </div>
-          
           <div id="blocked-list">
-            <p id="no-blocks-message" style="color: #666; font-style: italic;">You haven't blocked any users yet.</p>
+            <p id="no-blocks-message" style="color: #666; font-style: italic;">No users currently blocked.</p>
             <ul id="blocked-unis-list" style="list-style-type: none; padding: 0;"></ul>
           </div>
         </div>

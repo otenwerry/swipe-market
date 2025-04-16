@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../static/header.css">
     <link rel="stylesheet" href="../static/general.css">
     <link rel="stylesheet" href="../static/swipemarket.css">
+    <link rel="stylesheet" href="../static/intermediate.css"> 
     <link rel="stylesheet" href="../static/phonestyles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +84,7 @@
             <ul>
               <li>
                 Browse Listings: if you see a swipe below that you'd like to buy or sell, 
-                click the "get this swipe" or "swipe them in" button to be 
+                click the "get swiped in" or "swipe them in" button to be 
                 automatically put in touch with the person who posted it.
               </li>
               <li>
@@ -105,7 +106,7 @@
       </div>
       <div class="tables-container">
       <table>
-        <caption>Get Swiped In 
+        <caption>Buy a Swipe 
         </caption> 
         <thead>
           <tr>
@@ -129,7 +130,7 @@
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="seller" 
-                      onclick="openForm(this)">Get This Swipe</button>
+                      onclick="openForm(this)">Get Swiped In</button>
               <!--delete button that only appears to poster-->
               <div class="listing-actions" data-owner-email="{{ listing.user.email }}">
                 <button onclick="deleteListing('{{ listing.id }}', 'seller')" class="delete-button">X</button>
@@ -145,10 +146,7 @@
         </tbody>
       </table>
       <table>
-        <caption>Swipe Someone Else In <!--<br> <a href="/listings">
-          <button type="button" id="postListingsButton">Add a Request Listing</button>
-        </a>-->
-        </caption>
+        <caption>Sell a Swipe</caption>
         <thead>
           <tr>
             <th>Dining Hall(s)</th>
