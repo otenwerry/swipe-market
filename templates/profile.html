@@ -160,17 +160,16 @@
         
         <!-- Block User Section -->
         <div class="profile-form" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
-          <p style="color: #666;">Blocked users won't be able to see your listings and vice versa.</p>
           <div style="display: flex; flex-direction: column;">
             <label for="block-uni">UNI to Block</label>
+            <p style="color: #666; font-size: 14px; font-style: italic; margin-top: -7px;">Blocked users won't be able to see your listings and vice versa.</p>
             <div style="display: flex; gap: 10px;">
               <input type="text" id="block-uni" placeholder="abc1234" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
               <button id="block-button" class="block-button" style="background-color: #f44336;">Block</button>
             </div>
           </div>
-          
           <div id="blocked-list">
-            <p id="no-blocks-message" style="color: #666; font-style: italic;">You haven't blocked any users yet.</p>
+            <p id="no-blocks-message" style="color: #666; font-style: italic;">No users currently blocked.</p>
             <ul id="blocked-unis-list" style="list-style-type: none; padding: 0;"></ul>
           </div>
         </div>
