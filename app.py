@@ -694,7 +694,7 @@ def send_connection_email():
       body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email}.</p>"
     
     body += (
-      f"<p>As a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
+      f"<p>It's up to you to coordinate a meeting and exchange payment details - as a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {payment_methods_formatted}.</p>"
       f"<p>{buyer_name}, remember to delete your listing "
