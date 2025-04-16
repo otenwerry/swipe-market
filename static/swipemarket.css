@@ -204,7 +204,6 @@
   }
   .contact-button {
     font-size: 0.9rem;
-    padding: 8px 12px;
     background-color: #1a73e8;
     color: white;
     border: none;
@@ -212,7 +211,6 @@
     cursor: pointer;
     transition: all 0.2s ease;
     width: auto;
-    max-width: 120px;
     white-space: normal;
     height: auto;
     line-height: 1.2;
@@ -394,6 +392,7 @@
     justify-content: center;
     width: 100%;
     flex-wrap: nowrap;
+    background-color: red;
   }
   /*
   table th:nth-child(6), table td:nth-child(6) {
