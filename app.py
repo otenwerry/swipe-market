@@ -734,19 +734,19 @@ def send_connection_email():
     body += ".</p>"
     
     if seller_phone and seller_phone.strip() != "":
-      body += f"<p>{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}.</p>"
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}."
     else:
-      body += f"<p>{buyer_name}, you can reach {seller_name} at {seller_email}.</p>"
+      body += f"{buyer_name}, you can reach {seller_name} at {seller_email}."
     
     body += (
-      f"<p>As a reminder, the listing is for {dining_halls_formatted} on "
+      f"<p> It's up to you to coordinate a meeting and exchange payment details - as a reminder, the listing is for {dining_halls_formatted} on "
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
       f"{seller_name} accepts {payment_methods_formatted}.</p>"
       f"<p>{seller_name}, if this is the only swipe you want to sell from this listing, "
       f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=seller'>here</a> "
       f"once you've agreed to the sale.</p>"
-      f"<p>Best regards,<br>Swipe Market Team</p>"
+      f"<p>Best,<br>Swipe Market Team</p>"
     )
 
   # Send email

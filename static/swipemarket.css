@@ -388,6 +388,17 @@
   
   .listing-actions {
     display: flex;
+    flex-direction: row;
+    gap: 4px; 
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  table th:nth-child(6), table td:nth-child(6) {
+    min-width: 200px;  /* Increase if still wrapping */
+    white-space: nowrap;
   }
   
   .delete-button, .edit-button, .block-button {
