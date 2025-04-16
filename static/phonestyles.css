@@ -181,22 +181,25 @@
       /* Adjust contact button */
       .contact-button {
         font-size: 11px;
-        padding: 8px 12px; 
+        padding: 4px 8px;
+        max-width: 80px;
+        height: 24px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       /* Adjust delete and edit buttons to match contact button size */
       .delete-button, .edit-button {
         font-size: 11px;
         padding: 4px 8px;
-        align-items: center;
-        justify-content: center;
-        /*
         min-width: 30px;
         height: 24px;
         line-height: 1;
         display: flex;
         align-items: center;
-        justify-content: center;*/
+        justify-content: center;
       }
 
       .listing-actions {
@@ -341,5 +344,33 @@
         margin-bottom: 10px;
       }
 
+      .form-popup {
+        display: none;
+        position: fixed;
+        z-index: 9;
+        top: 10px;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       
+      .form-container {
+        background-color: #FFFFFF;
+        max-width: 500px;
+        padding: 30px;
+        border-radius: 10px;
+        position: relative;
+        margin: 0 auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        width: 90%;
+        transform: translateY(-50%);
+        top: 50%;
+      }
+  
   }
