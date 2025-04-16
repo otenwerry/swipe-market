@@ -207,7 +207,7 @@
         flex-direction: row;
         gap: 4px; 
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         width: 100%;
         flex-wrap: nowrap;
       }
@@ -216,13 +216,6 @@
       table td:nth-child(6) {
         min-width: 110px;  /* Increase if still wrapping */
         white-space: nowrap;
-      }
-
-      /* Add specific styling for table cells containing action buttons */
-      td:has(.listing-actions) {
-        text-align: center;
-        align-items: center;
-        justify-content: center;
       }
 
       .profile-menu {

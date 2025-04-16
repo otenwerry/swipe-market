@@ -389,16 +389,11 @@
     flex-direction: row;
     gap: 4px; 
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
     flex-wrap: nowrap;
     background-color: red;
   }
-  /*
-  table th:nth-child(6), table td:nth-child(6) {
-    min-width: 200px;  Increase if still wrapping 
-    white-space: nowrap;
-  }*/
   
   .delete-button, .edit-button, .block-button {
     font-size: 0.9rem;
