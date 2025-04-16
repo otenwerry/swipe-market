@@ -1271,6 +1271,6 @@ def format_payment_methods(payment_methods_str):
     return f"{', '.join(payment_methods[:-1])}, or {payment_methods[-1]}"
 
 if __name__ == '__main__':
-   with app.app_context():
-     db.create_all()
+   """with app.app_context():
+    db.create_all()"""
    app.run(host='0.0.0.0',port=5000, debug=True)
