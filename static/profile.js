@@ -141,10 +141,12 @@ function loadBlockedUsers() {
                 li.style.padding = '8px';
                 li.style.backgroundColor = '#f5f5f5';
                 li.style.borderRadius = '4px';
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
                 
                 const uniSpan = document.createElement('span');
                 uniSpan.textContent = uni;
-                uniSpan.style.marginRight = '10px';
                 
                 const unblockButton = document.createElement('button');
                 unblockButton.textContent = 'Unblock';
@@ -155,7 +157,6 @@ function loadBlockedUsers() {
                 unblockButton.style.borderRadius = '4px';
                 unblockButton.style.cursor = 'pointer';
                 unblockButton.onclick = () => unblockUser(uni);
-                
                 li.appendChild(uniSpan);
                 li.appendChild(unblockButton);
                 blockedList.appendChild(li);

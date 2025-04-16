@@ -426,7 +426,7 @@
     color: white;
   }
 
-  .delete-button:hover, .edit-button:hover, .block-button:hover {
+  .delete-button:hover, .edit-button:hover {
     opacity: 0.9;
     transform: translateY(-2px);
   }
