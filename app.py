@@ -699,7 +699,7 @@ def send_connection_email():
       f"They can pay via {payment_methods_formatted}.</p>"
       f"<p>{buyer_name}, remember to delete your listing "
       f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.</p>"
-      f"<p>Best regards,<br>Swipe Market Team</p>"
+      f"<p>Best,<br>Swipe Market Team</p>"
     )
     
   # If receiver is seller
