@@ -42,14 +42,13 @@ class SellerListing(db.Model):
     end_time = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     payment_methods = db.Column(db.String(200), nullable=False)
-    seller_name = db.Column(db.String(100), nullable=False)
-    seller_email = db.Column(db.String(100), nullable=False)
-    seller_phone = db.Column(db.String(50))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref='seller_listings')
     created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
-        return f'<SellerListing {self.id} - {self.seller_name}>'
+        return f'<SellerListing {self.id} - {self.user.name}>'
 
 #class for buyer listings
 class BuyerListing(db.Model):
@@ -61,14 +60,13 @@ class BuyerListing(db.Model):
     end_time = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     payment_methods = db.Column(db.String(200), nullable=False)
-    buyer_name = db.Column(db.String(100), nullable=False)
-    buyer_email = db.Column(db.String(100), nullable=False)
-    buyer_phone = db.Column(db.String(50))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref='buyer_listings')
     created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
-        return f'<BuyerListing {self.id} - {self.buyer_name}>'
+        return f'<BuyerListing {self.id} - {self.user.name}>'
 
 # model to store user information
 class User(db.Model):
@@ -250,7 +248,7 @@ def index():
             # Filter seller listings
             filtered_seller_listings = []
             for listing in seller_listings:
-                seller_uni = extract_uni(listing.seller_email)
+                seller_uni = extract_uni(listing.user.email)
                 if seller_uni not in all_blocked_unis:
                     filtered_seller_listings.append(listing)
                 else:
@@ -259,7 +257,7 @@ def index():
             # Filter buyer listings
             filtered_buyer_listings = []
             for listing in buyer_listings:
-                buyer_uni = extract_uni(listing.buyer_email)
+                buyer_uni = extract_uni(listing.user.email)
                 if buyer_uni not in all_blocked_unis:
                     filtered_buyer_listings.append(listing)
                 else:
@@ -357,18 +355,18 @@ def edit_listing(listing_id):
     if listing_type == 'seller':
         listing = SellerListing.query.get_or_404(listing_id)
         is_seller = True
-        owner_email = listing.seller_email
+        owner_email = listing.user.email
     else:  # listing_type == 'buyer'
         listing = BuyerListing.query.get_or_404(listing_id)
         is_seller = False
-        owner_email = listing.buyer_email
+        owner_email = listing.user.email
 
     print(f"Edit attempt - Listing owner email: {owner_email}")
     print(f"Edit attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
 
     # Check if the user owns the listing (case insensitive comparison)
-    if (is_seller and listing.seller_email.lower() != user_email.lower()) or \
-       (not is_seller and listing.buyer_email.lower() != user_email.lower()):
+    if (is_seller and listing.user.email.lower() != user_email.lower()) or \
+       (not is_seller and listing.user.email.lower() != user_email.lower()):
         print(f"Edit unauthorized - User {user_email} does not own listing {listing_id}")
         return redirect(url_for('index'))
         
@@ -454,16 +452,14 @@ def submit_buyer():
     
   payment_methods = ', '.join(payment_methods_list)
   
-  buyer_name = request.form.get('poster_name')
   buyer_email = request.form.get('poster_email')
-  print("poster name: " + buyer_name)
   print("poster email: " + buyer_email)
   
-  # Always retrieve phone number from User model since form field has been removed
-  buyer_phone = ""
+  # Get or create user
   user = User.query.filter_by(email=buyer_email).first()
-  if user and user.phone and user.phone.strip() != "":
-    buyer_phone = user.phone
+  if not user:
+    flash("Error: User not found. Please sign in first.", "error")
+    return redirect(url_for('buy_listings'))
 
   # Validate that if date is today, end time is in the future
   now = datetime.now(ny_tz)
@@ -500,9 +496,7 @@ def submit_buyer():
     end_time=end_time,
     price=price_value,
     payment_methods=payment_methods,
-    buyer_name=buyer_name,
-    buyer_email=buyer_email,
-    buyer_phone=buyer_phone
+    user_id=user.id
   )
 
   #add new listing to database
@@ -536,14 +530,13 @@ def submit_seller():
     
   payment_methods = ', '.join(payment_methods_list)
   
-  seller_name = request.form.get('poster_name')
   seller_email = request.form.get('poster_email')
   
-  # Always retrieve phone number from User model since form field has been removed
-  seller_phone = ""
+  # Get or create user
   user = User.query.filter_by(email=seller_email).first()
-  if user and user.phone and user.phone.strip() != "":
-    seller_phone = user.phone
+  if not user:
+    flash("Error: User not found. Please sign in first.", "error")
+    return redirect(url_for('sell_listings'))
 
   # Validate that if date is today, end time is in the future
   now = datetime.now(ny_tz)
@@ -580,9 +573,7 @@ def submit_seller():
     end_time=end_time,
     price=price_value,
     payment_methods=payment_methods,
-    seller_name=seller_name,
-    seller_email=seller_email,
-    seller_phone=seller_phone
+    user_id=user.id
   )
 
   #add new listing to database
@@ -612,13 +603,13 @@ def send_connection_email():
     if not receiver_listing:
       flash("Error: Seller listing not found.", "error")
       return redirect(url_for('index'))
-    receiver_email = receiver_listing.seller_email
+    receiver_email = receiver_listing.user.email
   else:
     receiver_listing = BuyerListing.query.get(listing_id)
     if not receiver_listing:
       flash("Error: Buyer listing not found.", "error")
       return redirect(url_for('index'))
-    receiver_email = receiver_listing.buyer_email
+    receiver_email = receiver_listing.user.email
   
   # Extract UNIs for block checking
   sender_uni = extract_uni(sender_email)
@@ -651,9 +642,9 @@ def send_connection_email():
   # If receiver is buyer
   if isinstance(receiver_listing, BuyerListing):
     buyer_listing = receiver_listing
-    buyer_name = buyer_listing.buyer_name
-    buyer_email = buyer_listing.buyer_email
-    buyer_phone = buyer_listing.buyer_phone
+    buyer_name = buyer_listing.user.name
+    buyer_email = buyer_listing.user.email
+    buyer_phone = buyer_listing.user.phone
     # And sender is seller
     seller_name = request.form.get('sender_name')
     seller_email = request.form.get('sender_email')
@@ -705,9 +696,9 @@ def send_connection_email():
   # If receiver is seller
   else:
     seller_listing = receiver_listing
-    seller_name = seller_listing.seller_name
-    seller_email = seller_listing.seller_email
-    seller_phone = seller_listing.seller_phone
+    seller_name = seller_listing.user.name
+    seller_email = seller_listing.user.email
+    seller_phone = seller_listing.user.phone
     # And sender is buyer
     buyer_name = request.form.get('sender_name')
     buyer_email = request.form.get('sender_email')
@@ -790,18 +781,18 @@ def delete_listing(listing_id):
     if listing_type == 'seller':
         listing = SellerListing.query.get_or_404(listing_id)
         is_seller = True
-        owner_email = listing.seller_email
+        owner_email = listing.user.email
     else:  # listing_type == 'buyer'
         listing = BuyerListing.query.get_or_404(listing_id)
         is_seller = False
-        owner_email = listing.buyer_email
+        owner_email = listing.user.email
 
     print(f"Delete attempt - Listing owner email: {owner_email}")
     print(f"Delete attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
     
     # Check if the user owns the listing (case insensitive comparison)
-    if (is_seller and listing.seller_email.lower() != user_email.lower()) or \
-       (not is_seller and listing.buyer_email.lower() != user_email.lower()):
+    if (is_seller and listing.user.email.lower() != user_email.lower()) or \
+       (not is_seller and listing.user.email.lower() != user_email.lower()):
         print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}")
         return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}", 403
         
@@ -1225,9 +1216,7 @@ def submit_listing():
             end_time=end_time,
             price=price_value,
             payment_methods=payment_methods,
-            seller_name=poster_name,
-            seller_email=poster_email,
-            seller_phone=phone
+            user_id=user.id
         )
     else:  # listing_type == 'buyer'
         new_listing = BuyerListing(
@@ -1237,9 +1226,7 @@ def submit_listing():
             end_time=end_time,
             price=price_value,
             payment_methods=payment_methods,
-            buyer_name=poster_name,
-            buyer_email=poster_email,
-            buyer_phone=phone
+            user_id=user.id
         )
 
     # Add new listing to database
