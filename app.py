@@ -677,14 +677,13 @@ def send_connection_email():
     if seller_phone and seller_phone.strip() != "":
       body += f" or via phone at {seller_phone}"
     
-    body += ".</p>"
-    
     if buyer_phone and buyer_phone.strip() != "":
-      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}."
+      body += f". {seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}."
     else:
-      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}."
+      body += f". {seller_name}, you can reach {buyer_name} at {buyer_email}."
     
     body += (
+      f"</p>"
       f"<p>It's up to you to coordinate a meeting and exchange payment details - as a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {payment_methods_formatted}.</p>"
@@ -731,15 +730,14 @@ def send_connection_email():
     if buyer_phone and buyer_phone.strip() != "":
       body += f" or via phone at {buyer_phone}"
     
-    body += ".</p>"
-    
     if seller_phone and seller_phone.strip() != "":
-      body += f"{buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}."
+      body += f". {buyer_name}, you can reach {seller_name} at {seller_email} or via phone at {seller_phone}."
     else:
-      body += f"{buyer_name}, you can reach {seller_name} at {seller_email}."
+      body += f". {buyer_name}, you can reach {seller_name} at {seller_email}."
     
     body += (
-      f"<p> It's up to you to coordinate a meeting and exchange payment details - as a reminder, the listing is for {dining_halls_formatted} on "
+      f"</p>"
+      f"<p>It's up to you to coordinate a meeting and exchange payment details - as a reminder, the listing is for {dining_halls_formatted} on "
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
       f"{seller_name} accepts {payment_methods_formatted}.</p>"
