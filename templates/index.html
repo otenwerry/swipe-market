@@ -131,7 +131,7 @@
                       data-listing-type="seller" 
                       onclick="openForm(this)">Get This Swipe</button>
               <!--delete button that only appears to poster-->
-              <div class="listing-actions" data-owner-email="{{ listing.seller_email }}">
+              <div class="listing-actions" data-owner-email="{{ listing.user.email }}">
                 <button onclick="deleteListing('{{ listing.id }}', 'seller')" class="delete-button">X</button>
                 <button onclick="editListing('{{ listing.id }}', 'seller')" class="edit-button">Edit</button>
               </div>
@@ -172,7 +172,7 @@
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="buyer" 
                       onclick="openForm(this)">Swipe Them In</button>
-              <div class="listing-actions" data-owner-email="{{ listing.buyer_email }}">
+              <div class="listing-actions" data-owner-email="{{ listing.user.email }}">
                 <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">X</button>
                 <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
               </div>
