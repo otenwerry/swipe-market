@@ -150,7 +150,6 @@ function loadBlockedUsers() {
                 unblockButton.textContent = 'Unblock';
                 unblockButton.style.backgroundColor = '#4CAF50';
                 unblockButton.style.color = 'white';
-                unbl
                 unblockButton.style.border = 'none';
                 unblockButton.style.padding = '5px 10px';
                 unblockButton.style.borderRadius = '4px';
