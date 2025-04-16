@@ -867,17 +867,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const contactButton = actions.previousElementSibling;
       
       if (isOwner) {
-          actions.style.display = 'inline-block';
+          actions.style.display = 'flex';
           contactButton.style.display = 'none';
       } else {
           actions.style.display = 'none';
-          contactButton.style.display = 'inline-block';
+          contactButton.style.display = 'flex';
       }
     } else {
       // If either email is missing, just hide the actions
       actions.style.display = 'none';
       if (actions.previousElementSibling) {
-        actions.previousElementSibling.style.display = 'inline-block';
+        actions.previousElementSibling.style.display = 'flex';
       }
       }
   });
