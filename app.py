@@ -322,21 +322,6 @@ def buy_listings(listing_id=None):
         return render_template('buy_listings.html', listing=listing, is_seller=is_seller)
     return render_template('buy_listings.html', listing=None)
 
-"""
-@app.route('/clear_database')
-def clear_database():
-    try:
-        # delete all records from both tables
-        SellerListing.query.delete()
-        BuyerListing.query.delete()
-        # commit changes
-        db.session.commit()
-        return "Database cleared successfully"
-    except Exception as e:
-        db.session.rollback()
-        return f"Error clearing database: {str(e)}"
-"""
-
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 def edit_listing(listing_id):
     print("Method: ", request.method)
@@ -582,12 +567,6 @@ def submit_seller():
 
   #redirect to Swipe Market page
   return redirect(url_for('index'))
-
-@app.route('/contact_form', methods=['POST'])
-def contact_form():
-  email = request.form.get('email')
-  flash('Success! Your email has been submitted', 'success')
-  return redirect(url_for('/'))
 
 @app.route('/send_connection_email', methods=['POST'])
 def send_connection_email():
