@@ -689,9 +689,9 @@ def send_connection_email():
     body += ".</p>"
     
     if buyer_phone and buyer_phone.strip() != "":
-      body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}.</p>"
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email} or via phone at {buyer_phone}."
     else:
-      body += f"<p>{seller_name}, you can reach {buyer_name} at {buyer_email}.</p>"
+      body += f"{seller_name}, you can reach {buyer_name} at {buyer_email}."
     
     body += (
       f"<p>It's up to you to coordinate a meeting and exchange payment details - as a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
