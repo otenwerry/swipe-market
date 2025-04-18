@@ -25,9 +25,7 @@ function loadProfileData() {
     // Fetch phone number from server
     fetch('/api/get_profile', {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('googleCredential')}`
-        }
+        credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
@@ -61,9 +59,9 @@ function saveProfileChanges() {
     
     fetch('/api/update_profile', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('googleCredential')}`
         },
         body: JSON.stringify({
             name: name,
@@ -95,9 +93,9 @@ function blockUser() {
     
     fetch('/api/block_user', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('googleCredential')}`
         },
         body: JSON.stringify({
             blocked_uni: uniToBlock
@@ -122,9 +120,7 @@ function blockUser() {
 function loadBlockedUsers() {
     fetch('/api/get_blocked_users', {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('googleCredential')}`
-        }
+        credentials: 'same-origin'
     })
     .then(response => response.json())
     .then(data => {
@@ -173,9 +169,9 @@ function loadBlockedUsers() {
 function unblockUser(uni) {
     fetch('/api/unblock_user', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('googleCredential')}`
         },
         body: JSON.stringify({
             blocked_uni: uni
