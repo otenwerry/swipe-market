@@ -189,17 +189,6 @@ if (email) {
   console.log(`Stored user email consistently as: ${email}`);
 }
 }
-// Initialize Google Sign-In when page loads
-window.onload = function () {
-google.accounts.id.initialize({
-  client_id: "YOUR_GOOGLE_CLIENT_ID",
-  callback: handleCredentialResponse
-});
-document.getElementById("g_id_signin").addEventListener("click", function () {
-  alert("clicked custom sign in")
-  google.accounts.id.prompt(); // Triggers the Google Sign-In popup
-});
-};
 //gets user's google credential and stores it in localStorage.
 function handleCredentialResponse(response) {
   // Decode the credential response
@@ -655,8 +644,6 @@ if (!isUserLoggedIn()) {
   }
   return true;
 }
-
-
 // --- INITIALIZATION AND EVENT LISTENERS ---
 
 //checks if user is logged in when page loads.
@@ -707,69 +694,11 @@ window.onload = function() {
       if (!document.getElementById('dropdown-styles')) {
         const style = document.createElement('style');
         style.id = 'dropdown-styles';
-        /*
-        style.textContent = `
-          .profile-menu {
-            position: relative;
-            display: inline-block;
-          }
-          
-          .profile-menu img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: opacity 0.3s;
-          }
-          
-          .profile-menu img:hover {
-            opacity: 0.8;
-          }
-          
-          .profile-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            min-width: 150px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 4px;
-            padding: 5px 0;
-          }
-          
-          .profile-menu.active .profile-dropdown {
-            display: block;
-          }
-          
-          .profile-dropdown button, .profile-dropdown a button {
-            width: 100%;
-            padding: 10px 15px;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #333;
-            transition: background-color 0.3s;
-          }
-          
-          .profile-dropdown button:hover, .profile-dropdown a button:hover {
-            background-color: #f1f1f1;
-          }
-          
-          .profile-dropdown a {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-          }
-        `;*/
         document.head.appendChild(style);
       }
 
       console.log('User is logged in:', payload.email);  // Debug log
 
-      // Extract first name in case token was stored before this feature was added
       if (payload.name) {
         const firstName = payload.name.split(' ')[0];
         localStorage.setItem('userName', firstName);
@@ -987,7 +916,7 @@ function disableContactedListings() {
   });
   
   // We no longer need to check for blocked listings
-}
+};
 
 // When the contact form is submitted, we'll let the server handle recording the contact
 document.addEventListener('DOMContentLoaded', function() {
