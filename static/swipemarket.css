@@ -394,7 +394,6 @@
     justify-content: center;
     width: 100%;
     flex-wrap: nowrap;
-    background-color: green;
   }
 
   .delete-button, .edit-button {

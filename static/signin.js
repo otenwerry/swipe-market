@@ -2,7 +2,7 @@
 const CSRF_TOKEN = document
   .querySelector('meta[name="csrf-token"]')
   .getAttribute('content');
-
+/*
 function postJSON(url, data) {
   return fetch(url, {
     method: 'POST',
@@ -13,7 +13,7 @@ function postJSON(url, data) {
     },
     body: JSON.stringify(data)
   });
-}
+}*/
 
 // --- GOOGLE SIGN IN ---
 
