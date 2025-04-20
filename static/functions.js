@@ -1,6 +1,19 @@
 //get CSRF token from meta tag
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+// A helper to do POST with CSRF:
+function postJSON(url, data) {
+  return fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',           // include session cookie
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken           // send the CSRF token
+    },
+    body: JSON.stringify(data)
+  });
+}
+
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 document.addEventListener('DOMContentLoaded', function() {
@@ -220,7 +233,10 @@ storeUserEmail(responsePayload.email);
     },
     body: JSON.stringify({ uni: uni }),
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('CSRF validation failed');
+    return response.json();
+  })
   .then(data => {
     if (data.banned) {
       alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
@@ -345,7 +361,10 @@ function checkUserExistence(email) {
     },
     body: JSON.stringify({ email: email }),
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('CSRF validation failed');
+    return response.json();
+  })
   .then(data => {
     if (data.exists) {
       console.log('User found in database');
@@ -531,7 +550,10 @@ function saveNewUser(phone, name) {
       phone: phone
     })
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('CSRF validation failed');
+    return response.json();
+  })
   .then(data => {
     if (data.success) {
       console.log('User saved successfully');
@@ -881,7 +903,10 @@ function fetchContactedListings() {
     },
     body: JSON.stringify({ email: userEmail }),
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('CSRF validation failed');
+    return response.json();
+  })
   .then(data => {
     if (data.success) {
       // Store the contacted listings in a data attribute on the body for quick access
@@ -1062,7 +1087,10 @@ function sendUserEmailToServer() {
     },
     body: JSON.stringify({ email: userEmail })
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('CSRF validation failed');
+    return response.json();
+  })
   .then(data => {
     if (data.success) {
       // If we're on a URL with email parameter, clean it up
