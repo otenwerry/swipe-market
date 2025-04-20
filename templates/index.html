@@ -146,7 +146,7 @@
             <td>{{ listing.start_time }} - {{ listing.end_time }}</td>
             <td>${{ "%.2f"|format(listing.price if listing.price is not none else 0) }}</td>
             <td>{{ listing.payment_methods }}</td>
-            <td style="text-align: center;">
+            <td>
               <button type="button" class="contact-button" 
                       data-listing-id="{{ listing.id }}" 
                       data-listing-type="seller" 

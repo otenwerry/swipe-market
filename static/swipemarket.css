@@ -385,11 +385,10 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
+  
   .listing-actions {
-    display: flex;
     flex-direction: row;
-    gap: 4px; 
+    gap: 10px; 
     align-items: center;
     justify-content: center;
     flex-wrap: nowrap;
@@ -397,7 +396,7 @@
 
   .delete-button, .edit-button {
     font-size: 0.9rem;
-    padding: 8px 12px;
+    padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -514,13 +513,12 @@
     color: #000000;
     box-sizing: border-box;
   }
-
+  /*
   table th:last-child,
   table td:last-child {
     text-align: center;
-    /* if you want vertical centering on multiline rows: */
     vertical-align: middle;
-  }
+  }*/
 
   /* Style for read-only inputs - moved after general input styles and made more specific */
   input[type="email"][readonly],

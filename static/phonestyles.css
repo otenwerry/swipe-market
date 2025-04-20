@@ -192,7 +192,7 @@
       /* Adjust delete and edit buttons to match contact button size */
       .delete-button, .edit-button {
         font-size: 11px;
-        padding: 4px 8px;
+        padding: 3px 6px;
         align-items: center;
         justify-content: center;
       }
@@ -200,22 +200,10 @@
       .listing-actions {
         display: flex;
         flex-direction: row;
-        gap: 4px; 
+        gap: 5px; 
         align-items: center;
         justify-content: center;
         flex-wrap: nowrap;
-      }
-
-      table th:nth-child(6),
-      table td:nth-child(6) {
-        min-width: 110px;  /* Increase if still wrapping */
-        white-space: nowrap;
-      }
-
-      td:has(.listing-actions) {
-        text-align: center;
-        align-items: center;
-        justify-content: center;
       }
 
       .profile-menu {

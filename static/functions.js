@@ -305,17 +305,17 @@ storeUserEmail(responsePayload.email);
       
       if (isOwner) {
         console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
-        actions.style.display = 'flex';
+        actions.style.display = 'inline-flex';
         contactButton.style.display = 'none';
       } else {
         actions.style.display = 'none';
-        contactButton.style.display = 'flex';
+        contactButton.style.display = 'inline-flex';
       }
     } else {
       // If either email is missing, just hide the actions
       actions.style.display = 'none';
       if (actions.previousElementSibling) {
-        actions.previousElementSibling.style.display = 'flex';
+        actions.previousElementSibling.style.display = 'inline-flex';
       }
       }
     });
@@ -805,17 +805,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const contactButton = actions.previousElementSibling;
       
       if (isOwner) {
-          actions.style.display = 'flex';
+          actions.style.display = 'inline-flex';
           contactButton.style.display = 'none';
       } else {
           actions.style.display = 'none';
-          contactButton.style.display = 'flex';
+          contactButton.style.display = 'inline-flex';
       }
     } else {
       // If either email is missing, just hide the actions
       actions.style.display = 'none';
       if (actions.previousElementSibling) {
-        actions.previousElementSibling.style.display = 'flex';
+        actions.previousElementSibling.style.display = 'inline-flex';
       }
       }
   });
