@@ -10,9 +10,11 @@ import string
 import pytz
 from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
+from flask import session, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from google.oauth2 import id_token
+from functools import wraps
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
@@ -36,6 +38,8 @@ migrate = Migrate(app, db)
 
 ny_tz = pytz.timezone('America/New_York')
 
+#VALIDATION FUNCTIONS
+
 def validate_email_domain(email):
     """Validate that the email is from columbia.edu or barnard.edu domain."""
     if not email:
@@ -51,6 +55,27 @@ def is_uni_banned(uni):
     banned_unis_str = os.environ.get('BANNED_UNIS', '')
     banned_unis = [u.strip().lower() for u in banned_unis_str.split(',')] if banned_unis_str else []
     return uni.lower() in banned_unis
+
+# Extract UNI from an email address
+def extract_uni(email):
+    if not email:
+        return None
+    
+    # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
+    if '@columbia.edu' in email or '@barnard.edu' in email:
+        return email.split('@')[0].lower()
+    
+    return None
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user_email' not in session:
+            flash('Please sign in to continue', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated
 
 #DB MODEL CLASSES
 
@@ -943,17 +968,6 @@ def get_contacted_listings():
         "success": True,
         "contacted_listings": contacted_listings
     })
-
-# Extract UNI from an email address
-def extract_uni(email):
-    if not email:
-        return None
-    
-    # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
-    if '@columbia.edu' in email or '@barnard.edu' in email:
-        return email.split('@')[0].lower()
-    
-    return None
 
 # Routes for blocked users
 @app.route('/api/block_user', methods=['POST'])
