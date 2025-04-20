@@ -1,3 +1,6 @@
+//get CSRF token from meta tag
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 document.addEventListener('DOMContentLoaded', function() {
@@ -210,8 +213,10 @@ storeUserEmail(responsePayload.email);
   // Check if UNI is banned before proceeding
   fetch('/api/check_banned_uni', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': CSRF_TOKEN,
     },
     body: JSON.stringify({ uni: uni }),
   })
@@ -333,8 +338,10 @@ storeUserEmail(responsePayload.email);
 function checkUserExistence(email) {
   fetch('/api/check_user', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': CSRF_TOKEN,
     },
     body: JSON.stringify({ email: email }),
   })
@@ -513,8 +520,10 @@ function saveNewUser(phone, name) {
   // Make API call to save user
   fetch('/api/save_user', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': CSRF_TOKEN,
     },
     body: JSON.stringify({
       name: name,
@@ -868,8 +877,10 @@ function fetchContactedListings() {
   
   fetch('/api/get_contacted_listings', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': CSRF_TOKEN,
     },
     body: JSON.stringify({ email: userEmail }),
   })
@@ -1047,8 +1058,10 @@ function sendUserEmailToServer() {
   // Send email to server via POST request
   fetch('/api/set_user_email', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': CSRF_TOKEN,
     },
     body: JSON.stringify({ email: userEmail })
   })
