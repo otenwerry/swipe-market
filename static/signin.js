@@ -1,7 +1,8 @@
 // Grab the CSRF token from the <meta> tag:
-const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+const CSRF_TOKEN = document
+  .querySelector('meta[name="csrf-token"]')
+  .getAttribute('content');
 
-// A helper to do POST with CSRF:
 function postJSON(url, data) {
   return fetch(url, {
     method: 'POST',

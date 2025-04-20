@@ -13,6 +13,8 @@ from flask import make_response, g, render_template, flash
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 app = Flask(__name__) #sets up a flask application
 csrf = CSRFProtect(app)
@@ -203,6 +205,28 @@ def update_expired_listings():
 
 # PAGE ROUTES
 
+@app.route('/api/auth/google', methods=['POST'])
+def google_auth():
+    token = request.json.get('id_token')
+    try:
+        # Verify the token’s integrity & claims
+        idinfo = id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            os.environ['GOOGLE_CLIENT_ID']
+        )
+        # Ensure it’s from a Columbia/Barnard account
+        email = idinfo['email']
+        if not (email.endswith('@columbia.edu') or email.endswith('@barnard.edu')):
+            raise ValueError("Unauthorized domain")
+
+        session['user_id'] = idinfo['sub']
+        session['user_email'] = email
+        session.permanent = True
+        return jsonify(success=True)
+    except ValueError as e:
+        # Invalid token or wrong audience/domain
+        return jsonify(success=False, error=str(e)), 401
 #regular route for the Swipe Market page
 @app.route('/')
 def index():

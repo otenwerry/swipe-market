@@ -394,9 +394,20 @@
     justify-content: center;
     width: 100%;
     flex-wrap: nowrap;
+    background-color: green;
+  }
+
+  .delete-button, .edit-button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 50px;
   }
   
-  .delete-button, .edit-button, .block-button {
+  .block-button {
     font-size: 0.9rem;
     padding: 8px 12px;
     border: none;
