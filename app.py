@@ -355,36 +355,7 @@ def index():
 
     return response
 
-#regular route for the sell listings page
-@app.route('/sell_listings/<int:listing_id>', methods=['GET'])
-@app.route('/sell_listings', methods=['GET'])
-def sell_listings(listing_id=None):
-    if listing_id:
-        # Try to find the listing in both seller and buyer tables
-        listing = SellerListing.query.get(listing_id)
-        is_seller = True
-        if not listing:
-            listing = BuyerListing.query.get(listing_id)
-            is_seller = False
-            if not listing:
-                return redirect(url_for('index'))
-        return render_template('sell_listings.html', listing=listing, is_seller=is_seller)
-    return render_template('sell_listings.html', listing=None)
 
-@app.route('/buy_listings/<int:listing_id>', methods=['GET'])
-@app.route('/buy_listings', methods=['GET'])
-def buy_listings(listing_id=None):
-    if listing_id:
-        # Try to find the listing in both seller and buyer tables
-        listing = BuyerListing.query.get(listing_id)
-        is_seller = False
-        if not listing:
-            listing = SellerListing.query.get(listing_id)
-            is_seller = True
-            if not listing:
-                return redirect(url_for('index'))
-        return render_template('buy_listings.html', listing=listing, is_seller=is_seller)
-    return render_template('buy_listings.html', listing=None)
 
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 @login_required
