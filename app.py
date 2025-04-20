@@ -14,7 +14,6 @@ from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
 
 app = Flask(__name__) #sets up a flask application
 csrf = CSRFProtect(app)
