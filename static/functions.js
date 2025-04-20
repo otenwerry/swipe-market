@@ -861,11 +861,8 @@ function editListing(listingId, listingType) {
 if (!requireSignIn()) {
   return;
 }
-
-  const userEmail = localStorage.getItem('userEmail');
-console.log(`Attempting to edit listing ${listingId} of type ${listingType} as ${userEmail}`);
-
-window.location.href = `/edit_listing/${listingId}?user_email=${encodeURIComponent(userEmail)}&listing_type=${encodeURIComponent(listingType)}`; 
+  console.log(`Attempting to edit listing ${listingId} of type ${listingType}`);
+  window.location.href = `/edit_listing/${listingId}?listing_type=${encodeURIComponent(listingType)}`; 
 }
 
 // Function to fetch contacted listings from the database

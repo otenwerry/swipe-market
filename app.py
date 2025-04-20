@@ -331,7 +331,10 @@ def buy_listings(listing_id=None):
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
 def edit_listing(listing_id):
     print("Method: ", request.method)
-    user_email = request.args.get('user_email') if request.method == 'GET' else request.form.get('poster_email')
+    if request.method == 'GET':
+        user_email = session.get('user_email') or request.cookies.get('userEmail')
+    else:
+        user_email = request.form.get('poster_email')
     # Get the listing type from query param (GET) or form data (POST)
     listing_type = request.args.get('listing_type') if request.method == 'GET' else request.form.get('listing_type')
     print(f"Edit attempt - User email: {user_email}, Listing type: {listing_type}")
