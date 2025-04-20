@@ -579,7 +579,20 @@ def submit_buyer():
 #and putting them into the database, then send
 #the user back to the Swipe Market page
 @app.route('/submit_seller', methods=['POST'])
+@login_required
 def submit_seller():
+  seller_email = session['user_email']
+
+  # Validate domain
+  if not validate_email_domain(seller_email):
+    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
+    return redirect(url_for('sell_listings'))
+  # Check if UNI is banned
+  seller_uni = extract_uni(seller_email)
+  if seller_uni and is_uni_banned(seller_uni):
+    flash("Error: Your account has been banned.", "error")
+    return redirect(url_for('sell_listings'))
+  
   #get values from the form
   dining_halls = request.form.getlist('dining_hall[]')
   if not dining_halls:
@@ -598,25 +611,6 @@ def submit_seller():
     return redirect(url_for('sell_listings'))
     
   payment_methods = ', '.join(payment_methods_list)
-  
-  seller_email = request.form.get('poster_email')
-  
-  # Validate email domain
-  if not validate_email_domain(seller_email):
-    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
-    return redirect(url_for('sell_listings'))
-  
-  # Check if UNI is banned
-  seller_uni = extract_uni(seller_email)
-  if seller_uni and is_uni_banned(seller_uni):
-    flash("Error: Your account has been banned.", "error")
-    return redirect(url_for('sell_listings'))
-  
-  # Get or create user
-  user = User.query.filter_by(email=seller_email).first()
-  if not user:
-    flash("Error: User not found. Please sign in first.", "error")
-    return redirect(url_for('sell_listings'))
 
   # Validate that if date is today, end time is in the future
   now = datetime.now(ny_tz)
@@ -643,6 +637,12 @@ def submit_seller():
         return redirect(url_for('sell_listings'))
   except (ValueError, TypeError):
     flash("Error: Please enter a valid price (number).", "error")
+    return redirect(url_for('sell_listings'))
+  
+  # Get or create user
+  user = User.query.filter_by(email=seller_email).first()
+  if not user:
+    flash("Error: User not found. Please sign in first.", "error")
     return redirect(url_for('sell_listings'))
 
   #create new SellerListing instance
