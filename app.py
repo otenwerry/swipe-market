@@ -744,7 +744,7 @@ def send_connection_email():
       f"They can pay via {payment_methods_formatted}.</p>"
       f"<p>{buyer_name}, remember to delete your listing "
       f"<a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=buyer'>here</a> once you've agreed to the sale.</p>"
-      f"<p>Best,<br>Swipe Market Team</p>"
+      f"<p>Best,<br>Swipe Market</p>"
     )
     
   # If receiver is seller
@@ -799,7 +799,7 @@ def send_connection_email():
       f"<p>{seller_name}, if this is the only swipe you want to sell from this listing, "
       f"remember to delete your listing <a href='https://swipemarketcu.com/?auto_delete={listing_id}&listing_type=seller'>here</a> "
       f"once you've agreed to the sale.</p>"
-      f"<p>Best,<br>Swipe Market Team</p>"
+      f"<p>Best,<br>Swipe Market</p>"
     )
 
   # Send email
