@@ -827,17 +827,20 @@ if (!requireSignIn()) {
       return;
   }
 
-const userEmail = localStorage.getItem('userEmail');
-console.log(`Attempting to delete listing ${listingId} of type ${listingType} as ${userEmail}`);
+  if (!confirm('Are you sure you want to delete this listing?')) {
+    return;
+  }
 
-  if (confirm('Are you sure you want to delete this listing?')) {
-      const formData = new FormData();
-      formData.append('user_email', userEmail);
+  const formData = new FormData();
   formData.append('listing_type', listingType);
       
-      fetch(`/delete_listing/${listingId}`, {
-          method: 'POST',
-          body: formData
+  fetch(`/delete_listing/${listingId}`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'X-CSRF-TOKEN': CSRF_TOKEN,
+    },
+    body: formData
   })
   .then(response => {
     if (response.ok) {
@@ -855,7 +858,7 @@ console.log(`Attempting to delete listing ${listingId} of type ${listingType} as
     alert('An error occurred while trying to delete the listing.');
   });
 }
-}
+
 //shows edit form.
 function editListing(listingId, listingType) {
 if (!requireSignIn()) {
