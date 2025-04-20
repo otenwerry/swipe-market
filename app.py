@@ -45,7 +45,7 @@ class SellerListing(db.Model):
     payment_methods = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='seller_listings')
-    created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(ny_tz))
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
@@ -63,7 +63,7 @@ class BuyerListing(db.Model):
     payment_methods = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='buyer_listings')
-    created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(ny_tz))
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
@@ -75,7 +75,7 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     phone = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(ny_tz))
     
     def __repr__(self):
         return f'<User {self.id} - {self.name}>'
@@ -96,7 +96,7 @@ class BlockedUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     blocker_uni = db.Column(db.String(20), nullable=False)
     blocked_uni = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now(ny_tz))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(ny_tz))
     
     # Ensure a user can't block the same UNI twice
     __table_args__ = (
