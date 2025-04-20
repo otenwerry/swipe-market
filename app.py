@@ -660,10 +660,9 @@ def send_connection_email():
 
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
+@login_required
 def delete_listing(listing_id):
-    # Get the user's email from the request
-    user_email = request.form.get('user_email')
-    # Get the listing type (seller or buyer) from the request
+    user_email = session['user_email']
     listing_type = request.form.get('listing_type')
     print(f"Delete attempt - User email: {user_email}, Listing type: {listing_type}")
     if not user_email:
@@ -677,27 +676,10 @@ def delete_listing(listing_id):
     if not listing_type or listing_type not in ['seller', 'buyer']:
         return f"Invalid listing type: {listing_type} - must be 'seller' or 'buyer'", 400
 
-    # Get the listing based on the specified type
-    if listing_type == 'seller':
-        listing = SellerListing.query.get_or_404(listing_id)
-        is_seller = True
-        owner_email = listing.user.email
-    else:  # listing_type == 'buyer'
-        listing = BuyerListing.query.get_or_404(listing_id)
-        is_seller = False
-        owner_email = listing.user.email
+    listing = (SellerListing if listing_type == 'seller' else BuyerListing).query.get_or_404(listing_id)
+    if listing.user.email.lower() != user_email.lower():
+        return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {listing.user.email}", 403
 
-    print(f"Delete attempt - Listing owner email: {owner_email}")
-    print(f"Delete attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
-    
-    # Check if the user owns the listing (case insensitive comparison)
-    if (is_seller and listing.user.email.lower() != user_email.lower()) or \
-       (not is_seller and listing.user.email.lower() != user_email.lower()):
-        print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}")
-        return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}", 403
-        
-    print(f"Delete authorized - User {user_email} owns listing {listing_id}")
-    #set is_active to false
     listing.is_active = False
     db.session.commit()
     return redirect(url_for('index'))
