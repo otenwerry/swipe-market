@@ -1,5 +1,5 @@
 // Grab the CSRF token from the <meta> tag:
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+/*const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 function postJSON(url, data) {
   return fetch(url, {
@@ -11,7 +11,7 @@ function postJSON(url, data) {
     },
     body: JSON.stringify(data)
   });
-}
+}*/
 
 document.addEventListener('DOMContentLoaded', function() {
     // Load existing profile data

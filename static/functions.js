@@ -2,7 +2,7 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 // A helper to do POST with CSRF:
-/*
+
 function postJSON(url, data) {
   return fetch(url, {
     method: 'POST',
@@ -13,7 +13,7 @@ function postJSON(url, data) {
     },
     body: JSON.stringify(data)
   });
-}*/
+}
 
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
