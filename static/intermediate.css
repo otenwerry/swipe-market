@@ -5,9 +5,12 @@
   
   /* Show switch-table links on smaller screens */
   .switch-table {
-    display: inline-block;
-    margin-left: 10px;
+    display: block;
+    margin-left: 0;
+    margin-top: 5px;
+    font-size: 16px;
   }
+  
   
   table th:nth-child(1),
   table td:nth-child(1) {
