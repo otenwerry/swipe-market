@@ -712,9 +712,9 @@ def save_user():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get_contacted_listings', methods=['POST'])
+@login_required
 def get_contacted_listings():
-    data = request.get_json()
-    email = data.get('email')
+    email = session['user_email']
     
     if not email:
         return jsonify({"success": False, "error": "Email is required"}), 400
@@ -735,6 +735,7 @@ def get_contacted_listings():
 
 # Routes for blocked users
 @app.route('/api/block_user', methods=['POST'])
+@login_required
 def block_user():
     # Get the user's email from the Authorization header
     blocker_email = session.get('user_email')
@@ -786,6 +787,7 @@ def block_user():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/unblock_user', methods=['POST'])
+@login_required
 def unblock_user():
     # Get the user's email from the session
     blocker_email = session.get('user_email')
@@ -827,6 +829,7 @@ def unblock_user():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get_blocked_users', methods=['GET'])
+@login_required
 def get_blocked_users():
     # Get the user's email from the session
     user_email = session.get('user_email')
@@ -890,6 +893,7 @@ def set_user_email():
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/get_profile', methods=['GET'])
+@login_required
 def get_profile():
     # Get the user's email from the session
     user_email = session.get('user_email')
@@ -909,6 +913,7 @@ def get_profile():
     })
 
 @app.route('/api/update_profile', methods=['POST'])
+@login_required
 def update_profile():
     # Get the user's email from the session
     user_email = session.get('user_email')
