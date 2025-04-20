@@ -603,4 +603,27 @@
     box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
   }
 
+  .price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dollar-sign {
+    position: absolute;
+    left: 10px;
+    color: #666;
+  }
+  .button-group {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .price-input-wrapper input {
+    padding-left: 25px;
+    align-items: center;
+    padding-top: 13px;
+  }
+
 

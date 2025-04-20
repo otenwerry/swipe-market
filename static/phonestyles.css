@@ -222,6 +222,11 @@
         height: 40px;
       }
 
+      .price-input-wrapper input {
+        padding-left: 25px;
+        padding-top: 10px;
+      }
+
       .profile-menu img {
         width: 24px;
         height: 24px;
