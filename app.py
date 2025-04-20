@@ -10,9 +10,11 @@ import string
 import pytz
 from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
+from flask import session, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from google.oauth2 import id_token
+from functools import wraps
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
@@ -36,6 +38,8 @@ migrate = Migrate(app, db)
 
 ny_tz = pytz.timezone('America/New_York')
 
+#VALIDATION FUNCTIONS
+
 def validate_email_domain(email):
     """Validate that the email is from columbia.edu or barnard.edu domain."""
     if not email:
@@ -51,6 +55,27 @@ def is_uni_banned(uni):
     banned_unis_str = os.environ.get('BANNED_UNIS', '')
     banned_unis = [u.strip().lower() for u in banned_unis_str.split(',')] if banned_unis_str else []
     return uni.lower() in banned_unis
+
+# Extract UNI from an email address
+def extract_uni(email):
+    if not email:
+        return None
+    
+    # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
+    if '@columbia.edu' in email or '@barnard.edu' in email:
+        return email.split('@')[0].lower()
+    
+    return None
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user_email' not in session:
+            flash('Please sign in to continue', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated
 
 #DB MODEL CLASSES
 
@@ -362,18 +387,11 @@ def buy_listings(listing_id=None):
     return render_template('buy_listings.html', listing=None)
 
 @app.route('/edit_listing/<int:listing_id>', methods=['GET', 'POST'])
+@login_required
 def edit_listing(listing_id):
-    print("Method: ", request.method)
-    if request.method == 'GET':
-        user_email = session.get('user_email') or request.cookies.get('userEmail')
-    else:
-        user_email = request.form.get('poster_email')
+    user_email = session['user_email']
     # Get the listing type from query param (GET) or form data (POST)
     listing_type = request.args.get('listing_type') if request.method == 'GET' else request.form.get('listing_type')
-    print(f"Edit attempt - User email: {user_email}, Listing type: {listing_type}")
-    
-    if not user_email:
-        return redirect(url_for('index'))
     
     # Check if UNI is banned
     user_uni = extract_uni(user_email)
@@ -461,210 +479,31 @@ def profile():
 
 
 
-#route for taking buyer listings from the form
-#and putting them into the database, then send
-#the user back to the Swipe Market page
-@app.route('/submit_buyer', methods=['POST'])
-def submit_buyer():
-  #get values from the form
-  dining_halls = request.form.getlist('dining_hall[]')
-  if not dining_halls:
-    flash("Error: Please select at least one dining hall.", "error")
-    return redirect(url_for('buy_listings'))
-    
-  dining_halls_str = ", ".join(dining_halls)
-  date = request.form.get('date')
-  start_time = request.form.get('start_time')
-  end_time = request.form.get('end_time')
-  price = request.form.get('price')
-  payment_methods_list = request.form.getlist('payment_methods[]')
-  
-  if not payment_methods_list:
-    flash("Error: Please select at least one payment method.", "error")
-    return redirect(url_for('buy_listings'))
-    
-  payment_methods = ', '.join(payment_methods_list)
-  
-  buyer_email = request.form.get('poster_email')
-  print("poster email: " + buyer_email)
-  
-  # Validate email domain
-  if not validate_email_domain(buyer_email):
-    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
-    return redirect(url_for('buy_listings'))
-  
-  # Check if UNI is banned
-  buyer_uni = extract_uni(buyer_email)
-  if buyer_uni and is_uni_banned(buyer_uni):
-    flash("Error: Your account has been banned.", "error")
-    return redirect(url_for('buy_listings'))
-  
-  # Get or create user
-  user = User.query.filter_by(email=buyer_email).first()
-  if not user:
-    flash("Error: User not found. Please sign in first.", "error")
-    return redirect(url_for('buy_listings'))
-
-  # Validate that if date is today, end time is in the future
-  now = datetime.now(ny_tz)
-  today_date = now.strftime("%Y-%m-%d")
-  
-  if date == today_date:
-      # Convert form end_time to datetime object for comparison
-      try:
-          end_hour, end_minute = map(int, end_time.split(':'))
-          end_datetime = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
-          
-          if end_datetime < now:
-              flash("Error: For today's listings, end time must be in the future.", "error")
-              return redirect(url_for('index'))
-      except Exception as e:
-          print(f"Time validation error: {e}")
-          flash("Error: Invalid time format.", "error")
-          return redirect(url_for('index'))
-
-  try:
-    price_value = float(price)
-    if price_value < 0:
-        flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('buy_listings'))
-  except (ValueError, TypeError):
-    flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('buy_listings'))
-
-  #create new BuyerListing instance
-  new_listing = BuyerListing(
-    dining_hall=dining_halls_str,
-    date=date,
-    start_time=start_time,
-    end_time=end_time,
-    price=price_value,
-    payment_methods=payment_methods,
-    user_id=user.id
-  )
-
-  #add new listing to database
-  db.session.add(new_listing)
-  db.session.commit()
-
-  #redirect to Swipe Market page
-  return redirect(url_for('index'))
-
-#route for taking seller listings from the form
-#and putting them into the database, then send
-#the user back to the Swipe Market page
-@app.route('/submit_seller', methods=['POST'])
-def submit_seller():
-  #get values from the form
-  dining_halls = request.form.getlist('dining_hall[]')
-  if not dining_halls:
-    flash("Error: Please select at least one dining hall.", "error")
-    return redirect(url_for('sell_listings'))
-    
-  dining_halls_str = ", ".join(dining_halls)
-  date = request.form.get('date')
-  start_time = request.form.get('start_time')
-  end_time = request.form.get('end_time')
-  price = request.form.get('price')
-  payment_methods_list = request.form.getlist('payment_methods[]')
-  
-  if not payment_methods_list:
-    flash("Error: Please select at least one payment method.", "error")
-    return redirect(url_for('sell_listings'))
-    
-  payment_methods = ', '.join(payment_methods_list)
-  
-  seller_email = request.form.get('poster_email')
-  
-  # Validate email domain
-  if not validate_email_domain(seller_email):
-    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
-    return redirect(url_for('sell_listings'))
-  
-  # Check if UNI is banned
-  seller_uni = extract_uni(seller_email)
-  if seller_uni and is_uni_banned(seller_uni):
-    flash("Error: Your account has been banned.", "error")
-    return redirect(url_for('sell_listings'))
-  
-  # Get or create user
-  user = User.query.filter_by(email=seller_email).first()
-  if not user:
-    flash("Error: User not found. Please sign in first.", "error")
-    return redirect(url_for('sell_listings'))
-
-  # Validate that if date is today, end time is in the future
-  now = datetime.now(ny_tz)
-  today_date = now.strftime("%Y-%m-%d")
-  
-  if date == today_date:
-      # Convert form end_time to datetime object for comparison
-      try:
-          end_hour, end_minute = map(int, end_time.split(':'))
-          end_datetime = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
-          
-          if end_datetime < now:
-              flash("Error: For today's listings, end time must be in the future.", "error")
-              return redirect(url_for('index'))
-      except Exception as e:
-          print(f"Time validation error: {e}")
-          flash("Error: Invalid time format.", "error")
-          return redirect(url_for('index'))
-
-  try:
-    price_value = float(price)
-    if price_value < 0:
-        flash("Error: Price cannot be negative.", "error")
-        return redirect(url_for('sell_listings'))
-  except (ValueError, TypeError):
-    flash("Error: Please enter a valid price (number).", "error")
-    return redirect(url_for('sell_listings'))
-
-  #create new SellerListing instance
-  new_listing = SellerListing(
-    dining_hall=dining_halls_str,
-    date=date,
-    start_time=start_time,
-    end_time=end_time,
-    price=price_value,
-    payment_methods=payment_methods,
-    user_id=user.id
-  )
-
-  #add new listing to database
-  db.session.add(new_listing)
-  db.session.commit()
-
-  #redirect to Swipe Market page
-  return redirect(url_for('index'))
 
 @app.route('/send_connection_email', methods=['POST'])
+@login_required
 def send_connection_email():
   listing_id = request.form.get('listing_id')
   listing_type = request.form.get('listing_type')
-  sender_email = request.form.get('sender_email')
 
-  print(f"Sending connection email - Listing ID: {listing_id}, Listing type: {listing_type}, Sender email: {sender_email}")
-  
+  sender_email = session['user_email']
+
   # Check if sender's UNI is banned
   sender_uni = extract_uni(sender_email)
   if sender_uni and is_uni_banned(sender_uni):
     flash("Error: Your account has been banned.", "error")
     return redirect(url_for('index'))
   
+  sender = User.query.filter_by(email=sender_email).first()
+  sender_name = sender.name
+  sender_phone = sender.phone or ""
+  
   # Get the listing and owner's email
   if listing_type == 'seller':
-    receiver_listing = SellerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Seller listing not found.", "error")
-      return redirect(url_for('index'))
-    receiver_email = receiver_listing.user.email
+    receiver = SellerListing.query.get(listing_id)
   else:
-    receiver_listing = BuyerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Buyer listing not found.", "error")
-      return redirect(url_for('index'))
-    receiver_email = receiver_listing.user.email
+    receiver = BuyerListing.query.get(listing_id) 
+  receiver_email = receiver.user.email
   
   # Extract UNIs for block checking
   sender_uni = extract_uni(sender_email)
@@ -695,33 +534,29 @@ def send_connection_email():
   db.session.add(contact_record)
   
   # If receiver is buyer
-  if isinstance(receiver_listing, BuyerListing):
-    buyer_listing = receiver_listing
-    buyer_name = buyer_listing.user.name
-    buyer_email = buyer_listing.user.email
-    buyer_phone = buyer_listing.user.phone
+  if isinstance(receiver, BuyerListing):
+    buyer_name = receiver.user.name
+    buyer_email = receiver.user.email
+    buyer_phone = receiver.user.phone
     # And sender is seller
-    seller_name = request.form.get('sender_name')
-    seller_email = request.form.get('sender_email')
+    seller_name = sender_name
+    seller_email = sender_email
     
     # Get sender's phone if available
-    seller_phone = ""
-    sender_user = User.query.filter_by(email=seller_email).first()
-    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-      seller_phone = sender_user.phone
+    seller_phone = sender_phone
 
     # Format times to 12-hour format
-    start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
-    end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
+    start_time_formatted = format_time_to_12hour(receiver.start_time)
+    end_time_formatted = format_time_to_12hour(receiver.end_time)
     # Format date without year
-    date_formatted = format_date_without_year(buyer_listing.date)
+    date_formatted = format_date_without_year(receiver.date)
     # Format dining halls and payment methods
-    dining_halls_formatted = format_dining_halls(buyer_listing.dining_hall)
-    payment_methods_formatted = format_payment_methods(buyer_listing.payment_methods)
+    dining_halls_formatted = format_dining_halls(receiver.dining_hall)
+    payment_methods_formatted = format_payment_methods(receiver.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
-    price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
+    price_str = f"{receiver.price:.2f}" if receiver.price is not None else "0.00"
     body = (
       f"<p>Hi {buyer_name},</p>"
       f"<p>{seller_name} is interested in selling a swipe to you! "
@@ -749,32 +584,28 @@ def send_connection_email():
     
   # If receiver is seller
   else:
-    seller_listing = receiver_listing
-    seller_name = seller_listing.user.name
-    seller_email = seller_listing.user.email
-    seller_phone = seller_listing.user.phone
+    seller_name = receiver.user.name
+    seller_email = receiver.user.email
+    seller_phone = receiver.user.phone
     # And sender is buyer
-    buyer_name = request.form.get('sender_name')
-    buyer_email = request.form.get('sender_email')
+    buyer_name = sender_name
+    buyer_email = sender_email
     
     # Get sender's phone if available
-    buyer_phone = ""
-    sender_user = User.query.filter_by(email=buyer_email).first()
-    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-      buyer_phone = sender_user.phone
+    buyer_phone = sender_phone
 
     # Format times to 12-hour format
-    start_time_formatted = format_time_to_12hour(seller_listing.start_time)
-    end_time_formatted = format_time_to_12hour(seller_listing.end_time)
+    start_time_formatted = format_time_to_12hour(receiver.start_time)
+    end_time_formatted = format_time_to_12hour(receiver.end_time)
     # Format date without year
-    date_formatted = format_date_without_year(seller_listing.date)
+    date_formatted = format_date_without_year(receiver.date)
     # Format dining halls and payment methods
-    dining_halls_formatted = format_dining_halls(seller_listing.dining_hall)
-    payment_methods_formatted = format_payment_methods(seller_listing.payment_methods)
+    dining_halls_formatted = format_dining_halls(receiver.dining_hall)
+    payment_methods_formatted = format_payment_methods(receiver.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
-    price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
+    price_str = f"{receiver.price:.2f}" if receiver.price is not None else "0.00"
     body = (
       f"<p>Hi {seller_name},</p>"
       f"<p>{buyer_name} is interested in buying a swipe from you! "
@@ -818,10 +649,9 @@ def send_connection_email():
 
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
+@login_required
 def delete_listing(listing_id):
-    # Get the user's email from the request
-    user_email = request.form.get('user_email')
-    # Get the listing type (seller or buyer) from the request
+    user_email = session['user_email']
     listing_type = request.form.get('listing_type')
     print(f"Delete attempt - User email: {user_email}, Listing type: {listing_type}")
     if not user_email:
@@ -835,27 +665,10 @@ def delete_listing(listing_id):
     if not listing_type or listing_type not in ['seller', 'buyer']:
         return f"Invalid listing type: {listing_type} - must be 'seller' or 'buyer'", 400
 
-    # Get the listing based on the specified type
-    if listing_type == 'seller':
-        listing = SellerListing.query.get_or_404(listing_id)
-        is_seller = True
-        owner_email = listing.user.email
-    else:  # listing_type == 'buyer'
-        listing = BuyerListing.query.get_or_404(listing_id)
-        is_seller = False
-        owner_email = listing.user.email
+    listing = (SellerListing if listing_type == 'seller' else BuyerListing).query.get_or_404(listing_id)
+    if listing.user.email.lower() != user_email.lower():
+        return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {listing.user.email}", 403
 
-    print(f"Delete attempt - Listing owner email: {owner_email}")
-    print(f"Delete attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
-    
-    # Check if the user owns the listing (case insensitive comparison)
-    if (is_seller and listing.user.email.lower() != user_email.lower()) or \
-       (not is_seller and listing.user.email.lower() != user_email.lower()):
-        print(f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}")
-        return f"Unauthorized - You don't own this listing. User email: {user_email}, Listing owner email: {owner_email}", 403
-        
-    print(f"Delete authorized - User {user_email} owns listing {listing_id}")
-    #set is_active to false
     listing.is_active = False
     db.session.commit()
     return redirect(url_for('index'))
@@ -943,17 +756,6 @@ def get_contacted_listings():
         "success": True,
         "contacted_listings": contacted_listings
     })
-
-# Extract UNI from an email address
-def extract_uni(email):
-    if not email:
-        return None
-    
-    # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
-    if '@columbia.edu' in email or '@barnard.edu' in email:
-        return email.split('@')[0].lower()
-    
-    return None
 
 # Routes for blocked users
 @app.route('/api/block_user', methods=['POST'])
@@ -1177,18 +979,14 @@ def post_listings():
     return render_template('post-listings.html')
 
 @app.route('/submit_listing', methods=['POST'])
+@login_required
 def submit_listing():
-    # Check if user is logged in
-    user_email = request.form.get('poster_email')
-    if not user_email:
-        flash("Please sign in to submit a listing.", "error")
-        return redirect(url_for('post_listings'))
+    user_email = session['user_email']
         
     # Validate email domain
     if not validate_email_domain(user_email):
         flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
         return redirect(url_for('post_listings'))
-        
     # Check if UNI is banned
     user_uni = extract_uni(user_email)
     if user_uni and is_uni_banned(user_uni):
@@ -1214,15 +1012,8 @@ def submit_listing():
         
     payment_methods = ', '.join(payment_methods_list)
     
-    poster_name = request.form.get('poster_name')
     poster_email = request.form.get('poster_email')
     listing_type = request.form.get('listing_type')
-    
-    # Always retrieve phone number from User model
-    phone = ""
-    user = User.query.filter_by(email=poster_email).first()
-    if user and user.phone and user.phone.strip() != "":
-        phone = user.phone
 
     # Validate that if date is today, end time is in the future
     now = datetime.now(ny_tz)
@@ -1249,6 +1040,8 @@ def submit_listing():
     except (ValueError, TypeError):
         flash("Error: Please enter a valid price (number).", "error")
         return redirect(url_for('post_listings'))
+
+    user = User.query.filter_by(email=poster_email).first()
 
     # Create new listing based on type
     if listing_type == 'seller':
