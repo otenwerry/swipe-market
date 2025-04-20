@@ -125,8 +125,9 @@
         </div>
       </div>
       <div class="tables-container">
-      <table>
-        <caption>Buy a Swipe 
+      <table id="buy-table">
+        <caption>Buy a Swipe
+          <a href="#sell-table" class="switch-table">[Jump to Sell Table]</a>
         </caption> 
         <thead>
           <tr>
@@ -165,8 +166,10 @@
           {% endfor %}
         </tbody>
       </table>
-      <table>
-        <caption>Sell a Swipe</caption>
+      <table id="sell-table">
+        <caption>Sell a Swipe
+          <a href="#buy-table" class="switch-table">[Jump to Buy Table]</a>
+        </caption>
         <thead>
           <tr>
             <th>Dining Hall(s)</th>
