@@ -36,6 +36,13 @@ migrate = Migrate(app, db)
 
 ny_tz = pytz.timezone('America/New_York')
 
+def validate_email_domain(email):
+    """Validate that the email is from columbia.edu or barnard.edu domain."""
+    if not email:
+        return False
+    email = email.lower()
+    return email.endswith('@columbia.edu') or email.endswith('@barnard.edu')
+
 #DB MODEL CLASSES
 
 #class for seller listings
@@ -444,6 +451,11 @@ def submit_buyer():
   buyer_email = request.form.get('poster_email')
   print("poster email: " + buyer_email)
   
+  # Validate email domain
+  if not validate_email_domain(buyer_email):
+    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
+    return redirect(url_for('buy_listings'))
+  
   # Get or create user
   user = User.query.filter_by(email=buyer_email).first()
   if not user:
@@ -520,6 +532,11 @@ def submit_seller():
   payment_methods = ', '.join(payment_methods_list)
   
   seller_email = request.form.get('poster_email')
+  
+  # Validate email domain
+  if not validate_email_domain(seller_email):
+    flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
+    return redirect(url_for('sell_listings'))
   
   # Get or create user
   user = User.query.filter_by(email=seller_email).first()
@@ -813,6 +830,10 @@ def save_user():
     if not email or not name:
         return jsonify({"success": False, "error": "Name and email are required"}), 400
     
+    # Validate email domain
+    if not validate_email_domain(email):
+        return jsonify({"success": False, "error": "Only Columbia and Barnard email addresses are allowed"}), 400
+    
     # Check if user already exists
     user = User.query.filter_by(email=email).first()
     if user:
@@ -1002,10 +1023,15 @@ def set_user_email():
     try:
         data = request.get_json()
         email = data.get('email')
-        if email:
-            session['user_email'] = email
-            return jsonify({"success": True})
-        return jsonify({"success": False, "error": "No email provided"}), 400
+        if not email:
+            return jsonify({"success": False, "error": "No email provided"}), 400
+            
+        # Validate email domain
+        if not validate_email_domain(email):
+            return jsonify({"success": False, "error": "Only Columbia and Barnard email addresses are allowed"}), 400
+            
+        session['user_email'] = email
+        return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -1075,6 +1101,11 @@ def submit_listing():
     user_email = request.form.get('poster_email')
     if not user_email:
         flash("Please sign in to submit a listing.", "error")
+        return redirect(url_for('post_listings'))
+        
+    # Validate email domain
+    if not validate_email_domain(user_email):
+        flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
         return redirect(url_for('post_listings'))
         
     # Get values from the form
