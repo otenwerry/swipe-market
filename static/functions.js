@@ -1,129 +1,10 @@
-export function getESTDate() {
-  const now = new Date();
-  const estDateString = now.toLocaleString("en-US", { timeZone: "America/New_York" });
-  return new Date(estDateString);
-}
-
-
-export function timeValidation() {// set default date to today
-const today = getESTDate();
-const dateInput = document.getElementById('date');
-const startTimeInput = document.getElementById('start_time');
-const endTimeInput = document.getElementById('end_time');
-const priceInput = document.getElementById('price');
-const isEditPage = window.location.pathname.includes('/edit_listing/');
-
-// Add validation for price input
-if (priceInput) {
-priceInput.addEventListener('input', function() {
-  const price = parseFloat(this.value);
-  if (isNaN(price) || price < 0) {
-    this.setCustomValidity('Price must be at least 0.');
-  } else {
-    this.setCustomValidity('');
-  }
-});
-}
-
-if (!isEditPage) {
-  // format today's date as YYYY-MM-DD
-  const formattedDate = today.toISOString().split('T')[0];
-  dateInput.value = formattedDate;
-  dateInput.min = formattedDate; // prevent selecting past dates
-
-  // set default start time to current time (rounded to nearest 15 minutes)
-  const minutes = today.getMinutes();
-  const roundedMinutes = Math.ceil(minutes / 15) * 15;
-  today.setMinutes(roundedMinutes);
-  today.setSeconds(0);
-  today.setMilliseconds(0);
-  
-  // format time as HH:MM
-  const hours = String(today.getHours()).padStart(2, '0');
-  const mins = String(today.getMinutes()).padStart(2, '0');
-  startTimeInput.value = `${hours}:${mins}`;
-
-  // Set end time based on start time
-  let endHours = parseInt(hours);
-  let endMins = parseInt(mins);
-  
-  if (endHours >= 23) {
-    // If start time is 11 PM or later, set end time to 11:59 PM
-    endHours = 23;
-    endMins = 59;
-  } else {
-    // Otherwise, set end time to 1 hour after start time
-    endHours += 1;
-  }
-  
-  // Format end time
-  endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
-} else {
-  // For edit page, still set the minimum date to today
-  const formattedDate = today.toISOString().split('T')[0];
-  dateInput.min = formattedDate; // prevent selecting past dates
-}
-
-// Function to validate end time for today's date
-function validateEndTime() {
-  // Check if date is today
-  if (dateInput.value === today.toISOString().split('T')[0]) {
-    // Get current time
-    const now = new getESTDate();
-    const currentHours = now.getHours();
-    const currentMinutes = now.getMinutes();
-    
-    // Get selected time
-    const [selectedHours, selectedMinutes] = endTimeInput.value.split(':').map(Number);
-    
-    // Compare times
-    if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
-      endTimeInput.setCustomValidity('For today, end time must be later than current time');
-    } else {
-      endTimeInput.setCustomValidity('');
-    }
-  } else {
-    // If date is not today, no time restriction
-    endTimeInput.setCustomValidity('');
-  }
-}
-
-// Add event listeners for both date and time fields to trigger validation
-endTimeInput.addEventListener('input', validateEndTime);
-dateInput.addEventListener('input', validateEndTime);
-
-// Run validation at page load
-validateEndTime();
-
-// custom validation for start time
-startTimeInput.addEventListener('input', function() {
-    if (endTimeInput.value && this.value >= endTimeInput.value) {
-        this.setCustomValidity('Start time must be earlier than end time');
-    } else {
-        this.setCustomValidity('');
-    }
-    
-    // Also re-validate end time to make sure both validations work together
-    validateEndTime();
-})
-// also check when end time changes
-endTimeInput.addEventListener('input', function() {
-    if (startTimeInput.value && startTimeInput.value >= this.value) {
-        startTimeInput.setCustomValidity('Start time must be earlier than end time');
-    } else {
-        startTimeInput.setCustomValidity('');
-    }
-    
-    // The validateEndTime function will be called from the general input event listener above
-})
-};
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
-export function setupHowItWorksPopup() {
-  //disableContactedListings();
-  //handlePopup();
+document.addEventListener('DOMContentLoaded', function() {
+  disableContactedListings();
+  handlePopup();
 // Check for auto delete parameter
-//checkAutoDelete();
+checkAutoDelete();
 
 // Add how-it-works popup functionality
 const howItWorksButton = document.getElementById('howItWorksButton');
@@ -149,6 +30,125 @@ if (howItWorksButton && howItWorksPopup) {
   });
 }
 
+function getESTDate() {
+  const now = new Date();
+  const estDateString = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+  return new Date(estDateString);
+}
+
+  // set default date to today
+const today = getESTDate();
+  const dateInput = document.getElementById('date');
+  const startTimeInput = document.getElementById('start_time');
+  const endTimeInput = document.getElementById('end_time');
+const priceInput = document.getElementById('price');
+  const isEditPage = window.location.pathname.includes('/edit_listing/');
+
+// Add validation for price input
+if (priceInput) {
+  priceInput.addEventListener('input', function() {
+    const price = parseFloat(this.value);
+    if (isNaN(price) || price < 0) {
+      this.setCustomValidity('Price must be at least 0.');
+    } else {
+      this.setCustomValidity('');
+    }
+  });
+}
+
+  if (!isEditPage) {
+    // format today's date as YYYY-MM-DD
+    const formattedDate = today.toISOString().split('T')[0];
+    dateInput.value = formattedDate;
+    dateInput.min = formattedDate; // prevent selecting past dates
+
+    // set default start time to current time (rounded to nearest 15 minutes)
+    const minutes = today.getMinutes();
+    const roundedMinutes = Math.ceil(minutes / 15) * 15;
+    today.setMinutes(roundedMinutes);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    
+    // format time as HH:MM
+    const hours = String(today.getHours()).padStart(2, '0');
+    const mins = String(today.getMinutes()).padStart(2, '0');
+    startTimeInput.value = `${hours}:${mins}`;
+
+    // Set end time based on start time
+    let endHours = parseInt(hours);
+    let endMins = parseInt(mins);
+    
+    if (endHours >= 23) {
+      // If start time is 11 PM or later, set end time to 11:59 PM
+      endHours = 23;
+      endMins = 59;
+    } else {
+      // Otherwise, set end time to 1 hour after start time
+      endHours += 1;
+    }
+    
+    // Format end time
+    endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+  } else {
+    // For edit page, still set the minimum date to today
+    const formattedDate = today.toISOString().split('T')[0];
+    dateInput.min = formattedDate; // prevent selecting past dates
+  }
+  
+  // Function to validate end time for today's date
+  function validateEndTime() {
+    // Check if date is today
+    if (dateInput.value === today.toISOString().split('T')[0]) {
+      // Get current time
+      const now = new getESTDate();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      
+      // Get selected time
+      const [selectedHours, selectedMinutes] = endTimeInput.value.split(':').map(Number);
+      
+      // Compare times
+      if (selectedHours < currentHours || (selectedHours === currentHours && selectedMinutes < currentMinutes)) {
+        endTimeInput.setCustomValidity('For today, end time must be later than current time');
+      } else {
+        endTimeInput.setCustomValidity('');
+      }
+    } else {
+      // If date is not today, no time restriction
+      endTimeInput.setCustomValidity('');
+    }
+  }
+  
+  // Add event listeners for both date and time fields to trigger validation
+  endTimeInput.addEventListener('input', validateEndTime);
+  dateInput.addEventListener('input', validateEndTime);
+  
+  // Run validation at page load
+  validateEndTime();
+  
+  // custom validation for start time
+  startTimeInput.addEventListener('input', function() {
+      if (endTimeInput.value && this.value >= endTimeInput.value) {
+          this.setCustomValidity('Start time must be earlier than end time');
+      } else {
+          this.setCustomValidity('');
+      }
+      
+      // Also re-validate end time to make sure both validations work together
+      validateEndTime();
+  });
+
+  // also check when end time changes
+  endTimeInput.addEventListener('input', function() {
+      if (startTimeInput.value && startTimeInput.value >= this.value) {
+          startTimeInput.setCustomValidity('Start time must be earlier than end time');
+      } else {
+          startTimeInput.setCustomValidity('');
+      }
+      
+      // The validateEndTime function will be called from the general input event listener above
+  });
+
   const form = document.querySelector('form');
   const diningHallSelect = document.getElementById('dining_hall');
   const paymentMethodsSelect = document.getElementById('payment_methods');
@@ -156,7 +156,7 @@ if (howItWorksButton && howItWorksPopup) {
   // Trigger initial validation
   diningHallSelect.dispatchEvent(new Event('change'));
   paymentMethodsSelect.dispatchEvent(new Event('change'));
-};
+});
 
 // Add a global debug function that can be called from console
 window.debugLoginState = function() {
@@ -181,7 +181,7 @@ return "Debug information logged to console";
 };
 
 // Also fix how we're storing and using email across the app to ensure consistency
-export function storeUserEmail(email) {
+function storeUserEmail(email) {
 if (email) {
   // Always store email in lowercase
   email = email.toLowerCase();
@@ -190,7 +190,7 @@ if (email) {
 }
 }
 //gets user's google credential and stores it in localStorage.
-export function handleCredentialResponse(response) {
+function handleCredentialResponse(response) {
   // Decode the credential response
   const responsePayload = jwt_decode(response.credential);
 
@@ -890,7 +890,7 @@ function fetchContactedListings() {
 }
 
 // Updated function to disable contacted buttons using server data
-export function disableContactedListings() {
+function disableContactedListings() {
   // Get the current user's email
   const userEmail = localStorage.getItem('userEmail');
   
@@ -972,7 +972,7 @@ if (listingForm) {
 });
 
 // add this function to handle the popup
-export function handlePopup() {
+function handlePopup() {
 // Check if URL has show_popup=true
   const urlParams = new URLSearchParams(window.location.search);
 const showPopup = urlParams.get('show_popup');
@@ -1070,7 +1070,7 @@ function sendUserEmailToServer() {
 }
 
 // Function to check if auto_delete parameter is in the URL and trigger delete if it is
-export function checkAutoDelete() {
+function checkAutoDelete() {
 const urlParams = new URLSearchParams(window.location.search);
 const autoDeleteId = urlParams.get('auto_delete');
 const listingType = urlParams.get('listing_type') || 'seller'; // Default to seller if not specified
