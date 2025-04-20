@@ -62,6 +62,7 @@ function saveProfileChanges() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
         },
         body: JSON.stringify({
             name: name,
@@ -96,6 +97,7 @@ function blockUser() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
         },
         body: JSON.stringify({
             blocked_uni: uniToBlock
@@ -172,6 +174,7 @@ function unblockUser(uni) {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
         },
         body: JSON.stringify({
             blocked_uni: uni
