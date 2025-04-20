@@ -481,32 +481,29 @@ def profile():
 
 
 @app.route('/send_connection_email', methods=['POST'])
+@login_required
 def send_connection_email():
   listing_id = request.form.get('listing_id')
   listing_type = request.form.get('listing_type')
-  sender_email = request.form.get('sender_email')
 
-  print(f"Sending connection email - Listing ID: {listing_id}, Listing type: {listing_type}, Sender email: {sender_email}")
-  
+  sender_email = session['user_email']
+
   # Check if sender's UNI is banned
   sender_uni = extract_uni(sender_email)
   if sender_uni and is_uni_banned(sender_uni):
     flash("Error: Your account has been banned.", "error")
     return redirect(url_for('index'))
   
+  sender = User.query.filter_by(email=sender_email).first()
+  sender_name = sender.name
+  sender_phone = sender.phone or ""
+  
   # Get the listing and owner's email
   if listing_type == 'seller':
-    receiver_listing = SellerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Seller listing not found.", "error")
-      return redirect(url_for('index'))
-    receiver_email = receiver_listing.user.email
+    receiver = SellerListing.query.get(listing_id)
   else:
-    receiver_listing = BuyerListing.query.get(listing_id)
-    if not receiver_listing:
-      flash("Error: Buyer listing not found.", "error")
-      return redirect(url_for('index'))
-    receiver_email = receiver_listing.user.email
+    receiver = BuyerListing.query.get(listing_id) 
+  receiver_email = receiver.user.email
   
   # Extract UNIs for block checking
   sender_uni = extract_uni(sender_email)
@@ -537,33 +534,29 @@ def send_connection_email():
   db.session.add(contact_record)
   
   # If receiver is buyer
-  if isinstance(receiver_listing, BuyerListing):
-    buyer_listing = receiver_listing
-    buyer_name = buyer_listing.user.name
-    buyer_email = buyer_listing.user.email
-    buyer_phone = buyer_listing.user.phone
+  if isinstance(receiver, BuyerListing):
+    buyer_name = receiver.user.name
+    buyer_email = receiver.user.email
+    buyer_phone = receiver.user.phone
     # And sender is seller
-    seller_name = request.form.get('sender_name')
-    seller_email = request.form.get('sender_email')
+    seller_name = sender_name
+    seller_email = sender_email
     
     # Get sender's phone if available
-    seller_phone = ""
-    sender_user = User.query.filter_by(email=seller_email).first()
-    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-      seller_phone = sender_user.phone
+    seller_phone = sender_phone
 
     # Format times to 12-hour format
-    start_time_formatted = format_time_to_12hour(buyer_listing.start_time)
-    end_time_formatted = format_time_to_12hour(buyer_listing.end_time)
+    start_time_formatted = format_time_to_12hour(receiver.start_time)
+    end_time_formatted = format_time_to_12hour(receiver.end_time)
     # Format date without year
-    date_formatted = format_date_without_year(buyer_listing.date)
+    date_formatted = format_date_without_year(receiver.date)
     # Format dining halls and payment methods
-    dining_halls_formatted = format_dining_halls(buyer_listing.dining_hall)
-    payment_methods_formatted = format_payment_methods(buyer_listing.payment_methods)
+    dining_halls_formatted = format_dining_halls(receiver.dining_hall)
+    payment_methods_formatted = format_payment_methods(receiver.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
-    price_str = f"{buyer_listing.price:.2f}" if buyer_listing.price is not None else "0.00"
+    price_str = f"{receiver.price:.2f}" if receiver.price is not None else "0.00"
     body = (
       f"<p>Hi {buyer_name},</p>"
       f"<p>{seller_name} is interested in selling a swipe to you! "
@@ -591,32 +584,28 @@ def send_connection_email():
     
   # If receiver is seller
   else:
-    seller_listing = receiver_listing
-    seller_name = seller_listing.user.name
-    seller_email = seller_listing.user.email
-    seller_phone = seller_listing.user.phone
+    seller_name = receiver.user.name
+    seller_email = receiver.user.email
+    seller_phone = receiver.user.phone
     # And sender is buyer
-    buyer_name = request.form.get('sender_name')
-    buyer_email = request.form.get('sender_email')
+    buyer_name = sender_name
+    buyer_email = sender_email
     
     # Get sender's phone if available
-    buyer_phone = ""
-    sender_user = User.query.filter_by(email=buyer_email).first()
-    if sender_user and sender_user.phone and sender_user.phone.strip() != "":
-      buyer_phone = sender_user.phone
+    buyer_phone = sender_phone
 
     # Format times to 12-hour format
-    start_time_formatted = format_time_to_12hour(seller_listing.start_time)
-    end_time_formatted = format_time_to_12hour(seller_listing.end_time)
+    start_time_formatted = format_time_to_12hour(receiver.start_time)
+    end_time_formatted = format_time_to_12hour(receiver.end_time)
     # Format date without year
-    date_formatted = format_date_without_year(seller_listing.date)
+    date_formatted = format_date_without_year(receiver.date)
     # Format dining halls and payment methods
-    dining_halls_formatted = format_dining_halls(seller_listing.dining_hall)
-    payment_methods_formatted = format_payment_methods(seller_listing.payment_methods)
+    dining_halls_formatted = format_dining_halls(receiver.dining_hall)
+    payment_methods_formatted = format_payment_methods(receiver.payment_methods)
 
     # Compose email
     subject = "[Swipe Market] Potential Sale"
-    price_str = f"{seller_listing.price:.2f}" if seller_listing.price is not None else "0.00"
+    price_str = f"{receiver.price:.2f}" if receiver.price is not None else "0.00"
     body = (
       f"<p>Hi {seller_name},</p>"
       f"<p>{buyer_name} is interested in buying a swipe from you! "
