@@ -1,3 +1,19 @@
+// Grab the CSRF token from the <meta> tag:
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+// A helper to do POST with CSRF:
+function postJSON(url, data) {
+  return fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',           // include session cookie
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken           // send the CSRF token
+    },
+    body: JSON.stringify(data)
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Load existing profile data
     loadProfileData();
