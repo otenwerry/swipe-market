@@ -228,13 +228,9 @@ def index():
     # Get all active listings
     seller_listings = SellerListing.query.filter_by(is_active=True).all()
     buyer_listings = BuyerListing.query.filter_by(is_active=True).all()
-    
-    # Try to get user email from multiple sources
-    current_user_email = request.args.get('email')
-    if not current_user_email:
-        current_user_email = request.cookies.get('userEmail')
-    if not current_user_email:
-        current_user_email = session.get('user_email')
+
+    #try to get user email
+    current_user_email = request.args.get('email') or session.get('user_email')
     
     print(f"Current user email: {current_user_email}")
     
@@ -290,11 +286,10 @@ def index():
     # Create a response
     response = make_response(render_template('index.html', seller_listings=seller_listings, buyer_listings=buyer_listings))
     
-    # If we have a user email, store it in the session and as a cookie
+   #if we have a user email, persist it in the session only
     if current_user_email:
         session['user_email'] = current_user_email
-        response.set_cookie('userEmail', current_user_email, max_age=86400, secure=True, httponly=True, samesite='Lax')
-    
+
     return response
 
 #regular route for the sell listings page
