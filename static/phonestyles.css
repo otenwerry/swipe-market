@@ -71,6 +71,29 @@
         margin: 10px 20px;
       }
 
+      .form-popup {
+        display: none;
+      }
+      
+      .form-popup.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .form-container {
+        max-width: 85%;
+        width: 85%;
+        margin: 0;
+        padding: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: fixed;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      }
+
       .signin-container .g_id_signin {
         transform: scale(0.6) translateX(-4px);;
         transform-origin: left top;

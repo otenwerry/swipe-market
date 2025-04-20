@@ -246,15 +246,26 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .form-popup.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .form-container {
     background-color: #FFFFFF;
     max-width: 500px;
+    width: 90%;
     padding: 30px;
     border-radius: 10px;
     position: relative;
-    margin: 15% auto;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border: 1px solid #e0e0e0;
   }
