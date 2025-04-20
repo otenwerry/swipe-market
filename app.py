@@ -439,6 +439,7 @@ def edit_listing(listing_id):
     return render_template('edit_listing.html', listing=listing, is_seller=is_seller, listing_type=listing_type)
 
 @app.route('/profile')
+@login_required
 def profile():
     return render_template('profile.html')
 
