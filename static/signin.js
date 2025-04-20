@@ -1,20 +1,3 @@
-// Grab the CSRF token from the <meta> tag:
-const CSRF_TOKEN = document
-  .querySelector('meta[name="csrf-token"]')
-  .getAttribute('content');
-/*
-function postJSON(url, data) {
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',           // include session cookie
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken           // send the CSRF token
-    },
-    body: JSON.stringify(data)
-  });
-}*/
-
 // --- GOOGLE SIGN IN ---
 
 //triggered when user signs in.
@@ -31,6 +14,7 @@ function onSignIn(googleUser) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
   const userName = localStorage.getItem('userName');
   const userEmail = localStorage.getItem('userEmail');
   

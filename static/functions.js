@@ -1,18 +1,17 @@
-//get CSRF token from meta tag
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  //get CSRF token from meta tag
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-function postJSON(url, data) {
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',           // include session cookie
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken           // send the CSRF token
-    },
-    body: JSON.stringify(data)
-  });
-}
-
+  function postJSON(url, data) {
+    return fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',           // include session cookie
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken           // send the CSRF token
+      },
+      body: JSON.stringify(data)
+    });
+  }
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 document.addEventListener('DOMContentLoaded', function() {
