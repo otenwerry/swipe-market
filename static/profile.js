@@ -1,6 +1,5 @@
 // Grab the CSRF token from the <meta> tag:
-/*const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+/*
 function postJSON(url, data) {
   return fetch(url, {
     method: 'POST',
@@ -14,6 +13,7 @@ function postJSON(url, data) {
 }*/
 
 document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     // Load existing profile data
     loadProfileData();
     
@@ -40,7 +40,11 @@ function loadProfileData() {
     // Fetch phone number from server
     fetch('/api/get_profile', {
         method: 'GET',
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     })
     .then(response => response.json())
     .then(data => {
@@ -137,7 +141,11 @@ function blockUser() {
 function loadBlockedUsers() {
     fetch('/api/get_blocked_users', {
         method: 'GET',
-        credentials: 'same-origin'
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     })
     .then(response => response.json())
     .then(data => {
