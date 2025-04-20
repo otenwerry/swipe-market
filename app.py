@@ -44,6 +44,15 @@ def validate_email_domain(email):
     email = email.lower()
     return email.endswith('@columbia.edu') or email.endswith('@barnard.edu')
 
+def is_uni_banned(uni):
+    """Check if a UNI is banned."""
+    if not uni:
+        return False
+    # Get banned UNIs from environment variable
+    banned_unis_str = os.environ.get('BANNED_UNIS', '')
+    banned_unis = [u.strip().lower() for u in banned_unis_str.split(',')] if banned_unis_str else []
+    return uni.lower() in banned_unis
+
 #DB MODEL CLASSES
 
 #class for seller listings
@@ -215,13 +224,13 @@ def update_expired_listings():
 def google_auth():
     token = request.json.get('id_token')
     try:
-        # Verify the token’s integrity & claims
+        # Verify the token's integrity & claims
         idinfo = id_token.verify_oauth2_token(
             token,
             requests.Request(),
             os.environ['GOOGLE_CLIENT_ID']
         )
-        # Ensure it’s from a Columbia/Barnard account
+        # Ensure it's from a Columbia/Barnard account
         email = idinfo['email']
         if not (email.endswith('@columbia.edu') or email.endswith('@barnard.edu')):
             raise ValueError("Unauthorized domain")
@@ -367,6 +376,12 @@ def edit_listing(listing_id):
     if not user_email:
         return redirect(url_for('index'))
     
+    # Check if UNI is banned
+    user_uni = extract_uni(user_email)
+    if user_uni and is_uni_banned(user_uni):
+        flash("Error: Your account has been banned.", "error")
+        return redirect(url_for('index'))
+    
     if not listing_type or listing_type not in ['seller', 'buyer']:
         return "Invalid listing type - must be 'seller' or 'buyer'", 400
 
@@ -479,6 +494,12 @@ def submit_buyer():
     flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
     return redirect(url_for('buy_listings'))
   
+  # Check if UNI is banned
+  buyer_uni = extract_uni(buyer_email)
+  if buyer_uni and is_uni_banned(buyer_uni):
+    flash("Error: Your account has been banned.", "error")
+    return redirect(url_for('buy_listings'))
+  
   # Get or create user
   user = User.query.filter_by(email=buyer_email).first()
   if not user:
@@ -561,6 +582,12 @@ def submit_seller():
     flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
     return redirect(url_for('sell_listings'))
   
+  # Check if UNI is banned
+  seller_uni = extract_uni(seller_email)
+  if seller_uni and is_uni_banned(seller_uni):
+    flash("Error: Your account has been banned.", "error")
+    return redirect(url_for('sell_listings'))
+  
   # Get or create user
   user = User.query.filter_by(email=seller_email).first()
   if not user:
@@ -619,6 +646,12 @@ def send_connection_email():
   sender_email = request.form.get('sender_email')
 
   print(f"Sending connection email - Listing ID: {listing_id}, Listing type: {listing_type}, Sender email: {sender_email}")
+  
+  # Check if sender's UNI is banned
+  sender_uni = extract_uni(sender_email)
+  if sender_uni and is_uni_banned(sender_uni):
+    flash("Error: Your account has been banned.", "error")
+    return redirect(url_for('index'))
   
   # Get the listing and owner's email
   if listing_type == 'seller':
@@ -795,6 +828,11 @@ def delete_listing(listing_id):
     if not user_email:
         return "Unauthorized - Please log in", 401
     
+    # Check if UNI is banned
+    user_uni = extract_uni(user_email)
+    if user_uni and is_uni_banned(user_uni):
+        return "Unauthorized - Your account has been banned", 403
+    
     if not listing_type or listing_type not in ['seller', 'buyer']:
         return f"Invalid listing type: {listing_type} - must be 'seller' or 'buyer'", 400
 
@@ -856,6 +894,11 @@ def save_user():
     # Validate email domain
     if not validate_email_domain(email):
         return jsonify({"success": False, "error": "Only Columbia and Barnard email addresses are allowed"}), 400
+    
+    # Check if UNI is banned
+    user_uni = extract_uni(email)
+    if user_uni and is_uni_banned(user_uni):
+        return jsonify({"success": False, "error": "Your account has been banned"}), 403
     
     # Check if user already exists
     user = User.query.filter_by(email=email).first()
@@ -920,6 +963,12 @@ def block_user():
     blocker_email = session.get('user_email')
     if not blocker_email:
         return jsonify({"success": False, "error": "Not authenticated"}), 401
+    
+    # Check if blocker's UNI is banned
+    blocker_uni = extract_uni(blocker_email)
+    if blocker_uni and is_uni_banned(blocker_uni):
+        return jsonify({"success": False, "error": "Your account has been banned"}), 403
+    
     # Get data from request
     data = request.get_json()
     blocked_uni = data.get('blocked_uni', '').strip().lower()
@@ -965,6 +1014,11 @@ def unblock_user():
     blocker_email = session.get('user_email')
     if not blocker_email:
         return jsonify({"success": False, "error": "Not authenticated"}), 401
+    
+    # Check if blocker's UNI is banned
+    blocker_uni = extract_uni(blocker_email)
+    if blocker_uni and is_uni_banned(blocker_uni):
+        return jsonify({"success": False, "error": "Your account has been banned"}), 403
     
     # Get data from request
     data = request.get_json()
@@ -1084,6 +1138,11 @@ def update_profile():
     if not user_email:
         return jsonify({"success": False, "error": "Not authenticated"}), 401
     
+    # Check if UNI is banned
+    user_uni = extract_uni(user_email)
+    if user_uni and is_uni_banned(user_uni):
+        return jsonify({"success": False, "error": "Your account has been banned"}), 403
+    
     # Get data from request
     data = request.get_json()
     name = data.get('name')
@@ -1129,6 +1188,12 @@ def submit_listing():
     # Validate email domain
     if not validate_email_domain(user_email):
         flash("Error: Only Columbia and Barnard email addresses are allowed.", "error")
+        return redirect(url_for('post_listings'))
+        
+    # Check if UNI is banned
+    user_uni = extract_uni(user_email)
+    if user_uni and is_uni_banned(user_uni):
+        flash("Error: Your account has been banned.", "error")
         return redirect(url_for('post_listings'))
         
     # Get values from the form
