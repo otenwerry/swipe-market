@@ -187,13 +187,11 @@
             <td>${{ "%.2f"|format(listing.price if listing.price is not none else 0) }}</td>
             <td>{{ listing.payment_methods }}</td>
             <td>
-              <button type="button" class="contact-button" 
-                      data-listing-id="{{ listing.id }}" 
-                      data-listing-type="buyer" 
-                      onclick="openForm(this)">Swipe Them In</button>
               <div class="listing-actions" data-owner-email="{{ listing.user.email }}">
-                <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">X</button>
-                <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
+              <button type="button" class="contact-button" data-listing-id="{{ listing.id }}" data-listing-type="buyer" onclick="openForm(this)">Swipe Them In</button>
+            
+              <button onclick="deleteListing('{{ listing.id }}', 'buyer')" class="delete-button">X</button>
+              <button onclick="editListing('{{ listing.id }}', 'buyer')" class="edit-button">Edit</button>
               </div>
             </td>
           </tr>

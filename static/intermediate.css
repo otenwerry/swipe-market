@@ -31,7 +31,7 @@
   table th:nth-child(6),
   table td:nth-child(6) {
     width: 25%;
-    min-width: 120px;
+    text-align: center;
   }
 }
 
@@ -68,6 +68,5 @@
   table th:nth-child(6),
   table td:nth-child(6) {
     width: 25%;
-    min-width: 120px;
   }
 }
