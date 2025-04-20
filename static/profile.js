@@ -13,7 +13,7 @@ function postJSON(url, data) {
 }*/
 
 document.addEventListener('DOMContentLoaded', function() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    //const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     // Load existing profile data
     loadProfileData();
     
@@ -43,7 +43,7 @@ function loadProfileData() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
+            //'X-CSRFToken': csrfToken
         }
     })
     .then(response => response.json())
@@ -81,7 +81,7 @@ function saveProfileChanges() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFTOKEN': csrfToken,
+            //'X-CSRFTOKEN': csrfToken,
         },
         body: JSON.stringify({
             name: name,
@@ -116,7 +116,7 @@ function blockUser() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFTOKEN': csrfToken,
+            //'X-CSRFTOKEN': csrfToken,
         },
         body: JSON.stringify({
             blocked_uni: uniToBlock
@@ -144,7 +144,7 @@ function loadBlockedUsers() {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
+            //'X-CSRFToken': csrfToken
         }
     })
     .then(response => response.json())
@@ -197,7 +197,7 @@ function unblockUser(uni) {
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFTOKEN': csrfToken,
+            //'X-CSRFTOKEN': csrfToken,
         },
         body: JSON.stringify({
             blocked_uni: uni

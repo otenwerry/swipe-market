@@ -1,10 +1,8 @@
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+//const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 //sets default date and time for seller listings.
 //formats date and time as YYYY-MM-DD HH:MM.
 document.addEventListener('DOMContentLoaded', function() {
-  //get CSRF token from meta tag
-
 
   disableContactedListings();
   handlePopup();
@@ -218,7 +216,7 @@ storeUserEmail(responsePayload.email);
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': csrfToken,
+      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ uni: uni }),
   })
@@ -343,7 +341,7 @@ function checkUserExistence(email) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': csrfToken,
+      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: email }),
   })
@@ -525,7 +523,7 @@ function saveNewUser(phone, name) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': csrfToken,
+      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({
       name: name,
@@ -839,9 +837,6 @@ if (!requireSignIn()) {
   fetch(`/delete_listing/${listingId}`, {
     method: 'POST',
     credentials: 'same-origin',
-    headers: {
-      'X-CSRFTOKEN': csrfToken,
-    },
     body: formData
   })
   .then(response => {
@@ -882,7 +877,7 @@ function fetchContactedListings() {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': csrfToken,
+      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: userEmail }),
   })
@@ -1063,7 +1058,7 @@ function sendUserEmailToServer() {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': csrfToken,
+      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: userEmail })
   })

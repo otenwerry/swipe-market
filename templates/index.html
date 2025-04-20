@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Swipe Market</title>
     <link rel="stylesheet" href="../static/header.css">
     <link rel="stylesheet" href="../static/general.css">
@@ -204,7 +203,6 @@
     </div>
     <div class="form-popup" id="myForm">
       <form action="/send_connection_email" method="POST" class="form-container">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="listing_id" id="listing_id" value="">
         <input type="hidden" name="listing_type" id="listing_type" value="">
         <input type="hidden" name="sender_name" id="sender_name" value="">

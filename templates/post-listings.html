@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Post Listings</title>
     <link rel="stylesheet" href="../static/header.css">
     <link rel="stylesheet" href="../static/general.css">
@@ -116,7 +115,6 @@
       <section style="max-width: 1000px; margin: 20px auto; padding: 20px;">
         <div class="seller-form">
           <form id="listingForm" action="/submit_listing" method="POST" onsubmit="return requireSignIn(event)">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="form-group">
               <label>Dining hall:</label>
               <div class="checkbox-group two-columns">
