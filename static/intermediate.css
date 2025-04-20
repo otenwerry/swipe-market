@@ -3,6 +3,12 @@
     flex-direction: column;
   }
   
+  /* Show switch-table links on smaller screens */
+  .switch-table {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  
   table th:nth-child(1),
   table td:nth-child(1) {
     width: 15%;
@@ -36,6 +42,11 @@
 }
 
 @media (min-width: 1250px){
+  /* Hide switch-table links on larger screens */
+  .switch-table {
+    display: none;
+  }
+  
   table {
     table-layout: fixed;
   }

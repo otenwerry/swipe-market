@@ -394,7 +394,7 @@
     flex-wrap: nowrap;
   }
 
-  .delete-button, .edit-button {
+  .delete-button, .edit-button, .switch-table {
     font-size: 0.9rem;
     padding: 8px 16px;
     border: none;
@@ -419,7 +419,7 @@
     color: white;
   }
 
-  .edit-button {
+  .edit-button, .switch-table {
     background-color: #1a73e8;
     color: white;
   }
@@ -432,6 +432,23 @@
   .delete-button:hover, .edit-button:hover {
     opacity: 0.9;
     transform: translateY(-2px);
+  }
+
+  .switch-table:hover {
+    color: white !important;
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .switch-table {
+    font-weight: 450;
+  }
+
+  .table-caption{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:10px;
   }
 
   /* Form styling for listings and profile pages */

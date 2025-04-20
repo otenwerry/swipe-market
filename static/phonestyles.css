@@ -151,6 +151,10 @@
         align-items: center;
       }
 
+      .switch-table{
+        font-size: 11px;
+      }
+
       /*
       .button-group {
         flex-direction: column;
