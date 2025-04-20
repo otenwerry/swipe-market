@@ -1,5 +1,5 @@
 //get CSRF token from meta tag
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 // A helper to do POST with CSRF:
 function postJSON(url, data) {
@@ -229,7 +229,7 @@ storeUserEmail(responsePayload.email);
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ uni: uni }),
   })
@@ -357,7 +357,7 @@ function checkUserExistence(email) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: email }),
   })
@@ -542,7 +542,7 @@ function saveNewUser(phone, name) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({
       name: name,
@@ -860,7 +860,7 @@ if (!requireSignIn()) {
     method: 'POST',
     credentials: 'same-origin',
     headers: {
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: formData
   })
@@ -902,7 +902,7 @@ function fetchContactedListings() {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: userEmail }),
   })
@@ -1086,7 +1086,7 @@ function sendUserEmailToServer() {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': CSRF_TOKEN,
+      'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ email: userEmail })
   })
