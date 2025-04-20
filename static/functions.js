@@ -833,6 +833,16 @@ if (!requireSignIn()) {
 
   const formData = new FormData();
   formData.append('listing_type', listingType);
+  
+  // Get the user email from localStorage and add it to the form data
+  const userEmail = localStorage.getItem('userEmail');
+  if (userEmail) {
+    formData.append('user_email', userEmail);
+  } else {
+    console.error('User email not found in localStorage');
+    alert('You need to be logged in to delete a listing.');
+    return;
+  }
       
   fetch(`/delete_listing/${listingId}`, {
     method: 'POST',
