@@ -694,11 +694,15 @@ def check_user():
         return jsonify({"exists": False})
 
 @app.route('/api/save_user', methods=['POST'])
+@login_required
 def save_user():
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    phone = data.get('phone')
+    user_email = session['user_email']
+    name = request.json.get('name')
+    email = request.json.get('email')
+    phone = request.json.get('phone')
+
+    if request.json.get('email') != user_email:
+        return jsonify({"success": False, "error": "Email mismatch"}), 403
     
     if not email or not name:
         return jsonify({"success": False, "error": "Name and email are required"}), 400
