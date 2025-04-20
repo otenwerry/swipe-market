@@ -89,6 +89,7 @@
         <section style="max-width: 1000px; margin: 20px auto; padding: 20px;">
             <div class="seller-form">
                 <form id="listingForm" action="/edit_listing/{{ listing.id }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <input type="hidden" name="poster_name" id="poster_name">
                     <input type="hidden" name="poster_email" id="poster_email" value="{{ user_email }}">
                     <input type="hidden" name="listing_type" value="{{ listing_type }}">

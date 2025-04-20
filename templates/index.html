@@ -186,6 +186,7 @@
     </div>
     <div class="form-popup" id="myForm">
       <form action="/send_connection_email" method="POST" class="form-container">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="listing_id" id="listing_id" value="">
         <input type="hidden" name="listing_type" id="listing_type" value="">
         <input type="hidden" name="sender_name" id="sender_name" value="">
