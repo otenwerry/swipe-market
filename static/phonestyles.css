@@ -129,6 +129,11 @@
         max-width: 20px;
       }
 
+      .update-button {
+        padding: 10px 20px;
+        font-size: 18px;
+      }
+
       .form-group-button-group {
         display: flex;
         flex-direction: row !important;
