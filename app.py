@@ -847,7 +847,6 @@ def get_blocked_users():
     })
 
 @app.route('/api/check_banned_uni', methods=['POST'])
-@login_required
 def check_banned_uni():
     try:
         data = request.get_json()
