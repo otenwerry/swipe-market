@@ -241,7 +241,6 @@ def update_expired_listings():
 
 
 # PAGE ROUTES
-
 @app.route('/api/auth/google', methods=['POST'])
 def google_auth():
     token = request.json.get('id_token')
@@ -642,6 +641,7 @@ def delete_listing(listing_id):
 
 # Routes for user profile management
 @app.route('/api/check_user', methods=['POST'])
+@login_required
 def check_user():
     data = request.get_json()
     email = data.get('email')
@@ -847,6 +847,7 @@ def get_blocked_users():
     })
 
 @app.route('/api/check_banned_uni', methods=['POST'])
+@login_required
 def check_banned_uni():
     try:
         data = request.get_json()
@@ -868,24 +869,6 @@ def check_banned_uni():
         #print(f"Error in check_banned_uni: {str(e)}")
         # Return a safe default rather than an error
         return jsonify({"banned": False, "error": str(e)})
-
-"""@app.route('/api/set_user_email', methods=['POST'])
-@login_required
-def set_user_email():
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        if not email:
-            return jsonify({"success": False, "error": "No email provided"}), 400
-            
-        # Validate email domain
-        if not validate_email_domain(email):
-            return jsonify({"success": False, "error": "Only Columbia and Barnard email addresses are allowed"}), 400
-            
-        session['user_email'] = email
-        return jsonify({"success": True})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500"""
 
 @app.route('/api/get_profile', methods=['GET'])
 @login_required
