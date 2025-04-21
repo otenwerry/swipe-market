@@ -242,6 +242,7 @@ storeUserEmail(responsePayload.email);
   
     //display profile icon
     const profileIcon = document.getElementById('profile-icon');
+
   if (profileIcon) {
     profileIcon.src = responsePayload.picture;
     profileIcon.style.display = 'block';
@@ -731,7 +732,7 @@ window.onload = function() {
       checkUserExistence(payload.email);
       
       // Send the user's email to the server for block filtering
-      sendUserEmailToServer();
+      //sendUserEmailToServer();
     } else {
       // Token expired, remove it and reset UI
       console.log('Token expired on page load');
@@ -1068,11 +1069,12 @@ if (!document.getElementById('contacted-button-styles')) {
 }
 
 // Function to ensure user's email is sent to the server for blocking logic
+/*
 function sendUserEmailToServer() {
   const userEmail = localStorage.getItem('userEmail');
   if (userEmail) {
   // Send email to server via POST request
-  fetch('/api/set_user_email', {
+  fetch('/api/auth/google', {
     method: 'POST',
     credentials: 'same-origin',
     headers: {
@@ -1096,7 +1098,7 @@ function sendUserEmailToServer() {
     console.error('Error setting user email:', error);
   });
 }
-}
+}*/
 
 // Function to check if auto_delete parameter is in the URL and trigger delete if it is
 function checkAutoDelete() {

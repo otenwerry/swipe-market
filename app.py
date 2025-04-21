@@ -869,7 +869,8 @@ def check_banned_uni():
         # Return a safe default rather than an error
         return jsonify({"banned": False, "error": str(e)})
 
-@app.route('/api/set_user_email', methods=['POST'])
+"""@app.route('/api/set_user_email', methods=['POST'])
+@login_required
 def set_user_email():
     try:
         data = request.get_json()
@@ -884,7 +885,7 @@ def set_user_email():
         session['user_email'] = email
         return jsonify({"success": True})
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500"""
 
 @app.route('/api/get_profile', methods=['GET'])
 @login_required
