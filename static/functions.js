@@ -359,10 +359,15 @@ function checkUserExistence(email) {
     } else {
       console.log('New user, prompting for phone number');
       showWelcomeModal();
-      const howItWorksPopUp = document.getElementById('howItWorksPopup');
-      if (howItWorksPopUp) {
-        howItWorksPopUp.style.display = 'block';
-      }
+    }
+    const saveBtn = document.getElementById('save-phone-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        const howItWorksPopUp = document.getElementById('howItWorksPopup');
+        if (howItWorksPopUp) {
+          howItWorksPopUp.style.display = 'block';
+        }
+      });
     }
   })
   .catch(error => {
