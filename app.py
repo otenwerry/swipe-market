@@ -14,6 +14,7 @@ from flask import session, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from google.oauth2 import id_token
+from google.auth.transport.requests import Request as GoogleRequest
 from functools import wraps
 
 app = Flask(__name__) #sets up a flask application
@@ -200,7 +201,7 @@ def format_date_without_year(date_str):
 # Update expired listings: sets is_active to False for listings whose end time has passed
 def update_expired_listings():
     now = datetime.now(ny_tz)
-    print(f"Current time (NY timezone): {now}")
+    #print(f"Current time (NY timezone): {now}")
     
     # Update SellerListings
     active_sellers = SellerListing.query.filter_by(is_active=True).all()
@@ -209,13 +210,12 @@ def update_expired_listings():
             expiration_str = f"{listing.date} {listing.end_time}"
             expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
             expiration = ny_tz.localize(expiration)
-            print(f"Seller listing {listing.id}: expiration={expiration}, now={now}")
+            #print(f"Seller listing {listing.id}: expiration={expiration}, now={now}")
             
             if now > expiration:
-                print(f"Marking seller listing {listing.id} as inactive")
                 listing.is_active = False
             else:
-                print(f"Seller listing {listing.id} is still active, expires in {expiration - now}")
+                pass
         except Exception as e:
             print(f"Error updating SellerListing {listing.id}: {e}")
             # Continue with next listing
@@ -227,13 +227,11 @@ def update_expired_listings():
             expiration_str = f"{listing.date} {listing.end_time}"
             expiration = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
             expiration = ny_tz.localize(expiration)
-            print(f"Buyer listing {listing.id}: expiration={expiration}, now={now}")
+            #print(f"Buyer listing {listing.id}: expiration={expiration}, now={now}")
             
             if now > expiration:
-                print(f"Marking buyer listing {listing.id} as inactive")
+                #print(f"Marking buyer listing {listing.id} as inactive")
                 listing.is_active = False
-            else:
-                print(f"Buyer listing {listing.id} is still active, expires in {expiration - now}")
         except Exception as e:
             print(f"Error updating BuyerListing {listing.id}: {e}")
             # Continue with next listing
@@ -251,7 +249,7 @@ def google_auth():
         # Verify the token's integrity & claims
         idinfo = id_token.verify_oauth2_token(
             token,
-            requests.Request(),
+            GoogleRequest(),
             os.environ['GOOGLE_CLIENT_ID']
         )
         # Ensure it's from a Columbia/Barnard account
@@ -295,11 +293,11 @@ def index():
     #try to get user email
     current_user_email = request.args.get('email') or session.get('user_email')
     
-    print(f"Current user email: {current_user_email}")
+    #print(f"Current user email: {current_user_email}")
     
     if current_user_email:
         current_user_uni = extract_uni(current_user_email)
-        print(f"Current user UNI: {current_user_uni}")
+        #print(f"Current user UNI: {current_user_uni}")
         
         if current_user_uni:
             # Get lists of UNIs that the current user has blocked and that have blocked the current user
@@ -308,7 +306,7 @@ def index():
             
             # Combine both lists to get all UNIs that should be filtered out
             all_blocked_unis = set(blocked_by_user + blocked_user)
-            print(f"All blocked UNIs: {all_blocked_unis}")
+            #print(f"All blocked UNIs: {all_blocked_unis}")
             
             # Filter seller listings
             filtered_seller_listings = []
@@ -316,8 +314,6 @@ def index():
                 seller_uni = extract_uni(listing.user.email)
                 if seller_uni not in all_blocked_unis:
                     filtered_seller_listings.append(listing)
-                else:
-                    print(f"Filtering out seller listing {listing.id} from {seller_uni}")
             
             # Filter buyer listings
             filtered_buyer_listings = []
@@ -325,8 +321,6 @@ def index():
                 buyer_uni = extract_uni(listing.user.email)
                 if buyer_uni not in all_blocked_unis:
                     filtered_buyer_listings.append(listing)
-                else:
-                    print(f"Filtering out buyer listing {listing.id} from {buyer_uni}")
             
             seller_listings = filtered_seller_listings
             buyer_listings = filtered_buyer_listings
@@ -383,19 +377,19 @@ def edit_listing(listing_id):
         is_seller = False
         owner_email = listing.user.email
 
-    print(f"Edit attempt - Listing owner email: {owner_email}")
-    print(f"Edit attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
+    #print(f"Edit attempt - Listing owner email: {owner_email}")
+    #print(f"Edit attempt - Comparing (case-insensitive): '{owner_email.lower()}' vs '{user_email.lower()}'")
 
     # Check if the user owns the listing (case insensitive comparison)
     if (is_seller and listing.user.email.lower() != user_email.lower()) or \
        (not is_seller and listing.user.email.lower() != user_email.lower()):
-        print(f"Edit unauthorized - User {user_email} does not own listing {listing_id}")
+        #print(f"Edit unauthorized - User {user_email} does not own listing {listing_id}")
         return redirect(url_for('index'))
         
-    print(f"Edit authorized - User {user_email} owns listing {listing_id}")
+    #print(f"Edit authorized - User {user_email} owns listing {listing_id}")
 
     if request.method == 'POST' and 'dining_hall[]' in request.form:
-        print("Form data received: ", request.form)
+        #print("Form data received: ", request.form)
         
         # Validate dining halls
         dining_halls = request.form.getlist('dining_hall[]')
@@ -426,12 +420,12 @@ def edit_listing(listing_id):
         listing.payment_methods = ", ".join(payment_methods_list)
         
         try:
-            print("Before commit - start_time:", listing.start_time)  # Debug log
+            #print("Before commit - start_time:", listing.start_time)  # Debug log
             db.session.commit()
-            print("After commit - start_time:", listing.start_time)  # Debug log
+            #print("After commit - start_time:", listing.start_time)  # Debug log
             return redirect(url_for('index'))
         except Exception as e:
-            print("Error updating:", str(e))
+            #print("Error updating:", str(e))
             db.session.rollback()
             return "Error updating listing", 500
 
@@ -625,7 +619,7 @@ def send_connection_email():
 def delete_listing(listing_id):
     user_email = session['user_email']
     listing_type = request.form.get('listing_type')
-    print(f"Delete attempt - User email: {user_email}, Listing type: {listing_type}")
+    #print(f"Delete attempt - User email: {user_email}, Listing type: {listing_type}")
     if not user_email:
         return "Unauthorized - Please log in", 401
     
@@ -859,7 +853,7 @@ def check_banned_uni():
         uni = data.get('uni', '').lower()
         
         if not uni:
-            print("Warning: Empty UNI provided to check_banned_uni")
+            #print("Warning: Empty UNI provided to check_banned_uni")
             return jsonify({"banned": False})
         
         # Get banned UNIs from environment variable
@@ -867,11 +861,11 @@ def check_banned_uni():
         banned_unis = [u.strip().lower() for u in banned_unis_str.split(',')] if banned_unis_str else []
         
         is_banned = uni in banned_unis
-        print(f"Checking if UNI '{uni}' is banned: {is_banned}")
+        #print(f"Checking if UNI '{uni}' is banned: {is_banned}")
         
         return jsonify({"banned": is_banned})
     except Exception as e:
-        print(f"Error in check_banned_uni: {str(e)}")
+        #print(f"Error in check_banned_uni: {str(e)}")
         # Return a safe default rather than an error
         return jsonify({"banned": False, "error": str(e)})
 
@@ -1009,7 +1003,7 @@ def submit_listing():
                 flash("Error: For today's listings, end time must be in the future.", "error")
                 return redirect(url_for('post_listings'))
         except Exception as e:
-            print(f"Time validation error: {e}")
+            #print(f"Time validation error: {e}")
             flash("Error: Invalid time format.", "error")
             return redirect(url_for('post_listings'))
 
