@@ -359,6 +359,10 @@ function checkUserExistence(email) {
     } else {
       console.log('New user, prompting for phone number');
       showWelcomeModal();
+      const howItWorksPopUp = document.getElementById('howItWorksPopup');
+      if (howItWorksPopUp) {
+        howItWorksPopUp.style.display = 'block';
+      }
     }
   })
   .catch(error => {
