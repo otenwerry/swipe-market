@@ -827,7 +827,7 @@ def get_blocked_users():
         "blocked_users": blocked_unis
     })
 
-@app.after_request
+"""@app.after_request
 def set_security_headers(response):
     csp = (
         "default-src 'self'; "
@@ -843,7 +843,7 @@ def set_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=()'
-    return response
+    return response"""
 
 @app.route('/api/check_banned_uni', methods=['POST'])
 def check_banned_uni():
