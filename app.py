@@ -838,6 +838,11 @@ def set_security_headers(response):
         "connect-src 'self';"
     )
     response.headers['Content-Security-Policy'] = csp
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=()'
     return response
 
 @app.route('/api/check_banned_uni', methods=['POST'])
