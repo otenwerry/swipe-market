@@ -1011,7 +1011,7 @@ if (showPopup === 'true') {
       const popupMessage = document.getElementById('popup-message');
       
       // Regular success message
-      popupMessage.textContent = 'Connection email sent! Check your inbox';
+      popupMessage.textContent = 'Connection email sent! Check your inbox.';
       popupMessage.style.color = '#000'; // Reset to default color
       
       // Check which listing was contacted
