@@ -216,7 +216,6 @@ function handleCredentialResponse(response) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
-      //'X-CSRFTOKEN': csrfToken,
     },
     body: JSON.stringify({ uni: uni }),
   })
@@ -227,6 +226,21 @@ function handleCredentialResponse(response) {
       return;
     }
     
+    // Send the credential to the server to initialize the Flask session
+    return fetch('/api/auth/google', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id_token: response.credential })
+    });
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) {
+      alert('Server sign-in failed: ' + (data.error||'unknown'));
+      return;
+    }
+
     // Continue with the normal sign-in process
     // Extract just the first name
     const fullName = responsePayload.name;
@@ -243,39 +257,40 @@ function handleCredentialResponse(response) {
     //display profile icon
     const profileIcon = document.getElementById('profile-icon');
 
-  if (profileIcon) {
-    profileIcon.src = responsePayload.picture;
-    profileIcon.style.display = 'block';
-  }
-  
-  const profileMenu = document.getElementById('profile-menu');
-  if (profileMenu) {
-    profileMenu.style.display = 'inline-block';
-  }
-  
-    //toggle dropdown
-  if (profileIcon) {
-    profileIcon.addEventListener('click', function(event) {
-      event.stopPropagation();
-      const profileMenu = this.parentElement;
-      profileMenu.classList.toggle('active');
-    });
-  }
-
-  // Add document click listener to close dropdown when clicking outside
-  document.addEventListener('click', function(event) {
-    const profileMenu = document.getElementById('profile-menu');
-    const profileIcon = document.getElementById('profile-icon');
-    
-    // Check if click is outside the profile menu and icon
-    if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
-      profileMenu.classList.remove('active');
+    if (profileIcon) {
+      profileIcon.src = responsePayload.picture;
+      profileIcon.style.display = 'block';
     }
+    
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) {
+      profileMenu.style.display = 'inline-block';
+    }
+    
+    //toggle dropdown
+    if (profileIcon) {
+      profileIcon.addEventListener('click', function(event) {
+        event.stopPropagation();
+        const profileMenu = this.parentElement;
+        profileMenu.classList.toggle('active');
+      });
+    }
+
+    // Add document click listener to close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const profileMenu = document.getElementById('profile-menu');
+      const profileIcon = document.getElementById('profile-icon');
+      
+      // Check if click is outside the profile menu and icon
+      if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
+        profileMenu.classList.remove('active');
+      }
     });
 
-    // Check if user exists in our database
+    // Now we're truly logged in - check user existence and fetch listings
     checkUserExistence(responsePayload.email);
-  
+    fetchContactedListings();
+    
     // Try to populate form fields if they exist
     const posterNameField = document.getElementById('poster_name');
     const posterEmailField = document.getElementById('poster_email');
@@ -289,50 +304,43 @@ function handleCredentialResponse(response) {
   
     // Update UI based on user's email
     const userEmail = responsePayload.email;
-  console.log('User email from Google sign-in:', userEmail);
+    console.log('User email from Google sign-in:', userEmail);
     
     // Show edit/delete buttons for listings owned by this user
     document.querySelectorAll('.listing-actions').forEach(actions => {
-    const ownerEmail = actions.dataset.ownerEmail;
-    console.log('Checking ownership after login:', { 
-      ownerEmail: ownerEmail, 
-      userEmail: userEmail, 
-      isMatch: ownerEmail && userEmail && ownerEmail.toLowerCase() === userEmail.toLowerCase() 
-    });
-    
-    if (userEmail && actions.dataset.ownerEmail) {
-      const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
-      const contactButton = actions.previousElementSibling;
+      const ownerEmail = actions.dataset.ownerEmail;
+      console.log('Checking ownership after login:', { 
+        ownerEmail: ownerEmail, 
+        userEmail: userEmail, 
+        isMatch: ownerEmail && userEmail && ownerEmail.toLowerCase() === userEmail.toLowerCase() 
+      });
       
-      if (isOwner) {
-        console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
-        actions.style.display = 'inline-flex';
-        contactButton.style.display = 'none';
+      if (userEmail && actions.dataset.ownerEmail) {
+        const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
+        const contactButton = actions.previousElementSibling;
+        
+        if (isOwner) {
+          console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
+          actions.style.display = 'inline-flex';
+          contactButton.style.display = 'none';
+        } else {
+          actions.style.display = 'none';
+          contactButton.style.display = 'inline-flex';
+        }
       } else {
+        // If either email is missing, just hide the actions
         actions.style.display = 'none';
-        contactButton.style.display = 'inline-flex';
-      }
-    } else {
-      // If either email is missing, just hide the actions
-      actions.style.display = 'none';
-      if (actions.previousElementSibling) {
-        actions.previousElementSibling.style.display = 'inline-flex';
-      }
+        if (actions.previousElementSibling) {
+          actions.previousElementSibling.style.display = 'inline-flex';
+        }
       }
     });
     
-    // Fetch contacted listings from the server and update the UI
-    fetchContactedListings();
-    
-    // Check for blocks and update UI accordingly
-  //checkBlockedListings();
-  
     console.log('User logged in:', responsePayload.email);
   })
-  .catch(error => {
-    console.error('Error checking banned UNI:', error);
-    // If there's an error checking the ban status, deny login to be safe
-    alert('An error occurred during sign in. Please try again later.');
+  .catch(err => {
+    console.error('Error during sign-in process:', err);
+    alert('Could not complete sign-in. Try again?');
   });
 }
 // Function to check if user exists in our database
