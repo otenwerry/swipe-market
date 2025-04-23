@@ -203,8 +203,8 @@ function handleCredentialResponse(response) {
     return;
   }
 
-// Store email consistently
-storeUserEmail(responsePayload.email);
+  // Store email consistently
+  storeUserEmail(responsePayload.email);
   
   // Extract UNI from email
   const emailParts = responsePayload.email.split('@');
