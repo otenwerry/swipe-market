@@ -194,6 +194,25 @@ if (email) {
 }
 //gets user's google credential and stores it in localStorage.
 function handleCredentialResponse(response) {
+  // 1) Tell Flask who we are
+  fetch('/api/auth/google', {
+    method: 'POST',
+    credentials: 'same-origin',           // ← must include cookies
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id_token: response.credential })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) {
+      return alert('Login failed: ' + data.error);
+    }
+    // 2) Now the session cookie exists; reload so that @login_required routes work
+    window.location.reload();
+  })
+  .catch(err => {
+    console.error('Auth error', err);
+    alert('Login error—check the console.');
+  });
   // Decode the credential response
   const responsePayload = jwt_decode(response.credential);
 
