@@ -220,30 +220,15 @@ function handleCredentialResponse(response) {
     },
     body: JSON.stringify({ uni: uni }),
   })
-    .then(response => response.json())
-    .then(data => {
-      if (data.banned) {
-        alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
-        return;
-    }
-    return fetch('/api/auth/google', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_token: response.credential })
-    });
-  })
-  .then(r => {
-    if (!r) return;
-    return r.json();
-  })
+  .then(response => response.json())
   .then(data => {
-    if (!data.success) {
-      console.error('Backend auth failed:', data.error);
-      alert('Sign-in failed, please try again.');
+    if (data.banned) {
+      alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
       return;
     }
-
+    
+    // Continue with the normal sign-in process
+    // Extract just the first name
     const fullName = responsePayload.name;
     const firstName = fullName.split(' ')[0];
     
@@ -258,10 +243,10 @@ function handleCredentialResponse(response) {
     //display profile icon
     const profileIcon = document.getElementById('profile-icon');
 
-    if (profileIcon) {
-      profileIcon.src = responsePayload.picture;
-      profileIcon.style.display = 'block';
-    }
+  if (profileIcon) {
+    profileIcon.src = responsePayload.picture;
+    profileIcon.style.display = 'block';
+  }
   
   const profileMenu = document.getElementById('profile-menu');
   if (profileMenu) {
@@ -288,73 +273,66 @@ function handleCredentialResponse(response) {
     }
     });
 
-      // Check if user exists in our database
-      checkUserExistence(responsePayload.email);
-    
-      // Try to populate form fields if they exist
-      const posterNameField = document.getElementById('poster_name');
-      const posterEmailField = document.getElementById('poster_email');
-      
-      if (posterNameField) {
-        posterNameField.value = firstName;
-      }
-      if (posterEmailField) {
-        posterEmailField.value = responsePayload.email;
-      }
-    
-      // Update UI based on user's email
-      const userEmail = responsePayload.email;
-      
-      // Show edit/delete buttons for listings owned by this user
-      document.querySelectorAll('.listing-actions').forEach(actions => {
-      const ownerEmail = actions.dataset.ownerEmail;
-      console.log('Checking ownership after login:', { 
-        ownerEmail: ownerEmail, 
-        userEmail: userEmail, 
-        isMatch: ownerEmail && userEmail && ownerEmail.toLowerCase() === userEmail.toLowerCase() 
-      });
-      
-      if (userEmail && actions.dataset.ownerEmail) {
-        const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
-        const contactButton = actions.previousElementSibling;
-        
-        if (isOwner) {
-          console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
-          actions.style.display = 'inline-flex';
-          contactButton.style.display = 'none';
-        } else {
-          actions.style.display = 'none';
-          contactButton.style.display = 'inline-flex';
-        }
-      } else {
-        // If either email is missing, just hide the actions
-        actions.style.display = 'none';
-        if (actions.previousElementSibling) {
-          actions.previousElementSibling.style.display = 'inline-flex';
-        }
-        }
-      });
-      
-      // Fetch contacted listings from the server and update the UI
-      fetchContactedListings();
-      
-      // Check for blocks and update UI accordingly
-    //checkBlockedListings();
-    
-      console.log('User logged in:', responsePayload.email);
-    })
-    /*
-    .catch(error => {
-      console.error('Error checking banned UNI:', error);
-      // If there's an error checking the ban status, deny login to be safe
-      alert('An error occurred during sign in. Please try again later.');
-    });*/
+    // Check if user exists in our database
+    checkUserExistence(responsePayload.email);
   
-  .catch(err => {
-    if(err.message !== 'banned') {
-      console.error('Auth request error:', err);
-      alert('Error communicating with server. Please try again later.');
+    // Try to populate form fields if they exist
+    const posterNameField = document.getElementById('poster_name');
+    const posterEmailField = document.getElementById('poster_email');
+    
+    if (posterNameField) {
+      posterNameField.value = firstName;
     }
+    if (posterEmailField) {
+      posterEmailField.value = responsePayload.email;
+    }
+  
+    // Update UI based on user's email
+    const userEmail = responsePayload.email;
+  console.log('User email from Google sign-in:', userEmail);
+    
+    // Show edit/delete buttons for listings owned by this user
+    document.querySelectorAll('.listing-actions').forEach(actions => {
+    const ownerEmail = actions.dataset.ownerEmail;
+    console.log('Checking ownership after login:', { 
+      ownerEmail: ownerEmail, 
+      userEmail: userEmail, 
+      isMatch: ownerEmail && userEmail && ownerEmail.toLowerCase() === userEmail.toLowerCase() 
+    });
+    
+    if (userEmail && actions.dataset.ownerEmail) {
+      const isOwner = actions.dataset.ownerEmail.toLowerCase() === userEmail.toLowerCase();
+      const contactButton = actions.previousElementSibling;
+      
+      if (isOwner) {
+        console.log('Found user listing to enable edit/delete for after login:', ownerEmail);
+        actions.style.display = 'inline-flex';
+        contactButton.style.display = 'none';
+      } else {
+        actions.style.display = 'none';
+        contactButton.style.display = 'inline-flex';
+      }
+    } else {
+      // If either email is missing, just hide the actions
+      actions.style.display = 'none';
+      if (actions.previousElementSibling) {
+        actions.previousElementSibling.style.display = 'inline-flex';
+      }
+      }
+    });
+    
+    // Fetch contacted listings from the server and update the UI
+    fetchContactedListings();
+    
+    // Check for blocks and update UI accordingly
+  //checkBlockedListings();
+  
+    console.log('User logged in:', responsePayload.email);
+  })
+  .catch(error => {
+    console.error('Error checking banned UNI:', error);
+    // If there's an error checking the ban status, deny login to be safe
+    alert('An error occurred during sign in. Please try again later.');
   });
 }
 // Function to check if user exists in our database
