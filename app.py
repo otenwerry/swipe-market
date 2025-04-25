@@ -16,6 +16,7 @@ from flask_migrate import Migrate
 from google.oauth2 import id_token
 from google.auth.transport.requests import Request as GoogleRequest
 from functools import wraps
+import smtplib
 from smtplib import SMTPException
 
 app = Flask(__name__) #sets up a flask application
@@ -583,11 +584,36 @@ def send_connection_email():
   recipients = [seller_email, buyer_email]
   msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
   msg.html = body
+  
+  host = app.config['MAIL_SERVER']
+  port = app.config['MAIL_PORT']
+  username = app.config['MAIL_USERNAME']
+  password = app.config['MAIL_PASSWORD']
+  # somewhere before your SMTP block:
+  print("MAIL_USERNAME =", username)
+  print("MAIL_PASSWORD =", 'set' if app.config['MAIL_PASSWORD'] else 'MISSING')
 
   try:
-    mail.state.smtp.debuglevel = 1
-    #attempt send
-    mail.send(msg)
+    print("Mail server:", host)
+    print("Mail port:  ", port)
+
+    smtp = smtplib.SMTP(host, port)
+    #smtp.set_debuglevel(1)    # dump SMTP dialog to your console
+
+    # 2) Identify yourself to the server
+    smtp.ehlo()
+
+    # 3) Start TLS
+    smtp.starttls()
+    smtp.ehlo()
+
+    # 4) Log in
+    smtp.login(username, password)
+
+    # 5) Send the mail
+    smtp.sendmail(msg.sender, msg.recipients, msg.as_string())
+    smtp.quit()
+
     db.session.commit()  # Commit the contact record after successfully sending the email
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
   except SMTPException as e: 
