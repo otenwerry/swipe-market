@@ -589,19 +589,15 @@ def send_connection_email():
     #attempt send
     mail.send(msg)
     db.session.commit()  # Commit the contact record after successfully sending the email
-    print(f"Email successfully sent to {recipients}")
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
   except SMTPException as e: 
     # these attributes are set when smtplib raises SMTPException
     code  = getattr(e, 'smtp_code', None)
     error = getattr(e, 'smtp_error', e)
-    print(f"SMTPException sending mail → code={code}, error={error!r}")
-    db.session.rollback()
-    return redirect(url_for('index', error='true'))
+    return f"SMTP failed: code={code}, error={error!r}", 500
   except Exception as e:
     db.session.rollback()  # Rollback on error
-    return redirect(url_for('index', error='true'))
-
+    return f"Unexpected error: {e}", 500
 
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
