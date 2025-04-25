@@ -16,6 +16,7 @@ from flask_migrate import Migrate
 from google.oauth2 import id_token
 from google.auth.transport.requests import Request as GoogleRequest
 from functools import wraps
+from smtplib import SMTPException
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
@@ -584,9 +585,19 @@ def send_connection_email():
   msg.html = body
 
   try:
+    mail.state.smtp.debuglevel = 1
+    #attempt send
     mail.send(msg)
     db.session.commit()  # Commit the contact record after successfully sending the email
+    print(f"Email successfully sent to {recipients}")
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
+  except SMTPException as e: 
+    # these attributes are set when smtplib raises SMTPException
+    code  = getattr(e, 'smtp_code', None)
+    error = getattr(e, 'smtp_error', e)
+    print(f"SMTPException sending mail → code={code}, error={error!r}")
+    db.session.rollback()
+    return redirect(url_for('index', error='true'))
   except Exception as e:
     db.session.rollback()  # Rollback on error
     return redirect(url_for('index', error='true'))
