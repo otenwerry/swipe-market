@@ -426,7 +426,6 @@ def profile():
 
 
 #OTHER ROUTES
-
 @app.route('/send_connection_email', methods=['POST'])
 @login_required
 def send_connection_email():
@@ -581,7 +580,7 @@ def send_connection_email():
   # Send email
   
   recipients = [seller_email, buyer_email]
-  service = get_gmail_service()
+  #service = get_gmail_service()
   """
   try:
       send_gmail(
