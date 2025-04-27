@@ -18,7 +18,7 @@ from google.auth.transport.requests import Request as GoogleRequest
 from functools import wraps
 import smtplib
 from smtplib import SMTPException
-from googleapi import get_gmail_service, send_gmail
+#from googleapi import get_gmail_service, send_gmail
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
