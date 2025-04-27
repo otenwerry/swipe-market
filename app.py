@@ -18,6 +18,7 @@ from google.auth.transport.requests import Request as GoogleRequest
 from functools import wraps
 import smtplib
 from smtplib import SMTPException
+from googleapi import get_gmail_service, send_gmail
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
@@ -426,9 +427,6 @@ def profile():
 
 #OTHER ROUTES
 
-
-
-
 @app.route('/send_connection_email', methods=['POST'])
 @login_required
 def send_connection_email():
@@ -581,7 +579,25 @@ def send_connection_email():
     )
 
   # Send email
+  
   recipients = [seller_email, buyer_email]
+  service = get_gmail_service()
+  """
+  try:
+      send_gmail(
+          service,
+          sender = app.config['MAIL_DEFAULT_SENDER'],
+          recipients = recipients,
+          subject    = subject,
+          html_body  = body
+      )
+      db.session.commit()  # only commit after success
+      return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
+  except Exception as e:
+      db.session.rollback()
+      app.logger.error(f"Gmail API send error: {e}")
+      return redirect(url_for('index', error='true'))"""
+
   msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
   msg.html = body
   
@@ -589,28 +605,14 @@ def send_connection_email():
   port = app.config['MAIL_PORT']
   username = app.config['MAIL_USERNAME']
   password = app.config['MAIL_PASSWORD']
-  # somewhere before your SMTP block:
-  print("MAIL_USERNAME =", username)
-  print("MAIL_PASSWORD =", 'set' if app.config['MAIL_PASSWORD'] else 'MISSING')
 
   try:
-    print("Mail server:", host)
-    print("Mail port:  ", port)
 
     smtp = smtplib.SMTP(host, port)
-    #smtp.set_debuglevel(1)    # dump SMTP dialog to your console
-
-    # 2) Identify yourself to the server
     smtp.ehlo()
-
-    # 3) Start TLS
     smtp.starttls()
     smtp.ehlo()
-
-    # 4) Log in
     smtp.login(username, password)
-
-    # 5) Send the mail
     smtp.sendmail(msg.sender, msg.recipients, msg.as_string())
     smtp.quit()
 
