@@ -284,8 +284,10 @@ def admin_authorize():
         redirect_uri=url_for("admin_oauth2callback", _external=True)
     )
     auth_url, state = flow.authorization_url(
-        access_type="offline",
-        include_granted_scopes="true"
+    access_type="offline",
+    include_granted_scopes="true",
+    login_hint=os.environ["MAIL_USERNAME"],
+    prompt="select_account consent" 
     )
     session["oauth_state"] = state
     return redirect(auth_url)
