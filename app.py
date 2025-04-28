@@ -3,6 +3,7 @@ from datetime import datetime, time
 import time as time_module
 import random
 import os
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 import requests
 import json
 import boto3
@@ -14,11 +15,14 @@ from flask import session, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from google.oauth2 import id_token
-from google.auth.transport.requests import Request as GoogleRequest
+from googleapiclient.errors import HttpError
+from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 from functools import wraps
 import smtplib
 from smtplib import SMTPException
-#from googleapi import get_gmail_service, send_gmail
+from gmail import get_gmail_service, create_message, send_message_raw
+from google_auth_oauthlib.flow import Flow
 
 app = Flask(__name__) #sets up a flask application
 #csrf = CSRFProtect(app)
@@ -247,7 +251,7 @@ def google_auth():
         # Verify the token's integrity & claims
         idinfo = id_token.verify_oauth2_token(
             token,
-            GoogleRequest(),
+            Request(),
             os.environ['GOOGLE_CLIENT_ID']
         )
         # Ensure it's from a Columbia/Barnard account
@@ -262,6 +266,47 @@ def google_auth():
     except ValueError as e:
         # Invalid token or wrong audience/domain
         return jsonify(success=False, error=str(e)), 401
+
+CLIENT_CONFIG = {
+  "web": {
+    "client_id":     os.environ["GOOGLE_CLIENT_ID"],
+    "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
+    "auth_uri":      "https://accounts.google.com/o/oauth2/auth",
+    "token_uri":     "https://oauth2.googleapis.com/token"
+  }
+}
+   
+@app.route("/admin/authorize")
+def admin_authorize():
+    flow = Flow.from_client_config(
+        CLIENT_CONFIG,
+        scopes=["https://www.googleapis.com/auth/gmail.send"],
+        redirect_uri=url_for("admin_oauth2callback", _external=True)
+    )
+    auth_url, state = flow.authorization_url(
+        access_type="offline",
+        include_granted_scopes="true"
+    )
+    session["oauth_state"] = state
+    return redirect(auth_url)
+
+@app.route("/admin/oauth2callback")
+def admin_oauth2callback():
+    flow = Flow.from_client_config(
+        CLIENT_CONFIG,
+        scopes=None,
+        state=session.pop("oauth_state")
+    )
+    flow.redirect_uri = url_for("admin_oauth2callback", _external=True)
+    flow.fetch_token(authorization_response=request.url)
+
+    # This is your NEW refresh token:
+    new_rt = flow.credentials.refresh_token
+    return (
+        "<h2>New Gmail Refresh Token</h2>"
+        f"<pre>{new_rt}</pre>"
+        "<p>Copy this into your GMAIL_REFRESH_TOKEN and restart your app.</p>"
+    )
 #regular route for the Swipe Market page
 @app.route('/')
 def index():
@@ -576,56 +621,30 @@ def send_connection_email():
       f"remember to delete your listing on the website once you've agreed to the sale.</p>"
       f"<p>Best,<br>Swipe Market</p>"
     )
-
-  # Send email
-  
-  recipients = [seller_email, buyer_email]
-  #service = get_gmail_service()
-  """
+    
   try:
-      send_gmail(
-          service,
-          sender = app.config['MAIL_DEFAULT_SENDER'],
-          recipients = recipients,
-          subject    = subject,
-          html_body  = body
-      )
-      db.session.commit()  # only commit after success
-      return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
-  except Exception as e:
-      db.session.rollback()
-      app.logger.error(f"Gmail API send error: {e}")
-      return redirect(url_for('index', error='true'))"""
-
-  msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=recipients)
-  msg.html = body
-  
-  host = app.config['MAIL_SERVER']
-  port = app.config['MAIL_PORT']
-  username = app.config['MAIL_USERNAME']
-  password = app.config['MAIL_PASSWORD']
-
+    gmail = get_gmail_service()
+  except RefreshError as e:
+    app.logger.error(f"Gmail token refresh failed: {e}")
+    flash("Email service authorization failure. Please re‐authorize.", "error")
+    return redirect(url_for('admin_authorize'))
+  system_addr = app.config['MAIL_USERNAME'] 
+  message_body = create_message(
+      sender=system_addr, to=",".join([buyer_email, seller_email]), subject=subject, html_content=body)
   try:
-
-    smtp = smtplib.SMTP(host, port)
-    smtp.ehlo()
-    smtp.starttls()
-    smtp.ehlo()
-    smtp.login(username, password)
-    smtp.sendmail(msg.sender, msg.recipients, msg.as_string())
-    smtp.quit()
-
-    db.session.commit()  # Commit the contact record after successfully sending the email
+    gmail.users().messages().send(userId='me', body=message_body).execute()
+    db.session.commit()
     return redirect(url_for('index', show_popup='true', contacted_id=listing_id))
-  except SMTPException as e: 
-    # these attributes are set when smtplib raises SMTPException
-    code  = getattr(e, 'smtp_code', None)
-    error = getattr(e, 'smtp_error', e)
-    return f"SMTP failed: code={code}, error={error!r}", 500
+  except HttpError as error:
+    app.logger.error(f"Gmail API error: {error}")
+    db.session.rollback()
+    flash("Error sending email. Please try again.", "error")
+    return redirect(url_for('index', error='true'))
   except Exception as e:
-    db.session.rollback()  # Rollback on error
-    return f"Unexpected error: {e}", 500
-
+    app.logger.error(f"Unexpected email error: {e}")
+    db.session.rollback()
+    flash("Unexpected error while sending email.", "error")
+    return redirect(url_for('index', error='true'))
 
 @app.route('/delete_listing/<int:listing_id>', methods=['POST'])
 @login_required
