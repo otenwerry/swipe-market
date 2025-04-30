@@ -630,7 +630,7 @@ def send_connection_email():
     app.logger.error(f"Gmail token refresh failed: {e}")
     flash("Email service authorization failure. Please re‐authorize.", "error")
     return redirect(url_for('admin_authorize'))
-  system_addr = app.config['MAIL_USERNAME'] 
+  system_addr = "liondinecu@gmail.com"
   message_body = create_message(
       sender=system_addr, to=",".join([buyer_email, seller_email]), subject=subject, html_content=body)
   try:
