@@ -395,7 +395,7 @@ function showWelcomeModal() {
     modal.innerHTML = `
       <div class="modal-content">
         <h2>Welcome to Swipe Market!</h2>
-        <p>Please complete your profile.</p>
+        <p>Please fill in your information. You can edit this later on the profile page.</p>
         <div class="form-group">
           <label for="new-name">Display Name</label>
           <input type="text" id="new-name" placeholder="Your name" required>
