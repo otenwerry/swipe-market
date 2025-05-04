@@ -568,7 +568,6 @@ def send_connection_email():
     body += (
       f"</p>"
       f"<p>It's up to you guys to coordinate a meeting and exchange payment details. "
-      f"If you're going to coordinate via this thread, please remember to <strong>reply all</strong>. "
       f"As a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {payment_methods_formatted}.</p>"
@@ -618,7 +617,6 @@ def send_connection_email():
     body += (
       f"</p>"
       f"<p>It's up to you guys to coordinate a meeting and exchange payment details. "
-      f"If you're going to coordinate via this thread, please remember to <strong>reply all</strong>. "
       f"As a reminder, the listing is for {dining_halls_formatted} on "
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
