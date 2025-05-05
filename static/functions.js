@@ -198,7 +198,7 @@ function handleCredentialResponse(response) {
   const responsePayload = jwt_decode(response.credential);
 
   //enforce columbia/barnard email
-  if (!responsePayload.email.endsWith('@columbia.edu') && !responsePayload.email.endsWith('@barnard.edu')) {
+  if (!responsePayload.email.endsWith('columbia.edu') && !responsePayload.email.endsWith('barnard.edu')) {
     alert('Please use your Columbia or Barnard email to sign in.');
     return;
   }
