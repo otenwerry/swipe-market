@@ -53,7 +53,7 @@ def validate_email_domain(email):
     if not email:
         return False
     email = email.lower()
-    return email.endswith('columbia.edu') or email.endswith('@barnard.edu')
+    return email.endswith('columbia.edu') or email.endswith('barnard.edu')
 
 def is_uni_banned(uni):
     """Check if a UNI is banned."""
@@ -70,7 +70,7 @@ def extract_uni(email):
         return None
     
     # Columbia/Barnard emails are in format uni@columbia.edu or uni@barnard.edu
-    if 'columbia.edu' in email or '@barnard.edu' in email:
+    if 'columbia.edu' in email or 'barnard.edu' in email:
         return email.split('@')[0].lower()
     
     return None
@@ -256,7 +256,7 @@ def google_auth():
         )
         # Ensure it's from a Columbia/Barnard account
         email = idinfo['email']
-        if not (email.endswith('columbia.edu') or email.endswith('@barnard.edu')):
+        if not (email.endswith('columbia.edu') or email.endswith('barnard.edu')):
             raise ValueError("Unauthorized domain")
 
         session['user_id'] = idinfo['sub']
