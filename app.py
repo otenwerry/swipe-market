@@ -12,7 +12,7 @@ import pytz
 from  flask_sqlalchemy import SQLAlchemy
 from flask import make_response, g, render_template, flash
 from flask import session, flash, redirect, url_for
-from flask_mail import Mail, Message
+#from flask_mail import Mail, Message
 from flask_migrate import Migrate
 from google.oauth2 import id_token
 from googleapiclient.errors import HttpError
@@ -41,7 +41,7 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True, 
     SESSION_COOKIE_SAMESITE='Lax'
 )
-mail = Mail(app)
+#mail = Mail(app)
 migrate = Migrate(app, db)
 
 ny_tz = pytz.timezone('America/New_York')
