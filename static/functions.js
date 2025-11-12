@@ -222,7 +222,7 @@ function handleCredentialResponse(response) {
   .then(response => response.json())
   .then(data => {
     if (data.banned) {
-      alert('You have been banned from Swipe Market. If you think this is a mistake, please contact liondinecu@gmail.com.');
+      alert('You have been banned from Swipe Market. If you think this is a mistake, please contact trades@swipemarketcu.com.');
       return;
     }
     

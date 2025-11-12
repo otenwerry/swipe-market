@@ -34,7 +34,7 @@ app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT'))
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_DEFAULT_SENDER'] = 'liondinecu@gmail.com'
+app.config['MAIL_DEFAULT_SENDER'] = 'trades@swipemarketcu.com'
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config.update(
     SESSION_COOKIE_SECURE=True,
@@ -632,7 +632,7 @@ def send_connection_email():
     app.logger.error(f"Gmail token refresh failed: {e}")
     flash("Email service authorization failure. Please re‐authorize.", "error")
     return redirect(url_for('admin_authorize'))
-  system_addr = "liondinecu@gmail.com"
+  system_addr = "trades@swipemarketcu.com"
   message_body = create_message(
       sender=system_addr, to=",".join([buyer_email, seller_email]), subject=subject, html_content=body)
   try:
