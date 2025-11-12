@@ -48,6 +48,10 @@ ny_tz = pytz.timezone('America/New_York')
 
 #VALIDATION FUNCTIONS
 
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
+    
 def validate_email_domain(email):
     """Validate that the email is from columbia.edu or barnard.edu domain."""
     if not email:
