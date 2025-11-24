@@ -204,7 +204,7 @@ def format_date_without_year(date_str):
         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
         
         # Format to "Month Day" (e.g., "January 15")
-        return date_obj.strftime("%B %d")
+        return date_obj.strftime("%b %d")
     except (ValueError, TypeError):
         # Return the original string if parsing fails
         return date_str
@@ -575,6 +575,7 @@ def send_connection_email():
       f"As a reminder, {buyer_name} wants to be swiped into {dining_halls_formatted} "
       f"on {date_formatted} between {start_time_formatted} and {end_time_formatted} for ${price_str}. "
       f"They can pay via {payment_methods_formatted}.</p>"
+      f"<p>Please REPLY ALL or reply directly to the other person! If you only reply directly to this email, they will not see it.</p>"
       f"<p>{buyer_name}, remember to delete your listing on the website once you've agreed to the sale.</p>"
       f"<p>Best,<br>Swipe Market</p>"
     )
@@ -625,6 +626,7 @@ def send_connection_email():
       f"{date_formatted} between {start_time_formatted} and {end_time_formatted} and costs "
       f"${price_str}. "
       f"{seller_name} accepts {payment_methods_formatted}.</p>"
+      f"<p>Please REPLY ALL or reply directly to the other person! If you only reply directly to this email, they will not see it.</p>"
       f"<p>{seller_name}, if this is the only swipe you want to sell from this listing, "
       f"remember to delete your listing on the website once you've agreed to the sale.</p>"
       f"<p>Best,<br>Swipe Market</p>"
