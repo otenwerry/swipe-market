@@ -14,7 +14,7 @@
   }
   
   #index-header a {
-    background: linear-gradient(45deg, #4285f4, #9c27b0);
+    background: #1a73e8;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
